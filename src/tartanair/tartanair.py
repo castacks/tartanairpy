@@ -8,6 +8,7 @@ import numpy as np
 [ ] Check that the inputs are valid.
 [ ] Add a function to customize a trajectory.
 [ ] Verify download of flow.
+[ ] Remove spamming text.
 '''
 
 class TartanAir():
@@ -45,6 +46,32 @@ class TartanAir():
         # Load the token from a text file.
         with open('/home/yoraish/azure_token.txt', 'r') as f:
             self.azure_token = f.read()
+
+        # Check if azcopy executable exists.
+        if not os.path.exists('./azcopy'):
+           
+            res = input("Azcopy executable not found. Downloading azcopy. Would you like to download it? (Y/n) ")
+
+            if res == 'n':
+                raise Exception("Azcopy executable not found. Please download it manually and place it in the current directory.")
+                
+            # Proceed in a different way depending on the OS.
+            # TODO(yoraish): test this on windows.
+            if os.name == 'nt':
+                os.system('powershell.exe -Command "Invoke-WebRequest -Uri https://aka.ms/downloadazcopy-v10-windows -OutFile downloadazcopy-v10-windows.zip"')
+                os.system('powershell.exe -Command "Expand-Archive downloadazcopy-v10-windows.zip"')
+                os.system('powershell.exe -Command "Remove-Item downloadazcopy-v10-windows.zip"')
+                os.system('azcopy.exe')
+
+            # TODO(yoraish): test this on mac.
+            elif os.name == 'posix':
+                os.system('wget https://aka.ms/downloadazcopy-v10-linux')
+                os.system('tar -xvf downloadazcopy-v10-linux')
+                os.system("mv azcopy_linux_amd64*/azcopy .")
+
+                os.system('rm downloadazcopy-v10-linux -r')
+                os.system('chmod +x azcopy')
+
     
     def download(self, env, difficulty = ['easy'], trajectory_id = ['P000'], modality = [], camera_name = []):
         """
@@ -77,6 +104,7 @@ class TartanAir():
         for env_i in env:
             for difficulty_i in difficulty:
                 for trajectory_id_i in trajectory_id:
+                    print("\n\nDownloading from trajectory: ", trajectory_id_i, " from environment: ", env_i, " with difficulty: ", difficulty_i, "\n\n")
                     # Download the trajectory.
                     # Source.
                     difficulty_str = "Data_" + difficulty_i
@@ -104,6 +132,7 @@ class TartanAir():
                                         cmd += "*" + camera_name_i + "_" + modality_i + "*;"
                             print('cmd: ', cmd)
                             cmd += "'"
+                            os.system(cmd)
 
                     # Download special modalities that are not images.
                     if 'lidar' or 'imu' in modality:
@@ -125,4 +154,4 @@ class TartanAir():
 if __name__ == "__main__":
     tartanair_data_root = '/media/yoraish/overflow/data/tartanair-v2'
     tartanair = TartanAir(tartanair_data_root)
-    tartanair.download(env = 'AmericanDinerExposure', difficulty = 'easy', trajectory_id = 'P000', modality = [ 'lidar'], camera_name = ['lcam_equirect'])
+    tartanair.download(env = 'AmericanDinerExposure', difficulty = 'easy', trajectory_id = ['P000', 'P003'], modality = ['imu', 'image'], camera_name = ['lcam_fish'])
