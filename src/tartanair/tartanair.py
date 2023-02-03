@@ -25,7 +25,7 @@ class TartanAir(TartanAirModule):
         # Modules.
         self.downloader = TartanAirDownloader(tartanair_data_root)
     
-    def download(self, env, difficulty, trajectory_id, modality = 'rgb', camera_name = 'lcam_front', allow_download = True):
+    def download(self, env, difficulty, trajectory_id, modality = 'rgb', camera_name = 'lcam_front'):
         """
         Download the relevant data from the TartanAir dataset.
         """
