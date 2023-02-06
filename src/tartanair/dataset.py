@@ -77,7 +77,7 @@ class TartanAirDataset(TartanAirModule):
 class TartanAirImageDatasetObject(Dataset):
 
     def __init__(self, tartanair_data_root, 
-                        envs, 
+                        envs = [], 
                         difficulties = ['easy', 'hard'], 
                         trajectory_ids = [], 
                         modalities = ['image'], 
@@ -131,9 +131,19 @@ class TartanAirImageDatasetObject(Dataset):
         # Get all the environment names.
         available_envs = os.listdir(tartanair_data_root)
 
-        # Check that all the requested environments are available.
-        for env in self.envs:
-            assert env in available_envs, 'The environment {} is not available.'.format(env)
+        # If no envs were passed, then use all of them.
+        print('envs', envs)
+        if not self.envs:
+            self.envs = available_envs
+
+            # Print.
+            print('No environments were passed. Using all of them:\n        ')
+            print("\n        ".join(self.envs))
+
+        # Otherwise check that all the requested environments are available.
+        else:
+            for env in self.envs:
+                assert env in available_envs, 'The environment {} is not available.'.format(env)
 
         # Get all the difficulty names.
         available_difficulties = os.listdir(os.path.join(tartanair_data_root, envs[0]))
@@ -162,8 +172,17 @@ class TartanAirImageDatasetObject(Dataset):
             for difficulty in os.listdir(tartanair_data_root + '/' + env):
                 diff_dir_gp = tartanair_data_root + '/' + env + '/' + difficulty
 
+                # Get the available trajectory ids.
+                available_trajectory_ids = os.listdir(diff_dir_gp)
+
+                # If no trajectory ids were passed, then use all of them.
+                if len(self.trajectory_ids) == 0:
+                    trajectory_ids_for_env = available_trajectory_ids
+                else:
+                    trajectory_ids_for_env = self.trajectory_ids
+
                 # Iterate over trajectories.
-                for traj_name in self.trajectory_ids:
+                for traj_name in trajectory_ids_for_env:
                     traj_dir_gp = os.path.join(diff_dir_gp, traj_name)
 
                     # Get the trajectory poses. This is a map from a camera_name to a list of poses.

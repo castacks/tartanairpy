@@ -14,14 +14,14 @@ from tartanair.tartanair import TartanAir
 
 # Create a TartanAir object.
 tartanair_data_root = '/media/yoraish/overflow/data/tartanair-v2'
-ta = TartanAir(tartanair_data_root)
+tair = TartanAir(tartanair_data_root)
 
 #####################
 # Using a dataloader #
 #####################
 
 # Set up the dataset.
-dataset = ta.create_image_dataset(env = 'ConstructionSite', difficulty = 'easy', trajectory_id = ['P000'], modality = ['image', 'depth'], camera_name = ['lcam_fish', 'lcam_front'])
+dataset = tair.create_image_dataset(env = 'ConstructionSite', difficulty = 'easy', trajectory_id = ['P000'], modality = ['image', 'depth'], camera_name = ['lcam_fish', 'lcam_front'])
 
 # Print the dataset.
 print(dataset)
@@ -35,13 +35,13 @@ dataloader = DataLoader(dataset, batch_size = 3, shuffle = True, num_workers = 0
 
 # Show a few images.
 for i_batch, sample_batched in enumerate(dataloader):
-    print(i_batch, sample_batched['lcam_fish']['image_0'].size())
+    print(i_batch, sample_batched['lcam_front']['image_0'].size())
 
     # Show the batch side by side.
     import cv2
     import numpy as np
-    imgs1 = sample_batched['lcam_fish']['image_0'].numpy()
-    imgs2 = sample_batched['lcam_fish']['image_1'].numpy()
+    imgs1 = sample_batched['lcam_front']['image_0'].numpy()
+    imgs2 = sample_batched['lcam_front']['image_1'].numpy()
 
 
     img = np.concatenate((imgs1[0], imgs1[1], imgs1[2]), axis = 1)
@@ -74,7 +74,7 @@ transform = transforms.Compose([
 ])
 
 # Set up a dataset.
-dataset = ta.create_image_dataset(env = 'ConstructionSite', difficulty = 'easy', trajectory_id = ['P000'], modality = ['image', 'depth'], camera_name = ['lcam_fish', 'lcam_front'], transform = transform)
+dataset = tair.create_image_dataset(env = [], difficulty = 'easy', trajectory_id = [], modality = ['image', 'depth'], camera_name = ['lcam_fish', 'lcam_front'], transform = transform)
 
 dataloader = DataLoader(dataset, batch_size = 3, shuffle = True, num_workers = 0)
 
