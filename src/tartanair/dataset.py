@@ -137,8 +137,8 @@ class TartanAirImageDatasetObject(Dataset):
             self.envs = available_envs
 
             # Print.
-            print('No environments were passed. Using all of them:\n        ')
-            print("\n        ".join(self.envs))
+            print('No environments were passed. Using all of them:')
+            print("        " + "\n        ".join(self.envs))
 
         # Otherwise check that all the requested environments are available.
         else:
