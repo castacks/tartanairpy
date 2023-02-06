@@ -15,8 +15,8 @@ from scipy.spatial.transform import Rotation
 
 
 # Local imports.
-from tartanair.tartanair_module import TartanAirModule
-from tartanair.reader import TartanAirImageReader
+from .tartanair_module import TartanAirModule
+from .reader import TartanAirImageReader
 
 class TartanAirDataset(TartanAirModule):
     '''
@@ -25,17 +25,6 @@ class TartanAirDataset(TartanAirModule):
     def __init__(self, tartanair_data_root):
         # Call the parent class constructor.
         super(TartanAirDataset, self).__init__(tartanair_data_root)
-
-        self.modality_names = ['image', 'depth', 'seg', 'imu', 'lidar']
-
-        self.env_names = ['DesertGasStation', 'Forest', 'OldIndustrialCity', 'ApocalypticCity']
-
-        self.difficulty_names = ['easy', 'hard']
-
-        # Load the token from a text file.
-        # TODO(yoraish): this will be changed and hardcoded.
-        with open('/home/yoraish/azure_token.txt', 'r') as f:
-            self.azure_token = f.read()
 
         # Load the dataset info.
         self.dataset = None
@@ -225,14 +214,18 @@ class TartanAirImageDatasetObject(Dataset):
             camera_sample = {}
 
             # Iterate over modalities.
-            for modality in self.modalities:
+            for modality in entry[camera_name]['data0'].keys():
                 # Get the data0 and data1 global paths.
                 data0_gp = entry[camera_name]['data0'][modality]
                 data1_gp = entry[camera_name]['data1'][modality]
 
                 # Read the data0 and data1.
-                data0 = self.read_image(data0_gp)
-                data1 = self.read_image(data1_gp)
+                if 'image' in modality:
+                    data0 = self.read_image(data0_gp)
+                    data1 = self.read_image(data1_gp)
+                elif 'depth' in modality:  
+                    data0 = self.read_depth(data0_gp)
+                    data1 = self.read_depth(data1_gp)
 
                 # Add the data0 and data1 to the camera sample.
                 camera_sample[modality + '_0'] = data0
@@ -246,125 +239,6 @@ class TartanAirImageDatasetObject(Dataset):
 
         # Return the sample.
         return sample
-
-    # def __getitem__(self, idx):
-    #     # If initialized, don't. Else, do.
-    #     if not self.initialized:
-    #         self.initialize()
-    #         self.initialized = True
-
-    #     ####################
-    #     # Get the sample. These are paths to images and depth images.
-    #     ####################
-    #     sample = self.data[idx]
-
-    #     ####################
-    #     # First, choose a rotation sampler for the fisheye image within the image cube.
-    #     ####################
-    #     fish_sampler = random.choice(self.fisheye_samplers)
-        
-    #     ####################
-    #     # Create the image dicts.
-    #     ####################
-    #     img0_dict = {"front": self.read_image(sample['img0']['front']),
-    #                 "back": self.read_image(sample['img0']['back']),
-    #                 "right": self.read_image(sample['img0']['right']),
-    #                 "left": self.read_image(sample['img0']['left']),
-    #                 "top": self.read_image(sample['img0']['top']),
-    #                 "bottom": self.read_image(sample['img0']['bottom'])
-    #                 }
-    #     img1_dict = {"front": self.read_image(sample['img1']['front']),
-    #                 "back": self.read_image(sample['img1']['back']),
-    #                 "right": self.read_image(sample['img1']['right']),
-    #                 "left": self.read_image(sample['img1']['left']),
-    #                 "top": self.read_image(sample['img1']['top']),
-    #                 "bottom": self.read_image(sample['img1']['bottom'])
-    #                 }
-
-    #     ####################
-    #     # Create the first and second fisheye images.
-    #     ####################
-    #     fish0, valid_mask_fish0 = fish_sampler(img0_dict, interpolation = 'linear') # (H, W, 3) uint8.
-    #     fish1, valid_mask_fish1 = fish_sampler(img1_dict, interpolation = 'linear')
-
-    #     # Create the depth dict.
-    #     depth_dict = {"front": self.read_depth(sample['depth0']['front']),
-    #                 "back": self.read_depth(sample['depth0']['back']),
-    #                 "right": self.read_depth(sample['depth0']['right']),
-    #                 "left": self.read_depth(sample['depth0']['left']),
-    #                 "top": self.read_depth(sample['depth0']['top']),
-    #                 "bottom": self.read_depth(sample['depth0']['bottom'])
-    #                 }
-
-    #     ####################
-    #     # Create a depth image for the first fisheye image.
-    #     ####################
-    #     depth0, valid_mask_depth = fish_sampler.blend_interpolation(depth_dict, self.blend_func)
-
-    #     ####################
-    #     # Adapt the motion to the rotated fisheye image.
-    #     # TODO(yoraish): this rotation is in the image frame. Meaning z is forward, x is right, y is down. We would like to convert it to NED, where z is down, x is forward, y is right in order to adapt the motion.
-    #     ####################
-    #     R_cube_fish = fish_sampler.R_raw_fisheye.cpu().numpy() # This is in RDF (OpenCV camera).
-    #     X_cube_fish = np.eye(4)
-    #     X_cube_fish[:3, :3] = R_cube_fish
-    #     R_fish_cube = np.linalg.inv(R_cube_fish)
-    #     X_fish_cube = np.eye(4)
-    #     X_fish_cube[:3, :3] = R_fish_cube
-
-    #     # The cube in the base (b), this transforms NED to RDF camera. 
-    #     X_NED_cam = np.eye(4)
-    #     X_NED_cam[:3, :3] = np.array([[0, 0, 1], [1, 0, 0], [0, 1, 0]])
-
-    #     # Its inverse.
-    #     X_cam_NED = np.linalg.inv(X_NED_cam)
-
-    #     # Convert the motion to SE(3).
-    #     X_b0_b1 = se2SE(sample['motion'])
-
-    #     # The transform between the base (b) and the rotated base (bb).
-    #     X_b_bb = X_NED_cam @ X_cube_fish @ X_cam_NED
-
-    #     # The transform between the rotated base (bb) and the base (b).
-    #     X_bb_b = np.linalg.inv(X_b_bb)
-
-    #     # The NED transformation between the rotated bases.
-    #     X_bb0_bb1 = X_bb_b @ X_b0_b1 @ X_b_bb
-
-    #     # Back to xyz, rotvec.
-    #     fish_ned_motion = SE2se(X_bb0_bb1)
-
-    #     ####################
-    #     # Create the fisheye flow image.
-    #     ####################
-    #     flow_fish = flow_from_depth_motion(depth0, fish_ned_motion, self.fish_camera_model) # Output is np array (H, W, 2).
-
-    #     # Show.
-    #     if self.visualize:
-    #         print(Fore.GREEN + 'Showing the fisheye image and flow.' + Style.RESET_ALL)
-    #         import matplotlib.pyplot as plt
-    #         plt.figure()
-    #         flow = self.visualizer.visflow(flow_fish, add_arrows=True)
-    #         # Apply the mask.
-    #         flow[valid_mask_fish0 == 0] *= 0
-    #         plt.imshow(flow)
-    #         plt.show()
-
-    #     ####################
-    #     # Form the sample.
-    #     ####################
-    #     res = {'fish0': fish0, 'fish1': fish1, 'gt_fish_flow': flow_fish, 'fish_valid_mask': valid_mask_fish0} 
-
-    #     if idx > len(self.data):
-    #         raise StopIteration 
-
-    #     # Add the motion if it is available.
-    #     if fish_ned_motion is None:
-    #         return res
-    #     else:
-    #         res['motion'] = fish_ned_motion
-    #         return res
-
 
     ########################
     # Utility geometry functions.
