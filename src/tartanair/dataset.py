@@ -8,7 +8,6 @@ import os
 import sys
 import time
 import numpy as np
-from tqdm import tqdm
 import yaml
 import torch
 from torch.utils.data import Dataset
@@ -211,7 +210,7 @@ class TartanAirImageDatasetObject(Dataset):
                     # Memoization of some directory data.
                     memoized_dir_data = {}
 
-                    for frame_id in tqdm(range(num_frames_in_traj - 1)): # We do not have a motion for the last frame as we do not have a next frame.
+                    for frame_id in range(num_frames_in_traj - 1): # We do not have a motion for the last frame as we do not have a next frame.
                             
                         # Create entry.
                         entry = {camera_name: {'data0' : {}, 'data1' : {}, 'motion' : None} for camera_name in self.camera_names}
@@ -239,7 +238,7 @@ class TartanAirImageDatasetObject(Dataset):
                                 data_file_gps = memoized_dir_data[(camera_name, modality)]
                                 data0_file_gp = os.path.join(traj_dir_gp, modality + '_' + camera_name, data_file_gps[frame_id])
                                 data1_file_gp = os.path.join(traj_dir_gp, modality + '_' + camera_name, data_file_gps[frame_id + 1])
-                                
+
                                 # Check that the data files exists.
                                 assert os.path.exists(data0_file_gp), 'The data file {} does not exist.'.format(data0_file_gp)
                                 assert os.path.exists(data1_file_gp), 'The data file {} does not exist.'.format(data1_file_gp)
