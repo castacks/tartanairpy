@@ -12,7 +12,8 @@ import yaml
 import torch
 from torch.utils.data import Dataset
 from scipy.spatial.transform import Rotation
-
+import torchvision.transforms.functional as TF
+import torchvision.transforms as transforms
 
 # Local imports.
 from .tartanair_module import TartanAirModule
@@ -29,9 +30,25 @@ class TartanAirDataset(TartanAirModule):
         # Load the dataset info.
         self.dataset = None
 
-    def create_image_dataset(self, env, difficulty, trajectory_id, modality, camera_name):
+    def create_image_dataset(self, 
+                             env, 
+                             difficulty, 
+                             trajectory_id, 
+                             modality, 
+                             camera_name, 
+                             transform = transforms.Compose([])
+                             ):
         '''
         Create a dataset object, reading data from the TartanAir dataset, and return it.
+
+        Args:
+
+        env(str or list): The environment(s) to use.
+        difficulty(str or list): The difficulty(s) to use. The allowed names are: 'easy', 'hard'.
+        trajectory_id(str or list): The trajectory id(s) to use. If empty, then all the trajectories will be used.
+        modality(str or list): The modality(ies) to use.
+        camera_name(str or list): The camera name(s) to use. If the modality list does not include a form of an image (e.g. 'image', 'depth', 'seg'), then this parameter is ignored.
+        transform(torchvision.transforms): A torchvision transform object, which will be applied to the data. If out_to_tensor is True, then the transform will be applied before the data is converted to a tensor.
         '''
 
         # Convert all inputs to lists.
@@ -46,8 +63,12 @@ class TartanAirDataset(TartanAirModule):
         if type(camera_name) is not list:
             camera_name = [camera_name]
 
+        # If the transform is none, then create an empty transform.
+        if transform is None:
+            transform = transforms.Compose([])
+
         # Create a dataset object.
-        self.dataset = TartanAirImageDatasetObject(self.tartanair_data_root, env, difficulty, trajectory_id, modality, camera_name)
+        self.dataset = TartanAirImageDatasetObject(self.tartanair_data_root, env, difficulty, trajectory_id, modality, camera_name, transform)
 
         # Return the dataset object.
         return self.dataset
@@ -60,7 +81,8 @@ class TartanAirImageDatasetObject(Dataset):
                         difficulties = ['easy', 'hard'], 
                         trajectory_ids = [], 
                         modalities = ['image'], 
-                        camera_names = ['lcam_front']):
+                        camera_names = ['lcam_front'],
+                        transform = None):
 
         '''
         The TartanAirDatasetObject class implements a PyTorch Dataset object, which can be used to read data from the TartanAir dataset.
@@ -85,13 +107,21 @@ class TartanAirImageDatasetObject(Dataset):
         self.trajectory_ids = trajectory_ids
         self.modalities = modalities
         self.camera_names = camera_names
+        self.transform = transform
+
+        # Alert the user that transforms may only make sense for RGB image modalities.
+        if self.transform is not None and ('seg' in self.modalities or 'depth' in self.modalities):
+            print('Warning: The transform parameter may only be relevant for RGB image modalities and will be applied to that only.')
 
         # Some data reading functions.
         # Reading depth.
         self.read_depth = TartanAirImageReader().read_depth
 
         # Reading image.
-        self.read_image = TartanAirImageReader().read_bgr
+        self.read_image = TartanAirImageReader().read_rgb
+
+        # Reading segmentation.
+        self.read_seg = TartanAirImageReader().read_seg
 
         # If imu or lidar are in the modalities list, then note that we cannot load it in this dataset.
         if 'imu' in self.modalities or 'lidar' in self.modalities:
@@ -223,9 +253,19 @@ class TartanAirImageDatasetObject(Dataset):
                 if 'image' in modality:
                     data0 = self.read_image(data0_gp)
                     data1 = self.read_image(data1_gp)
+
+                    # Transform the data0 and data1.
+                    if self.transform is not None:
+                        data0 = self.transform(data0)
+                        data1 = self.transform(data1)
+
                 elif 'depth' in modality:  
                     data0 = self.read_depth(data0_gp)
                     data1 = self.read_depth(data1_gp)
+
+                elif 'seg' in modality:
+                    data0 = self.read_seg(data0_gp)
+                    data1 = self.read_seg(data1_gp)
 
                 # Add the data0 and data1 to the camera sample.
                 camera_sample[modality + '_0'] = data0

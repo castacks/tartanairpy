@@ -16,7 +16,11 @@ from tartanair.tartanair import TartanAir
 tartanair_data_root = '/media/yoraish/overflow/data/tartanair-v2'
 ta = TartanAir(tartanair_data_root)
 
-# Download a trajectory.
+#####################
+# Using a dataloader #
+#####################
+
+# Set up the dataset.
 dataset = ta.create_image_dataset(env = 'ConstructionSite', difficulty = 'easy', trajectory_id = ['P000'], modality = ['image', 'depth'], camera_name = ['lcam_fish', 'lcam_front'])
 
 # Print the dataset.
@@ -36,26 +40,14 @@ for i_batch, sample_batched in enumerate(dataloader):
     # Show the batch side by side.
     import cv2
     import numpy as np
-    img0_0 = sample_batched['lcam_fish']['image_0'][0].numpy()
-    img1_0 = sample_batched['lcam_fish']['image_0'][1].numpy()
-    img2_0 = sample_batched['lcam_fish']['image_0'][2].numpy()
-
-    img0_1 = sample_batched['lcam_fish']['image_1'][0].numpy()
-    img1_1 = sample_batched['lcam_fish']['image_1'][1].numpy()
-    img2_1 = sample_batched['lcam_fish']['image_1'][2].numpy()
-    
-    img0_0 = cv2.resize(img0_0, (0, 0), fx = 0.5, fy = 0.5)
-    img1_0 = cv2.resize(img1_0, (0, 0), fx = 0.5, fy = 0.5)
-    img2_0 = cv2.resize(img2_0, (0, 0), fx = 0.5, fy = 0.5)
-
-    img0_1 = cv2.resize(img0_1, (0, 0), fx = 0.5, fy = 0.5)
-    img1_1 = cv2.resize(img1_1, (0, 0), fx = 0.5, fy = 0.5)
-    img2_1 = cv2.resize(img2_1, (0, 0), fx = 0.5, fy = 0.5)
+    imgs1 = sample_batched['lcam_fish']['image_0'].numpy()
+    imgs2 = sample_batched['lcam_fish']['image_1'].numpy()
 
 
-    img = np.concatenate((img0_0, img1_0, img2_0), axis = 1)
-    img1 = np.concatenate((img0_1, img1_1, img2_1), axis = 1)
-    img = np.concatenate((img, img1), axis = 0)
+    img = np.concatenate((imgs1[0], imgs1[1], imgs1[2]), axis = 1)
+    img = np.concatenate((img, np.concatenate((imgs2[0], imgs2[1], imgs2[2]), axis = 1)), axis = 0)
+    img = cv2.resize(img, (0,0), fx = 0.5, fy = 0.5)
+    img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 
     cv2.imshow('image', img)
     cv2.waitKey(0)
@@ -64,5 +56,51 @@ for i_batch, sample_batched in enumerate(dataloader):
         break
 
 
+####################
+# Using transforms #
+####################
+
+# Do this again, this time also create and pass a simple transform.
+import torchvision.transforms as transforms
+transform = transforms.Compose([
+    transforms.ToTensor(),
+    
+    # Resize the image.
+    transforms.Resize((224, 224)),
+
+    # Randomly flip the image.
+    transforms.RandomHorizontalFlip(p = 1.0),
+
+])
+
+# Set up a dataset.
+dataset = ta.create_image_dataset(env = 'ConstructionSite', difficulty = 'easy', trajectory_id = ['P000'], modality = ['image', 'depth'], camera_name = ['lcam_fish', 'lcam_front'], transform = transform)
+
+dataloader = DataLoader(dataset, batch_size = 3, shuffle = True, num_workers = 0)
+
+# Show a few images.
+
+for i_batch, sample_batched in enumerate(dataloader):
+    print(i_batch, sample_batched['lcam_fish']['image_0'].size())    
+
+    # Show the batch side by side.
+    import cv2
+    import numpy as np
+    imgs1 = sample_batched['lcam_fish']['image_0'].numpy()
+    imgs2 = sample_batched['lcam_fish']['image_1'].numpy()
+
+    # Move the color channel to the end.
+    imgs1 = np.transpose(imgs1, (0, 2, 3, 1))
+    imgs2 = np.transpose(imgs2, (0, 2, 3, 1))
 
 
+    img = np.concatenate((imgs1[0], imgs1[1], imgs1[2]), axis = 1)
+    img = np.concatenate((img, np.concatenate((imgs2[0], imgs2[1], imgs2[2]), axis = 1)), axis = 0)
+    img = cv2.resize(img, (0,0), fx = 0.5, fy = 0.5)
+    img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+
+    cv2.imshow('image transform', img)
+    cv2.waitKey(0)
+
+    if i_batch == 5:
+        break

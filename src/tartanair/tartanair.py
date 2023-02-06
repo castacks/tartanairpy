@@ -40,9 +40,9 @@ class TartanAir(TartanAirModule):
         """
         pass
 
-    def create_image_dataset(self, env, difficulty, trajectory_id, modality = 'image', camera_name = 'lcam_front'):
+    def create_image_dataset(self, env, difficulty, trajectory_id, modality = 'image', camera_name = 'lcam_front', transform = None):
         """
         Return the relevant data from the TartanAir dataset.
         This dataset will only handle image data in modalities such as 'image', depth, and segmentation.
         """
-        return self.dataset.create_image_dataset(env, difficulty, trajectory_id, modality, camera_name)
+        return self.dataset.create_image_dataset(env, difficulty, trajectory_id, modality, camera_name, transform)

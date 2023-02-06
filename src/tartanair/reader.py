@@ -23,6 +23,16 @@ class TartanAirImageReader():
             img = cv2.resize(img, (0,0), fx=scale, fy=scale)
         return img
 
+    def read_rgb(self, imgpath, scale = 1):
+        img = cv2.imread(imgpath)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+        if img is None or img.size==0:
+            return None
+        if scale != 1:
+            img = cv2.resize(img, (0,0), fx=scale, fy=scale)
+        return img
+
     def depth_rgba_float32(self, depth_rgba):
         depth = depth_rgba.view("<f4")
         return np.squeeze(depth, axis=-1)
