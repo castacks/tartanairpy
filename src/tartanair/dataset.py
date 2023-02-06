@@ -8,6 +8,7 @@ import os
 import sys
 import time
 import numpy as np
+from tqdm import tqdm
 import yaml
 import torch
 from torch.utils.data import Dataset
@@ -144,13 +145,16 @@ class TartanAirImageDatasetObject(Dataset):
         else:
             for env in self.envs:
                 assert env in available_envs, 'The environment {} is not available.'.format(env)
+        
+        # Check that all the requested difficulties are available in all the requested environments.
+        for env in self.envs:
+            # Get all the difficulty names.
+            available_difficulties = os.listdir(os.path.join(tartanair_data_root, env))
 
-        # Get all the difficulty names.
-        available_difficulties = os.listdir(os.path.join(tartanair_data_root, envs[0]))
-
-        # Check that all the requested difficulties are available.
-        for difficulty in self.difficulties:
-            assert 'Data_' + difficulty in available_difficulties, 'The difficulty {} is not available.'.format(difficulty)
+            # Check that all the requested difficulties are available.
+            for difficulty in self.difficulties:
+                assert 'Data_' + difficulty in available_difficulties, 'The difficulty {} is not available in the environment {}.'.format(difficulty, env)
+         
 
         # The object that will keep all of the data. We will later concatenate all of the data. It takes the form of 
         # [{camera0: 
@@ -204,7 +208,10 @@ class TartanAirImageDatasetObject(Dataset):
                     tmp_data_path = os.path.join(traj_dir_gp, self.modalities[0] + '_' + self.camera_names[0])
                     num_frames_in_traj = len(os.listdir(tmp_data_path))
 
-                    for frame_id in range(num_frames_in_traj - 1): # We do not have a motion for the last frame as we do not have a next frame.
+                    # Memoization of some directory data.
+                    memoized_dir_data = {}
+
+                    for frame_id in tqdm(range(num_frames_in_traj - 1)): # We do not have a motion for the last frame as we do not have a next frame.
                             
                         # Create entry.
                         entry = {camera_name: {'data0' : {}, 'data1' : {}, 'motion' : None} for camera_name in self.camera_names}
@@ -217,17 +224,22 @@ class TartanAirImageDatasetObject(Dataset):
 
                             # Iterate over modalities.
                             for modality in self.modalities:
-                                
-                                # The data folders global path. One directory global path for each camera.
-                                camera_dir_gps = os.path.join(traj_dir_gp, modality + '_' + camera_name)
 
                                 # The data files global paths. Sorted.
-                                data_file_gps = os.listdir(camera_dir_gps)
-                                data_file_gps.sort()
-                                data0_file_gp = os.path.join(camera_dir_gps, data_file_gps[frame_id])
-                                data1_file_gp = os.path.join(camera_dir_gps, data_file_gps[frame_id + 1])
+                                if (camera_name, modality) not in memoized_dir_data:
 
+                                    # The data folders global path. One directory global path for each camera.
+                                    camera_dir_gps = os.path.join(traj_dir_gp, modality + '_' + camera_name)
+                                    
+                                    # The data files global paths. Sorted.
+                                    data_file_gps = os.listdir(camera_dir_gps)
+                                    data_file_gps.sort()
+                                    memoized_dir_data[(camera_name, modality)] = data_file_gps
 
+                                data_file_gps = memoized_dir_data[(camera_name, modality)]
+                                data0_file_gp = os.path.join(traj_dir_gp, modality + '_' + camera_name, data_file_gps[frame_id])
+                                data1_file_gp = os.path.join(traj_dir_gp, modality + '_' + camera_name, data_file_gps[frame_id + 1])
+                                
                                 # Check that the data files exists.
                                 assert os.path.exists(data0_file_gp), 'The data file {} does not exist.'.format(data0_file_gp)
                                 assert os.path.exists(data1_file_gp), 'The data file {} does not exist.'.format(data1_file_gp)
