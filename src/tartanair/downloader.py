@@ -122,7 +122,7 @@ Destination: {}
                             os.system(cmd)
 
                     # Download special modalities that are not images.
-                    if 'lidar' or 'imu' in modality:
+                    if 'lidar' in modality or 'imu' in modality:
                         for mty in [m for m in modality if m in ['lidar', 'imu']]:
 
                             azure_url_special = "https://tartanairv2.blob.core.windows.net/data-raw/" + env_i + "/" + difficulty_str + "/" + trajectory_id_i + "/" + mty + "/" + self.azure_token
@@ -134,5 +134,5 @@ Destination: {}
 
                         # Also download the front-facing pose file.
                         azure_url_pose = "https://tartanairv2.blob.core.windows.net/data-raw/" + env_i + "/" + difficulty_str + "/" + trajectory_id_i + "/pose_lcam_front.txt" + self.azure_token
-
+                        dest_env_special = os.path.join(self.tartanair_data_root, env_i, difficulty_str, trajectory_id_i)
                         os.system('./azcopy copy "{}" {} --recursive --as-subdir=true' .format(azure_url_pose, dest_env_special))

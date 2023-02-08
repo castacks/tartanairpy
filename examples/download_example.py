@@ -17,4 +17,4 @@ tartanair_data_root = '/media/yoraish/overflow/data/tartanair-v2'
 tair = TartanAir(tartanair_data_root)
 
 # Download a trajectory.
-tair.download(env = 'ArchVizTinyHouseDayExposure', difficulty = 'hard', trajectory_id = ['P003'], modality = ['lidar'], camera_name = ['lcam_front', 'lcam_left', 'lcam_right', 'lcam_back', 'lcam_top', 'lcam_bottom'])
+tair.download(env = 'ArchVizTinyHouseDayExposure', difficulty = 'hard', trajectory_id = ['P000'], modality = ['depth'], camera_name = ['lcam_front', 'lcam_left', 'lcam_right', 'lcam_back', 'lcam_top', 'lcam_bottom'])
