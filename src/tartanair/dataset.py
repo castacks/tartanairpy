@@ -115,13 +115,17 @@ class TartanAirImageDatasetObject(Dataset):
 
         # Some data reading functions.
         # Reading depth.
-        self.read_depth = TartanAirImageReader().read_depth
+        self.tair_reader = TartanAirImageReader()
+        self.read_depth = self.tair_reader.read_depth
 
         # Reading image.
-        self.read_image = TartanAirImageReader().read_rgb
+        self.read_image = self.tair_reader.read_rgb
 
         # Reading segmentation.
-        self.read_seg = TartanAirImageReader().read_seg
+        self.read_seg = self.tair_reader.read_seg
+
+        # Reading distance images. Those store the distance to the closest object in the scene in each pixel along its ray.
+        self.read_dist = self.tair_reader.read_dist
 
         # If imu or lidar are in the modalities list, then note that we cannot load it in this dataset.
         if 'imu' in self.modalities or 'lidar' in self.modalities:
@@ -189,19 +193,22 @@ class TartanAirImageDatasetObject(Dataset):
                     traj_dir_gp = os.path.join(diff_dir_gp, traj_name)
 
                     # Get the trajectory poses. This is a map from a camera_name to a list of poses.
-                    camera_name_to_poses = {}
+                    camera_name_to_motions = {}
                     for camera_name in self.camera_names:
                         # If the camera_name is one of fish or equirct, then use the front camera motions.
                         if 'fish' in camera_name or 'equirct' in camera_name:
                             cam_side = 'lcam' if 'lcam' in camera_name else 'rcam'
                             posefile = traj_dir_gp + '/pose_{}_front.txt'.format(cam_side)
+
                         else:
                             posefile = traj_dir_gp + f'/pose_{camera_name}.txt'
+                            
                         poselist = np.loadtxt(posefile).astype(np.float32)
                         
                         traj_poses   = self.pos_quats2SEs(poselist) # From xyz, xyzw format, to SE(3) format (camera in world).
                         traj_matrix  = self.pose2motion(traj_poses) # From SE(3) format, to flattened-tranformation-matrix (1x12) format.
                         traj_motions = self.SEs2ses(traj_matrix).astype(np.float32) # From flattened-tranformation-matrix (1x12) format, to relative motion (1x6) format.
+                        camera_name_to_motions[camera_name] = traj_motions
 
                     # Iterate over available frames.
                     tmp_data_path = os.path.join(traj_dir_gp, self.modalities[0] + '_' + self.camera_names[0])
@@ -219,7 +226,7 @@ class TartanAirImageDatasetObject(Dataset):
                         for camera_name in self.camera_names:
 
                             # Start by adding the motion to the entry.
-                            entry[camera_name]['motion'] = traj_motions[frame_id]
+                            entry[camera_name]['motion'] = camera_name_to_motions[camera_name][frame_id]
 
                             # Iterate over modalities.
                             for modality in self.modalities:
@@ -292,6 +299,10 @@ class TartanAirImageDatasetObject(Dataset):
                 elif 'depth' in modality:  
                     data0 = self.read_depth(data0_gp)
                     data1 = self.read_depth(data1_gp)
+
+                elif 'dist' in modality:
+                    data0 = self.read_dist(data0_gp)
+                    data1 = self.read_dist(data1_gp)
 
                 elif 'seg' in modality:
                     data0 = self.read_seg(data0_gp)

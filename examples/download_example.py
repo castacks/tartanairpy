@@ -14,7 +14,7 @@ from tartanair.tartanair import TartanAir
 
 # Create a TartanAir object.
 tartanair_data_root = '/media/yoraish/overflow/data/tartanair-v2'
-ta = TartanAir(tartanair_data_root)
+tair = TartanAir(tartanair_data_root)
 
 # Download a trajectory.
-ta.download(env = 'AmericanDinerExposure', difficulty = 'easy', trajectory_id = ['P000', 'P003'], modality = ['imu', 'image'], camera_name = ['lcam_fish'])
+tair.download(env = 'ArchVizTinyHouseDayExposure', difficulty = 'hard', trajectory_id = ['P003'], modality = ['lidar'], camera_name = ['lcam_front', 'lcam_left', 'lcam_right', 'lcam_back', 'lcam_top', 'lcam_bottom'])

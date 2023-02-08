@@ -105,12 +105,18 @@ Destination: {}
                         # Download all images.
                         if camera_name:
                             cmd += " --include-pattern '"
+                            
                             for modality_i in modality:
                                 for camera_name_i in camera_name:
                                     if modality_i == 'image' and camera_name_i.split("_")[1] in ['front', 'left', 'right', 'back', 'top', 'bottom']:
                                         cmd += "*" + camera_name_i + ".png;"
                                     else:
+                                        # NOTE(yorais): This may add weird file names, like lidar_lcam_front, if both a special mdality and a camera name are specified. This is okay for now, as those files are not downloaded as they do not exist.
                                         cmd += "*" + camera_name_i + "_" + modality_i + "*;"
+                                    
+                                    # Add pose file.
+                                    cmd += "pose_" + camera_name_i + ".txt;"
+
                             cmd += "'"
                             print(Fore.GREEN +  'The cmd: ', cmd, Style.RESET_ALL)
                             os.system(cmd)
@@ -124,3 +130,9 @@ Destination: {}
                             cmd_special = './azcopy copy "{}" {} --recursive --as-subdir=true' .format(azure_url_special, dest_env_special)
                             print(Fore.GREEN +  'A cmd: ', cmd_special, Style.RESET_ALL)
                             os.system(cmd_special)
+
+
+                        # Also download the front-facing pose file.
+                        azure_url_pose = "https://tartanairv2.blob.core.windows.net/data-raw/" + env_i + "/" + difficulty_str + "/" + trajectory_id_i + "/pose_lcam_front.txt" + self.azure_token
+
+                        os.system('./azcopy copy "{}" {} --recursive --as-subdir=true' .format(azure_url_pose, dest_env_special))
