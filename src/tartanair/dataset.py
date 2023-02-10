@@ -210,13 +210,6 @@ class TartanAirImageDatasetObject(Dataset):
                         traj_motions = self.SEs2ses(traj_matrix).astype(np.float32) # From flattened-tranformation-matrix (1x12) format, to relative motion (1x6) format.
                         camera_name_to_motions[camera_name] = traj_motions
 
-                        print(camera_name, 'poselist', poselist[0])
-                        print(camera_name, 'poselist', poselist[1])
-                        print("   ", camera_name, 'traj_motions', traj_motions[0])
-                        print("   ", camera_name, 'traj_motions', traj_motions[1])
-                        print("   ", camera_name, 'traj_motions', traj_motions[2])
-
-
                     # Iterate over available frames.
                     tmp_data_path = os.path.join(traj_dir_gp, self.modalities[0] + '_' + self.camera_names[0])
                     num_frames_in_traj = len(os.listdir(tmp_data_path))

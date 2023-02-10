@@ -108,14 +108,21 @@ Destination: {}
                             
                             for modality_i in modality:
                                 for camera_name_i in camera_name:
+
+                                    # If requested an image (RGB), then add the image -- the naming convention is a bit different so it gets a special treatment.
                                     if modality_i == 'image' and camera_name_i.split("_")[1] in ['front', 'left', 'right', 'back', 'top', 'bottom']:
                                         cmd += "*" + camera_name_i + ".png;"
                                     else:
-                                        # NOTE(yorais): This may add weird file names, like lidar_lcam_front, if both a special mdality and a camera name are specified. This is okay for now, as those files are not downloaded as they do not exist.
+                                        # NOTE(yorais): This may add weird file names, like lidar_lcam_front, if both a special modality and a camera name are specified. This is okay for now, as those files are not downloaded as they do not exist.
                                         cmd += "*" + camera_name_i + "_" + modality_i + "*;"
+
+                                    # Add pose file. If the camera is 'regular', meaning in [front, left, right, back, top, bottom], then add the pose file directly from the name of the camera. Otherwise, add the pose file from the front camera (for fisheye and equirect).
                                     
-                                    # Add pose file.
-                                    cmd += "pose_" + camera_name_i + ".txt;"
+                                    if camera_name_i.split("_")[1] in ['front', 'left', 'right', 'back', 'top', 'bottom']:
+                                        cmd += "pose_" + camera_name_i + ".txt;" 
+                                    
+                                    elif camera_name_i.split("_")[1] in ['fish', 'equirect']:
+                                        cmd += "pose_" + camera_name_i.split("_")[0] + "_front.txt;"
 
                             cmd += "'"
                             print(Fore.GREEN +  'The cmd: ', cmd, Style.RESET_ALL)
@@ -136,3 +143,13 @@ Destination: {}
                         azure_url_pose = "https://tartanairv2.blob.core.windows.net/data-raw/" + env_i + "/" + difficulty_str + "/" + trajectory_id_i + "/pose_lcam_front.txt" + self.azure_token
                         dest_env_special = os.path.join(self.tartanair_data_root, env_i, difficulty_str, trajectory_id_i)
                         os.system('./azcopy copy "{}" {} --recursive --as-subdir=true' .format(azure_url_pose, dest_env_special))
+
+
+            # If requested a segmentation image, also add the seg_label.json file.
+            if 'seg' in modality:
+                azure_url_seg = "https://tartanairv2.blob.core.windows.net/data-raw/" + env_i + "/" + "seg_label.json" + self.azure_token
+                dest_env_seg = os.path.join(self.tartanair_data_root, env_i)
+                cmd_seg = './azcopy copy "{}" {} --recursive --as-subdir=true' .format(azure_url_seg, dest_env_seg)
+
+                print(Fore.GREEN +  'seg cmd: ', cmd_seg, Style.RESET_ALL)
+                os.system(cmd_seg)
