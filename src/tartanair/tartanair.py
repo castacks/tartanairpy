@@ -44,8 +44,7 @@ class TartanAir():
         self.difficulty_names = ['easy', 'hard']
 
         # Load the token from a text file.
-        with open('/home/yoraish/azure_token.txt', 'r') as f:
-            self.azure_token = f.read()
+        self.azure_token = "sv=2021-04-10&st=2022-12-20T15%3A06%3A27Z&se=2023-01-31T15%3A06%3A00Z&sr=c&sp=racwl&sig=JwRHih2ECN7MKyWfX5iFyPvaL%2FMEPHmhZQYgtY5bQI0%3D%"
 
         # Check if azcopy executable exists.
         if not os.path.exists('./azcopy'):
@@ -152,6 +151,6 @@ class TartanAir():
         pass
 
 if __name__ == "__main__":
-    tartanair_data_root = '/media/yoraish/overflow/data/tartanair-v2'
+    tartanair_data_root = '/Users/kunalkapoor/Downloads/tartanairpy/src/tartanair'
     tartanair = TartanAir(tartanair_data_root)
     tartanair.download(env = 'AmericanDinerExposure', difficulty = 'easy', trajectory_id = ['P000', 'P003'], modality = ['imu', 'image'], camera_name = ['lcam_fish'])
