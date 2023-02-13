@@ -1,0 +1,222 @@
+{
+	"frames": [
+		{
+			"name": "awf",
+			"comment": "AirSim World NED Frame. "
+		},
+		{
+			"name": "rbf",
+			"comment": "Rig body frame. "
+		},
+		{
+			"name": "rpf",
+			"comment": "Rig Panorama Frame. " 
+		},
+		{
+			"name": "cbf0",
+			"comment": "Camera Body Frame 0. " 
+		},
+		{
+			"name": "cpf0",
+			"comment": "Camera Ponarama Frame 0. " 
+		},
+		{
+			"name": "cif0",
+			"comment": "Camera Image Frame 0. " 
+		},
+		{
+			"name": "cbf1",
+			"comment": "Camera Body Frame 1. " 
+		},
+		{
+			"name": "cpf1",
+			"comment": "Camera Ponarama Frame 1. " 
+		},
+		{
+			"name": "cif1",
+			"comment": "Camera Image Frame 1. " 
+		},
+		{
+			"name": "cbf2",
+			"comment": "Camera Body Frame 2. " 
+		},
+		{
+			"name": "cpf2",
+			"comment": "Camera Ponarama Frame 2. " 
+		},
+		{
+			"name": "cif2",
+			"comment": "Camera Image Frame 2. " 
+		},
+		{
+			"name": "cbf3",
+			"comment": "Camera Body Frame 3. " 
+		},
+		{
+			"name": "cpf3",
+			"comment": "Camera Ponarama Frame 3. " 
+		},
+		{
+			"name": "cif3",
+			"comment": "Camera Image Frame 3. " 
+		}
+	],
+	"typical_poses":{
+		"T_body_panorama": {
+			"position": [0.0, 0.0, 0.0],
+			"orientation": {
+				"type": "rotation_matrix",
+				"data": [
+					 0.0,  0.0, -1.0,
+					-1.0,  0.0,  0.0,
+					 0.0,  1.0,  0.0
+				]
+			}
+		},
+		"T_body_image": {
+			"position": [0.0, 0.0, 0.0],
+			"orientation": {
+				"type": "rotation_matrix",
+				"data": [
+					 0.0,  0.0,  1.0,
+					 1.0,  0.0,  0.0,
+					 0.0,  1.0,  0.0
+				]
+			}
+		}
+	},
+	"transforms": [
+		{
+			"f0": "awf",
+			"f1": "rbf",
+			"pose": {
+				"type": "create",
+				"position": [0.0, 0.0, 0.0],
+				"orientation": {
+					"type": "quaternion",
+					"data": { "x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0 }
+				} 
+			}
+		},
+		{
+			"f0": "rbf",
+			"f1": "rpf",
+			"pose": {
+				"type": "reference",
+				"key": "T_body_panorama"
+			}
+		},
+		{
+			"f0": "rbf",
+			"f1": "cbf0",
+			"pose": {
+				"type": "create",
+				"position": [0.6000000238418579, 0.0, 0.0],
+				"orientation": {
+					"type": "quaternion",
+					"data": { "x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0 }
+				}	
+			}
+		},
+		{
+			"f0": "cbf0",
+			"f1": "cpf0",
+			"pose": {
+				"type": "reference",
+				"key": "T_body_panorama"
+			}
+		},
+		{
+			"f0": "cbf0",
+			"f1": "cif0",
+			"pose": {
+				"type": "reference",
+				"key": "T_body_image"
+			}
+		},
+		{
+			"f0": "rbf",
+			"f1": "cbf1",
+			"pose": {
+				"type": "create",
+				"position": [0.0, 0.6000000238418579, 0.0],
+				"orientation": {
+					"type": "quaternion",
+					"data": { "x": 0.0, "y": 0.0, "z": 0.7071067690849304, "w": 0.7071067690849304 }
+				}	
+			}
+		},
+		{
+			"f0": "cbf1",
+			"f1": "cpf1",
+			"pose": {
+				"type": "reference",
+				"key": "T_body_panorama"
+			}
+		},
+		{
+			"f0": "cbf1",
+			"f1": "cif1",
+			"pose": {
+				"type": "reference",
+				"key": "T_body_image"
+			}
+		},
+		{
+			"f0": "rbf",
+			"f1": "cbf2",
+			"pose": {
+				"type": "create",
+				"position": [-0.6000000238418579, 0.0, 0.0],
+				"orientation": {
+					"type": "quaternion",
+					"data": { "x": 0.0, "y": 0.0, "z": 1.0, "w": -4.371138828673793e-08 }
+				}	
+			}
+		},
+		{
+			"f0": "cbf2",
+			"f1": "cpf2",
+			"pose": {
+				"type": "reference",
+				"key": "T_body_panorama"
+			}
+		},
+		{
+			"f0": "cbf2",
+			"f1": "cif2",
+			"pose": {
+				"type": "reference",
+				"key": "T_body_image"
+			}
+		},
+		{
+			"f0": "rbf",
+			"f1": "cbf3",
+			"pose": {
+				"type": "create",
+				"position": [0.0, -0.6000000238418579, 0.0],
+				"orientation": {
+					"type": "quaternion",
+					"data": { "x": 0.0, "y": 0.0, "z": 0.7071067690849304, "w": -0.7071067690849304 }
+				}	
+			}
+		},
+		{
+			"f0": "cbf3",
+			"f1": "cpf3",
+			"pose": {
+				"type": "reference",
+				"key": "T_body_panorama"
+			}
+		},
+		{
+			"f0": "cbf3",
+			"f1": "cif3",
+			"pose": {
+				"type": "reference",
+				"key": "T_body_image"
+			}
+		}
+	]
+}

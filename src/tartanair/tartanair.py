@@ -6,6 +6,7 @@ import numpy as np
 from .tartanair_module import TartanAirModule
 from .downloader import TartanAirDownloader
 from .dataset import TartanAirDataset
+from .customizer import TartanAirCustomizer
 
 # TODO(yoraish):
 '''
@@ -26,6 +27,7 @@ class TartanAir(TartanAirModule):
         # Modules.
         self.downloader = TartanAirDownloader(tartanair_data_root)
         self.dataset = TartanAirDataset(tartanair_data_root)
+        self.customizer = TartanAirCustomizer(tartanair_data_root)
     
     def download(self, env, difficulty, trajectory_id, modality = 'image', camera_name = 'lcam_front'):
         """
@@ -33,12 +35,11 @@ class TartanAir(TartanAirModule):
         """
         self.downloader.download(env, difficulty, trajectory_id, modality, camera_name)
 
-    def customize(self, env, difficulty, trajectory_id, modality = 'image', camera_name = 'lcam_front', R_raw_new = np.eye(4), allow_download = True):
+    def customize(self, env, difficulty, trajectory_id, modality = 'image', new_camera_models_params = [{}]):
         """"
-        Checks if the trajectory exists locally. Otherwise, downloads it.
-        Use the relevant raw trajectory files, and create a custom image, and delete those the downloaded raw files.
+        Synthesizes data in new camera-models from the TartanAir dataset.
         """
-        pass
+        self.customizer.customize(env, difficulty, trajectory_id, modality, new_camera_models_params)
 
     def create_image_dataset(self, env, difficulty, trajectory_id, modality = 'image', camera_name = 'lcam_front', transform = None):
         """
