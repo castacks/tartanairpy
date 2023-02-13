@@ -43,4 +43,4 @@ cam_model_1 = {'name': 'doublesphere',
                         'fov_degree': 195},
                 'R_raw_new': R_raw_new1}
 
-ta.customize(env = 'OldBrickHouse', difficulty = 'easy', trajectory_id = ['P003'], modality = ['image', 'depth'], new_camera_models_params=[cam_model_0, cam_model_1])
+ta.customize(env = 'OldBrickHouse', difficulty = 'easy', trajectory_id = ['P003'], modality = ['image', 'depth'], new_camera_models_params=[cam_model_0, cam_model_1], num_workers = 2)

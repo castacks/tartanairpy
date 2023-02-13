@@ -6,10 +6,15 @@ This file contains the TartanAirCustomizer class, which reads local data and syn
 '''
 # General imports.
 import json
+from multiprocessing import Pool
+import multiprocessing
 import os
+import time
 import cv2
 import numpy as np
 import torch
+import torch.multiprocessing as mp
+
 
 # Local imports.
 from .tartanair_module import TartanAirModule
@@ -31,14 +36,12 @@ class TartanAirCustomizer(TartanAirModule):
         # Available camera models.
         self.camera_model_name_to_class = {'pinhole': Pinhole, 'doublesphere': DoubleSphere, 'linearsphere': LinearSphere, 'equirect': Equirectangular}
 
-
     def customize(self, env, difficulty = [], trajectory_id = ['P000'], modality = [], new_camera_models_params = [], R_raw_new = np.eye(4), num_workers = 1):
-
         ###############################
         # Check the input arguments.
         ###############################
 
-        print("Customizing the TartanAir dataset...")
+        print("Customizing the TartanAir dataset... With {} workers.".format(num_workers))
         # Check that all arguments are lists. If not, convert them to lists.
         if not isinstance(env, list):
             env = [env]
@@ -142,12 +145,10 @@ class TartanAirCustomizer(TartanAirModule):
                 # For this trajectory folder, create the appropriate folders for each new data input and populate those with resampled images.
                 for modality in self.modalities:
                     for cam_name in required_cam_sides: 
-                        # for new_cam_model in self.new_cam_models_params:
-                        for new_cam_model, (new_cam_model_object, R_raw_new, params_dict) in new_cam_model_name_to_cam_model_object_R_dict.items():
+                        for new_cam_model_name, (new_cam_model_object, R_raw_new, params_dict) in new_cam_model_name_to_cam_model_object_R_dict.items():
                             
                             # Create directory.
-                            # new_cam_model = new_cam_model['name']
-                            new_data_dir_path = os.path.join(tartanair_path, env_name, rel_traj_path, "_".join([modality, cam_name, new_cam_model]))
+                            new_data_dir_path = os.path.join(tartanair_path, env_name, rel_traj_path, "_".join([modality, cam_name, new_cam_model_name]))
                             print("Creating directory", new_data_dir_path)
                             
                             # Does not overwrite older directories if those exist.
@@ -166,17 +167,13 @@ class TartanAirCustomizer(TartanAirModule):
                             # Rotation to torch.
                             R_raw_new = torch.tensor(R_raw_new).float()
 
-                            sampler = SixPlanarTorch(fov= fov,
-                                                     camera_model= new_cam_model_object,
-                                                     R_raw_fisheye= R_raw_new,
-                                                     )
 
                             ###############################
                             # Enumerate the frames.
                             ###############################
                             # For each frame, get the six raw images. The number of frames is the same for all modalities so just check it for one.
                             num_frames = len(os.listdir(os.path.join(tartanair_path, env_name, rel_traj_path, "{}_{}_front".format(modality, cam_name))))
-                            
+
                             # Get all the frame file names and sort them.
                             side_to_frame_gfps = {}
                             for side in ['front', 'back', 'left', 'right', 'top', 'bottom']:
@@ -187,91 +184,76 @@ class TartanAirCustomizer(TartanAirModule):
                             ###############################
                             # Sample images from frames.
                             ###############################
-                            for frame_ix in range(10):#num_frames):
-                                # Get the six raw images.
-                                raw_images = {}
-                                for side in ['front', 'back', 'left', 'right', 'top', 'bottom']:
-                                    raw_images[side] = modality_to_reader[modality](side_to_frame_gfps[side][frame_ix])
 
-                                # Resample the six raw images to the new camera model.
-                                if modality_to_interpolation[modality] == "blend":
-                                    blend_func = BlendBy2ndOrderGradTorch(0.01) # hard code
-                                    new_image, new_image_valid_mask = sampler.blend_interpolation(raw_images, blend_func, invalid_pixel_value=0)  
-                                else:
-                                    new_image, new_image_valid_mask = sampler(raw_images, interpolation= modality_to_interpolation[modality])
+                            # Keep a list of the arguments to be multiprocess-passed to the function `sample_image_worker`.
+                            sample_image_worker_args = []
+                            for frame_ix in range(num_frames):
+                                sample_image_worker_args.append([frame_ix, 
+                                                                new_cam_model_object, R_raw_new, # sampler, 
+                                                                modality, 
+                                                                new_cam_model_name, 
+                                                                cam_name, 
+                                                                side_to_frame_gfps, 
+                                                                new_data_dir_path, 
+                                                                modality_to_reader, 
+                                                                modality_to_interpolation, 
+                                                                modality_to_writer
+                                ])
 
-                                # Write the new image.
-                                out_fn = str(frame_ix).zfill(6) + "_{}_{}_{}.png".format(cam_name, modality, new_cam_model)
-                                out_fp = os.path.join(new_data_dir_path, out_fn)
-                                print("Writing", out_fp)
+                            if num_workers <= 1:
+                                print("        Running sequentially.")
+                                for arglist in sample_image_worker_args:
+                                    self.sample_image_worker(arglist)
 
-                                modality_to_writer[modality](out_fp, new_image)
+                            else:
+                                # Run in parallel.
+                                print("        Running in parallel with", num_workers, "workers.")
+                                try:
+                 
+                                    with Pool(num_workers) as pool:
+                                        pool.map(self.sample_image_worker, sample_image_worker_args)
 
+                                except KeyboardInterrupt:
+                                    exit()
+
+
+                            ###############################
+                            # Write the camera model parameters.
+                            ###############################
                             # Write the valid mask.
-                            out_fn = "valid_mask_{}_{}_{}.png".format(cam_name, modality, new_cam_model)
+                            out_fn = "valid_mask_{}_{}_{}.png".format(cam_name, modality, new_cam_model_name)
                             out_fp = os.path.join(new_data_dir_path, out_fn)
                             print("Writing", out_fp)
 
                             # Write the camera model parameters.
-                            out_fn = "camera_model_params_{}_{}_{}.json".format(cam_name, modality, new_cam_model)
+                            out_fn = "camera_model_params_{}_{}_{}.json".format(cam_name, modality, new_cam_model_name)
                             out_fp = os.path.join(new_data_dir_path, out_fn)
 
                             with open(out_fp, 'w') as f:
                                 json.dump(params_dict, f, indent=4)
-
                             print("Writing", out_fp)
 
+    def sample_image_worker(self, argslist): 
+        frame_ix, new_cam_model_object, R_raw_new, modality, new_cam_model_name, cam_name, side_to_frame_gfps, new_data_dir_path, modality_to_reader, modality_to_interpolation, modality_to_writer = argslist
 
+        sampler = SixPlanarTorch(new_cam_model_object.fov_degree, new_cam_model_object, R_raw_new)
 
+        raw_images = {}
+        for side in ['front', 'back', 'left', 'right', 'top', 'bottom']:
+            raw_images[side] = modality_to_reader[modality](side_to_frame_gfps[side][frame_ix])
 
-                            
+        # Resample the six raw images to the new camera model.
+        if modality_to_interpolation[modality] == "blend":
+            blend_func = BlendBy2ndOrderGradTorch(0.01) # hard code
+            new_image, new_image_valid_mask = sampler.blend_interpolation(raw_images, blend_func, invalid_pixel_value=0)  
+        else:
+            new_image, new_image_valid_mask = sampler(raw_images, interpolation= modality_to_interpolation[modality])
 
-
-                '''
-                # For each timestep in the trajectory, collect images and create new-camera-model images.
-                # Choose a random modality directory to deternmine the number of frames available.
-                random_folder_name = "image_lcam_bottom"
-                frames = enumerate_frames(os.path.join(traj_path, random_folder_name), '.png')
-                num_frames = len(frames)
-                print("        Found", num_frames, "frames.")
-
-                frame_ixs = [f.split("_")[0] for f in frames]
-                print("        Preparing frames for multiprocessing.")
-
-                # Keep a list of arguments to be multiprocess-passed to the function `sample_image`.
-                sample_image_worker_args = [] 
-                count = 0
-                starttime = time.time()
-                for frame_ix in frame_ixs: 
-                    for new_cam_model in self.new_cam_models_params:
-                        # Aggregate the information needed to create a new cam-model image from all the images in this time-step.                    
-                        sample_args = [] 
-
-                        for modality in self.modalities:
-                            for cam_name in ['lcam', 'rcam']: 
-                                sample_image_worker_args.append([traj_path, \
-                                                                frame_ix, \
-                                                                new_cam_model, \
-                                                                modality, \
-                                                                cam_name, \
-                                                                modality_to_reader, \
-                                                                new_cam_model_to_camera_model, \
-                                                                modality_to_interpolation, \
-                                                                modality_to_writer])
-                # Run in parallel.
-                try:
-                    workernum = min(self.num_workers, 2) # use no more than 4 because the sampling process already uses multi-process
-                    with PoolWithLogger(workernum, self.proc_init, 'tartanair', ".\log.txt" ) as pool:
-                        results = pool.map( self.sample_image_worker, sample_image_worker_args )
-                except KeyboardInterrupt:
-                    print("Caught KeyboardInterrupt, terminating workers.")
-                    pool.terminate()
-
-                print("Finish sample traj {} in {}s".format(traj_path, time.time()-starttime))
-            # Or run sequentially.
-            # for arglist in sample_image_worker_args:
-            #     self.sample_image_worker(*arglist)'''
-
+        # Write the new image.
+        out_fn = str(frame_ix).zfill(6) + "_{}_{}_{}.png".format(cam_name, modality, new_cam_model_name)
+        out_fp = os.path.join(new_data_dir_path, out_fn)
+        print("Writing", out_fp)
+        modality_to_writer[modality](out_fp, new_image)
 
 
     def check_six_images_exist(self, env = [], difficulty = [], trajectory_id = [], modality = [], raw_side = ''):

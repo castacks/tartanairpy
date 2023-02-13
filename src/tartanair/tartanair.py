@@ -35,11 +35,11 @@ class TartanAir(TartanAirModule):
         """
         self.downloader.download(env, difficulty, trajectory_id, modality, camera_name)
 
-    def customize(self, env, difficulty, trajectory_id, modality = 'image', new_camera_models_params = [{}]):
+    def customize(self, env, difficulty, trajectory_id, modality = 'image', new_camera_models_params = [{}], num_workers = 1):
         """"
         Synthesizes data in new camera-models from the TartanAir dataset.
         """
-        self.customizer.customize(env, difficulty, trajectory_id, modality, new_camera_models_params)
+        self.customizer.customize(env, difficulty, trajectory_id, modality, new_camera_models_params, num_workers=num_workers)
 
     def create_image_dataset(self, env, difficulty, trajectory_id, modality = 'image', camera_name = 'lcam_front', transform = None):
         """
