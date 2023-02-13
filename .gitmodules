@@ -1,0 +1,8 @@
+[submodule "src/tartanair/image_resampling/image_sampler"]
+	path = src/tartanair/image_resampling/image_sampler
+	url = git@github.com:castacks/image_sampler.git
+	branch = main
+[submodule "src/tartanair/image_resampling/mvs_utils"]
+	path = src/tartanair/image_resampling/mvs_utils
+	url = git@github.com:castacks/mvs_utils.git
+	branch = main

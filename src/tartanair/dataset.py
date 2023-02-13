@@ -132,8 +132,9 @@ class TartanAirImageDatasetObject(Dataset):
             raise ValueError('The imu and lidar modalities are not supported in the TartanAirImageDatasetObject class.')
 
         # Create a mapping between img_now_gfp, img_next_gfp, motion.
-        # Get all the environment names.
+        # Get all the environment names. Those are only folders.
         available_envs = os.listdir(tartanair_data_root)
+        available_envs = [env for env in available_envs if os.path.isdir(os.path.join(tartanair_data_root, env))]
 
         # If no envs were passed, then use all of them.
         print('envs', envs)
@@ -153,6 +154,7 @@ class TartanAirImageDatasetObject(Dataset):
         for env in self.envs:
             # Get all the difficulty names.
             available_difficulties = os.listdir(os.path.join(tartanair_data_root, env))
+            available_difficulties = [difficulty for difficulty in available_difficulties if os.path.isdir(os.path.join(tartanair_data_root, env, difficulty))]
 
             # Check that all the requested difficulties are available.
             for difficulty in self.difficulties:
@@ -178,6 +180,10 @@ class TartanAirImageDatasetObject(Dataset):
             # Iterate over difficulties.
             for difficulty in os.listdir(tartanair_data_root + '/' + env):
                 diff_dir_gp = tartanair_data_root + '/' + env + '/' + difficulty
+
+                # Check that this is a directory.
+                if not os.path.isdir(diff_dir_gp):
+                    continue
 
                 # Get the available trajectory ids.
                 available_trajectory_ids = os.listdir(diff_dir_gp)
