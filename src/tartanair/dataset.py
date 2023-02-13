@@ -115,13 +115,17 @@ class TartanAirImageDatasetObject(Dataset):
 
         # Some data reading functions.
         # Reading depth.
-        self.read_depth = TartanAirImageReader().read_depth
+        self.tair_reader = TartanAirImageReader()
+        self.read_depth = self.tair_reader.read_depth
 
         # Reading image.
-        self.read_image = TartanAirImageReader().read_rgb
+        self.read_image = self.tair_reader.read_rgb
 
         # Reading segmentation.
-        self.read_seg = TartanAirImageReader().read_seg
+        self.read_seg = self.tair_reader.read_seg
+
+        # Reading distance images. Those store the distance to the closest object in the scene in each pixel along its ray.
+        self.read_dist = self.tair_reader.read_dist
 
         # If imu or lidar are in the modalities list, then note that we cannot load it in this dataset.
         if 'imu' in self.modalities or 'lidar' in self.modalities:
@@ -144,13 +148,16 @@ class TartanAirImageDatasetObject(Dataset):
         else:
             for env in self.envs:
                 assert env in available_envs, 'The environment {} is not available.'.format(env)
+        
+        # Check that all the requested difficulties are available in all the requested environments.
+        for env in self.envs:
+            # Get all the difficulty names.
+            available_difficulties = os.listdir(os.path.join(tartanair_data_root, env))
 
-        # Get all the difficulty names.
-        available_difficulties = os.listdir(os.path.join(tartanair_data_root, envs[0]))
-
-        # Check that all the requested difficulties are available.
-        for difficulty in self.difficulties:
-            assert 'Data_' + difficulty in available_difficulties, 'The difficulty {} is not available.'.format(difficulty)
+            # Check that all the requested difficulties are available.
+            for difficulty in self.difficulties:
+                assert 'Data_' + difficulty in available_difficulties, 'The difficulty {} is not available in the environment {}.'.format(difficulty, env)
+         
 
         # The object that will keep all of the data. We will later concatenate all of the data. It takes the form of 
         # [{camera0: 
@@ -186,23 +193,29 @@ class TartanAirImageDatasetObject(Dataset):
                     traj_dir_gp = os.path.join(diff_dir_gp, traj_name)
 
                     # Get the trajectory poses. This is a map from a camera_name to a list of poses.
-                    camera_name_to_poses = {}
+                    camera_name_to_motions = {}
                     for camera_name in self.camera_names:
                         # If the camera_name is one of fish or equirct, then use the front camera motions.
                         if 'fish' in camera_name or 'equirct' in camera_name:
                             cam_side = 'lcam' if 'lcam' in camera_name else 'rcam'
                             posefile = traj_dir_gp + '/pose_{}_front.txt'.format(cam_side)
+
                         else:
                             posefile = traj_dir_gp + f'/pose_{camera_name}.txt'
+                            
                         poselist = np.loadtxt(posefile).astype(np.float32)
                         
                         traj_poses   = self.pos_quats2SEs(poselist) # From xyz, xyzw format, to SE(3) format (camera in world).
                         traj_matrix  = self.pose2motion(traj_poses) # From SE(3) format, to flattened-tranformation-matrix (1x12) format.
                         traj_motions = self.SEs2ses(traj_matrix).astype(np.float32) # From flattened-tranformation-matrix (1x12) format, to relative motion (1x6) format.
+                        camera_name_to_motions[camera_name] = traj_motions
 
                     # Iterate over available frames.
                     tmp_data_path = os.path.join(traj_dir_gp, self.modalities[0] + '_' + self.camera_names[0])
                     num_frames_in_traj = len(os.listdir(tmp_data_path))
+
+                    # Memoization of some directory data.
+                    memoized_dir_data = {}
 
                     for frame_id in range(num_frames_in_traj - 1): # We do not have a motion for the last frame as we do not have a next frame.
                             
@@ -213,20 +226,25 @@ class TartanAirImageDatasetObject(Dataset):
                         for camera_name in self.camera_names:
 
                             # Start by adding the motion to the entry.
-                            entry[camera_name]['motion'] = traj_motions[frame_id]
+                            entry[camera_name]['motion'] = camera_name_to_motions[camera_name][frame_id]
 
                             # Iterate over modalities.
                             for modality in self.modalities:
-                                
-                                # The data folders global path. One directory global path for each camera.
-                                camera_dir_gps = os.path.join(traj_dir_gp, modality + '_' + camera_name)
 
                                 # The data files global paths. Sorted.
-                                data_file_gps = os.listdir(camera_dir_gps)
-                                data_file_gps.sort()
-                                data0_file_gp = os.path.join(camera_dir_gps, data_file_gps[frame_id])
-                                data1_file_gp = os.path.join(camera_dir_gps, data_file_gps[frame_id + 1])
+                                if (camera_name, modality) not in memoized_dir_data:
 
+                                    # The data folders global path. One directory global path for each camera.
+                                    camera_dir_gps = os.path.join(traj_dir_gp, modality + '_' + camera_name)
+                                    
+                                    # The data files global paths. Sorted.
+                                    data_file_gps = os.listdir(camera_dir_gps)
+                                    data_file_gps.sort()
+                                    memoized_dir_data[(camera_name, modality)] = data_file_gps
+
+                                data_file_gps = memoized_dir_data[(camera_name, modality)]
+                                data0_file_gp = os.path.join(traj_dir_gp, modality + '_' + camera_name, data_file_gps[frame_id])
+                                data1_file_gp = os.path.join(traj_dir_gp, modality + '_' + camera_name, data_file_gps[frame_id + 1])
 
                                 # Check that the data files exists.
                                 assert os.path.exists(data0_file_gp), 'The data file {} does not exist.'.format(data0_file_gp)
@@ -282,6 +300,10 @@ class TartanAirImageDatasetObject(Dataset):
                     data0 = self.read_depth(data0_gp)
                     data1 = self.read_depth(data1_gp)
 
+                elif 'dist' in modality:
+                    data0 = self.read_dist(data0_gp)
+                    data1 = self.read_dist(data1_gp)
+
                 elif 'seg' in modality:
                     data0 = self.read_seg(data0_gp)
                     data1 = self.read_seg(data1_gp)
@@ -293,8 +315,8 @@ class TartanAirImageDatasetObject(Dataset):
             # Add the camera sample to the sample.
             sample[camera_name] = camera_sample
 
-        # Add the motion to the sample.
-        sample['motion'] = entry[camera_name]['motion']
+            # Add the motion to the sample.
+            sample[camera_name]['motion'] = entry[camera_name]['motion']
 
         # Return the sample.
         return sample
