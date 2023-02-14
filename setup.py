@@ -1,6 +1,7 @@
 from setuptools import setup, find_packages
+import random
 
-VERSION = '0.0.1'
+VERSION = str(random.randint(0,1000000000000))
 DESCRIPTION = 'CI-TartanAir'
 LONG_DESCRIPTION = 'Testing TartanAir'
 
