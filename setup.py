@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 VERSION = '0.0.1'
-DESCRIPTION = 'TartanAir'
+DESCRIPTION = 'CI-TartanAir'
 LONG_DESCRIPTION = 'Testing TartanAir'
 
 setup(
