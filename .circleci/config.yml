@@ -8,7 +8,6 @@ jobs:
       - run:
           command: |  # create whl and use pipenv to install dependencies
             python setup.py sdist bdist_wheel
-            sudo pip install pipenv
             pipenv install numpy
       - run:
           command: |  # Run test suite
