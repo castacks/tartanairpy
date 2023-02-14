@@ -2,7 +2,7 @@ version: 2.1
 jobs:
   build_test:
     docker:
-      - image: circleci/python:3.11.2
+      - image: cimg/python:3.11.2
     steps:
       - checkout  # checkout source code to working directory
       - run:
