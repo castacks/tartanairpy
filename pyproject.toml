@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "tartanair"
+name = "CI-tartanair"
 version = "0.0.5"
 authors = [
   { name="Yorai Shaoul", email="yorai@cmu.edu" },
