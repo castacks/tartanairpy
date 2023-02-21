@@ -1,9 +1,0 @@
-__pycache__/
-*.pyc
-
-.vscode
-*.code-workspace
-data/
-Data/
-output/
-Output/
