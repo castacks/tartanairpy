@@ -12,9 +12,11 @@ import os
 import time
 import cv2
 import numpy as np
+from scipy.spatial.transform import Rotation
+
+# PyTorch imports.
 import torch
 import torch.multiprocessing as mp
-
 
 # Local imports.
 from .tartanair_module import TartanAirModule
@@ -144,12 +146,12 @@ class TartanAirCustomizer(TartanAirModule):
 
                 # For this trajectory folder, create the appropriate folders for each new data input and populate those with resampled images.
                 for modality in self.modalities:
-                    for cam_name in required_cam_sides: 
+                    for cam_name in required_cam_sides: # Could be either of lcam or rcam.
                         for new_cam_model_name, (new_cam_model_object, R_raw_new, params_dict) in new_cam_model_name_to_cam_model_object_R_dict.items():
                             
                             # Create directory.
                             new_data_dir_path = os.path.join(tartanair_path, env_name, rel_traj_path, "_".join([modality, cam_name, new_cam_model_name]))
-                            print("Creating directory", new_data_dir_path)
+                            print("Creating directory", new_data_dir_path) # Of form Data_easy/env/P001/image_lcam_custom0
                             
                             # Does not overwrite older directories if those exist.
                             if os.path.exists(new_data_dir_path):
@@ -165,8 +167,10 @@ class TartanAirCustomizer(TartanAirModule):
                             fov = new_cam_model_object.fov_degree
 
                             # Rotation to torch.
-                            R_raw_new = torch.tensor(R_raw_new).float()
-
+                            if R_raw_new is not None:
+                                R_raw_new = torch.tensor(R_raw_new).float()
+                            else:
+                                R_raw_new = torch.eye(3).float()
 
                             ###############################
                             # Enumerate the frames.
@@ -232,6 +236,42 @@ class TartanAirCustomizer(TartanAirModule):
                             with open(out_fp, 'w') as f:
                                 json.dump(params_dict, f, indent=4)
                             print("Writing", out_fp)
+
+                            ###############################
+                            # Create a rotated pose file.
+                            ###############################
+                            # TODO(yoraish): compare a 90 degree roll rotation of the front camera to the top camera pose files and images.
+                            # The name of the output file.
+                            out_fn = "pose_{}_{}.txt".format(cam_name, new_cam_model_name)
+
+                            # Read the pose file. All rotation matrices are with respect to the front camera.
+                            pose_fp = os.path.join(tartanair_path, env_name, rel_traj_path, "pose_{}_front.txt".format(cam_name))
+                            poses = np.loadtxt(pose_fp)
+                            poses_rotated = poses.copy()
+
+                            # Convert the rotation matrix of the sampled image in raw to NED frame.
+                            R_edn_ned = np.array([[0, 1, 0], [0, 0, 1], [1, 0, 0]])
+                            R_ned_edn = R_edn_ned.T
+                            R_raw_new_ned= R_ned_edn @ R_raw_new.numpy() @ R_edn_ned
+
+                            for pose_ix, pose in enumerate(poses):
+                                # Get the rotation matrix.
+                                q_w_raw = pose[3:7]
+                                R_w_raw_ned = Rotation.from_quat(q_w_raw).as_matrix()
+
+                                # Rotate the rotation matrix.
+                                R_w_new_ned = R_w_raw_ned @ R_raw_new_ned
+
+                                # Convert the rotation matrix to a quaternion.
+                                q_w_new = Rotation.from_matrix(R_w_new_ned).as_quat()
+
+                                # Append to the list.
+                                poses_rotated[pose_ix, 3:7] = q_w_new
+
+                            # Write the rotated pose file.
+                            out_fp = os.path.join(traj_path, out_fn)
+                            np.savetxt(out_fp, poses_rotated, fmt='%.6f')
+                                
 
     def sample_image_worker(self, argslist): 
         frame_ix, new_cam_model_object, R_raw_new, modality, new_cam_model_name, cam_name, side_to_frame_gfps, new_data_dir_path, modality_to_reader, modality_to_interpolation, modality_to_writer = argslist
