@@ -18,5 +18,24 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
+dependencies = [
+    "colorama",
+    "cupy",
+    "kornia",
+    "matplotlib",
+    "networkx",
+    "numba",
+    "numpy",
+    "opencv_contrib_python",
+    "Pillow",
+    "plyfile",
+    "pyquaternion",
+    "pytransform3d",
+    "PyYAML",
+    "scipy",
+    "torch",
+    "torchvision"
+    ]
+
 [project.urls]
 "Homepage" = "http://theairlab.org/tartanair-dataset/"
