@@ -13,8 +13,13 @@ from colorama import Fore, Style
 from .tartanair_module import TartanAirModule
 
 class TartanAirDownloader(TartanAirModule):
-    def __init__(self, tartanair_data_root):
+    def __init__(self, tartanair_data_root, azure_token = None):
         super().__init__(tartanair_data_root)
+
+        if not azure_token:
+            print("TEST ERROR(download): azure_token is None. Please pass a valid azure_token to the init function. This will no longer be necessary when TartanAir will be officially released.")
+        else:
+            self.azure_token = azure_token
 
     def check_azcopy(self):
         # Check if azcopy executable exists.
@@ -55,6 +60,7 @@ class TartanAirDownloader(TartanAirModule):
             modality (str or list): The modality to download. Valid modalities are: rgb, depth, seg. Default is rgb.
             camera_name (str or list): The name of the camera to download. 
         """
+        print("Azure token: {}".format(self.azure_token))
         # Check if azcopy executable exists.
         self.check_azcopy()
         

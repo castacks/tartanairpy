@@ -22,15 +22,21 @@ downloader = None
 dataset = None
 customizer = None
 
-def init(tartanair_data_root_input):
+def init(tartanair_data_root_input, azure_token = None):
     """
     Initialize the TartanAir toolbox.
     """
+
+    # Until the official release, ask for an azure token.
+    if not azure_token:
+        print("TEST ERROR: azure_token is None. Please pass a valid azure_token to the init function. This will no longer be necessary when TartanAir will be officially released.")
+
     global tartanair_data_root
     tartanair_data_root = tartanair_data_root_input
 
     global downloader
-    downloader = TartanAirDownloader(tartanair_data_root)
+    # If a token is provided, use it. Otherwise, let the downloader use self.azure_token from the parent class.
+    downloader = TartanAirDownloader(tartanair_data_root, azure_token = azure_token)
 
     global dataset
     dataset = TartanAirDataset(tartanair_data_root)
