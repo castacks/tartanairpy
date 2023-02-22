@@ -36,7 +36,30 @@ class TartanAirModule():
 
         self.modality_names = ['image', 'depth', 'seg', 'imu', 'lidar']
 
-        self.env_names = ['DesertGasStation', 'Forest', 'OldIndustrialCity', 'ApocalypticCity']
+        self.env_names = [
+                        "AbandonedCableExposure",
+                        "OldScandinaviaExposure",
+                        "ShoreCavesExposure",
+                        "PolarSciFiExposure",
+                        "PrisonExposure",
+                        "AmericanDinerExposure",
+                        "ArchVizTinyHouseDayExposure",
+                        "DesertGasStationExposure",
+                        "GothicIslandExposure",
+                        "ArchVizTinyHouseNightExposure",
+                        "TerrainBlendingExposure",
+                        "VictorianStreetExposure",
+                        "OldIndustrialCityExposure",
+                        "SupermarketExposure",
+                        "WaterMillDayExposure",
+                        "UrbanConstructionExposure",
+                        "WaterMillNightExposure",
+                        "ModularNeighborhoodIntExt",
+                        "ConstructionSite",
+                        "ForestEnvExposure",
+                        "NordicHarborExposure",
+                        "HQWesternSaloonExposure",
+        ]
 
         self.difficulty_names = ['easy', 'hard']
 

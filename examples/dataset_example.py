@@ -9,19 +9,19 @@ Example script for creating a Pytorch dataset using the TartanAir dataset toolbo
 import sys
 
 # Local imports.
-sys.path.append('../src/')
-from tartanair.tartanair import TartanAir
+sys.path.append('..')
+import tartanair as ta
 
 # Create a TartanAir object.
-tartanair_data_root = '/media/yoraish/overflow/data/tartanair-v2'
-tair = TartanAir(tartanair_data_root)
+tartanair_data_root = '/media/yoraish/overflow/data/tartanair-v2_training_data'
+ta.init(tartanair_data_root)
 
 #####################
 # Using a dataloader #
 #####################
 
 # Set up the dataset.
-dataset = tair.create_image_dataset(env = 'ConstructionSite', difficulty = 'easy', trajectory_id = ['P000'], modality = ['image', 'depth'], camera_name = ['lcam_fish', 'lcam_front'])
+dataset = ta.create_image_dataset(env = 'ConstructionSite', difficulty = 'easy', trajectory_id = ['P000'], modality = ['image', 'depth'], camera_name = ['lcam_front'])
 
 # Print the dataset.
 print(dataset)
@@ -74,7 +74,7 @@ transform = transforms.Compose([
 ])
 
 # Set up a dataset.
-dataset = tair.create_image_dataset(env = [], difficulty = 'easy', trajectory_id = [], modality = ['image', 'depth'], camera_name = ['lcam_fish', 'lcam_front'], transform = transform)
+dataset = ta.create_image_dataset(env = [], difficulty = 'easy', trajectory_id = [], modality = ['image', 'depth'], camera_name = ['lcam_fish', 'lcam_front'], transform = transform)
 
 dataloader = DataLoader(dataset, batch_size = 3, shuffle = True, num_workers = 0)
 
@@ -104,3 +104,18 @@ for i_batch, sample_batched in enumerate(dataloader):
 
     if i_batch == 5:
         break
+
+'''
+To specify dependencies in a pipy package, add the following to setup.py:
+install_requires=[
+    'torch',
+    'torchvision',
+    'numpy',
+    'opencv-python',
+    'matplotlib',
+    'scipy',
+    'tqdm'
+],
+
+
+'''

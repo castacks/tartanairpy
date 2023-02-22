@@ -11,12 +11,12 @@ import numpy as np
 from scipy.spatial.transform import Rotation
 
 # Local imports.
-sys.path.append('../src/')
-from tartanair.tartanair import TartanAir
+sys.path.append('..')
+import tartanair as ta
 
 # Create a TartanAir object.
-tartanair_data_root = '/media/yoraish/overflow/data/tartanair-v2'
-ta = TartanAir(tartanair_data_root)
+tartanair_data_root = '/media/yoraish/overflow/data/tartanair-v2_eval_data_siximages'
+ta.init(tartanair_data_root)
 
 # Create the requested camera models and their parameters.
 R_raw_new0 = Rotation.from_euler('y', 90, degrees=True).as_matrix().tolist()

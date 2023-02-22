@@ -9,15 +9,15 @@ Example script for downloading using the TartanAir dataset toolbox.
 import sys
 
 # Local imports.
-sys.path.append('../src/')
-from tartanair.tartanair import TartanAir
+sys.path.append('..')
+import tartanair as ta
 
 # Create a TartanAir object.
 tartanair_data_root = '/media/yoraish/overflow/data/tartanair-v2'
-tair = TartanAir(tartanair_data_root)
+ta.init(tartanair_data_root)
 
 # Download a trajectory.
-tair.download(env = ['ConstructionSite',
+ta.download(env = [   'ConstructionSite',
                       'HQWesternSaloonExposure',
                       'DesertGasStationExposure',
                       'PolarSciFiExposure'],
@@ -25,7 +25,3 @@ tair.download(env = ['ConstructionSite',
                       trajectory_id = ["P000", "P001", "P002"], 
                       modality = ['image','depth'], 
                       camera_name = ['lcam_front', 'lcam_back', 'lcam_left', 'lcam_right', 'lcam_top', 'lcam_bottom'])
-'''
-'ArchVizTinyHouseDayExposure',
-'AbandonedCableExposure',                      
-'''
