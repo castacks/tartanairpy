@@ -6,6 +6,7 @@ import numpy as np
 from .downloader import TartanAirDownloader
 from .dataset import TartanAirDataset
 from .customizer import TartanAirCustomizer
+from .lister import TartanAirLister
 
 # TODO(yoraish):
 '''
@@ -21,6 +22,7 @@ tartanair_data_root = ""
 downloader = None
 dataset = None
 customizer = None
+lister = None
 
 def init(tartanair_data_root_input, azure_token = None):
     """
@@ -43,6 +45,9 @@ def init(tartanair_data_root_input, azure_token = None):
 
     global customizer
     customizer = TartanAirCustomizer(tartanair_data_root)
+
+    global lister
+    lister = TartanAirLister(tartanair_data_root)
     
 
 def download(env = [], difficulty = [], trajectory_id = [], modality = 'image', camera_name = 'lcam_front'):
@@ -80,3 +85,15 @@ def create_image_dataset(env, difficulty, trajectory_id, modality = 'image', cam
         raise Exception("TartanAir toolbox not initialized. Please call tartanair.init(tartanair_data_root) first.")
 
     return dataset.create_image_dataset(env, difficulty, trajectory_id, modality, camera_name, transform)
+
+def list_envs():
+    """
+    List all the environments in the TartanAir dataset.
+    """
+    global lister
+    global tartanair_data_root
+    
+    if not tartanair_data_root:
+        raise Exception("TartanAir toolbox not initialized. Please call tartanair.init(tartanair_data_root) first.")
+
+    return lister.list_envs()

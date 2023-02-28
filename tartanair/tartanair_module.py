@@ -62,8 +62,3 @@ class TartanAirModule():
         ]
 
         self.difficulty_names = ['easy', 'hard']
-
-        # Load the token from a text file.
-        # TODO(yoraish): this will be changed and hardcoded.
-        # with open('/home/yoraish/azure_token.txt', 'r') as f:
-        #     self.azure_token = f.read()
