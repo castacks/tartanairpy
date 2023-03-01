@@ -30,7 +30,7 @@ print(dataset)
 # Create a torch dataloader.
 import torch
 from torch.utils.data import Dataset, DataLoader
-
+'''
 dataloader = DataLoader(dataset, batch_size = 3, shuffle = True, num_workers = 0)
 
 # Show a few images.
@@ -104,18 +104,37 @@ for i_batch, sample_batched in enumerate(dataloader):
 
     if i_batch == 5:
         break
-
 '''
-To specify dependencies in a pipy package, add the following to setup.py:
-install_requires=[
-    'torch',
-    'torchvision',
-    'numpy',
-    'opencv-python',
-    'matplotlib',
-    'scipy',
-    'tqdm'
-],
+####################
+# Ask for all the data from an environment.
+####################
+dataset = ta.create_image_dataset(env = 'ConstructionSite')
+
+dataloader = DataLoader(dataset, batch_size = 3, shuffle = True, num_workers = 0)
+
+# Show a few images.
+
+for i_batch, sample_batched in enumerate(dataloader):
+    print(i_batch, sample_batched['lcam_fish']['image_0'].size())    
+
+    # Show the batch side by side.
+    import cv2
+    import numpy as np
+    imgs1 = sample_batched['lcam_fish']['image_0'].numpy()
+    imgs2 = sample_batched['lcam_fish']['image_1'].numpy()
+
+    # Move the color channel to the end.
+    imgs1 = np.transpose(imgs1, (0, 2, 3, 1))
+    imgs2 = np.transpose(imgs2, (0, 2, 3, 1))
 
 
-'''
+    img = np.concatenate((imgs1[0], imgs1[1], imgs1[2]), axis = 1)
+    img = np.concatenate((img, np.concatenate((imgs2[0], imgs2[1], imgs2[2]), axis = 1)), axis = 0)
+    img = cv2.resize(img, (0,0), fx = 0.5, fy = 0.5)
+    img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+
+    cv2.imshow('image transform', img)
+    cv2.waitKey(0)
+
+    if i_batch == 5:
+        break

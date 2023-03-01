@@ -17,7 +17,7 @@ class TartanAirDownloader(TartanAirModule):
         super().__init__(tartanair_data_root)
 
         if not azure_token:
-            print("TEST ERROR(download): azure_token is None. Please pass a valid azure_token to the init function. This will no longer be necessary when TartanAir will be officially released.")
+            print(Fore.RED + "TEST ERROR(download): azure_token is None. Please pass a valid azure_token to the init function. This will no longer be necessary when TartanAir will be officially released." + Style.RESET_ALL)
         else:
             self.azure_token = azure_token
 
