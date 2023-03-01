@@ -67,8 +67,7 @@ class TartanAirVisualizer(TartanAirModule):
             img_height = sample_images[0].shape[0]
             img_width = sample_images[0].shape[1]
             black_image = 255 * np.ones((num_rows * img_height, num_cols * img_width, 3), np.uint8)
-            print(num_rows, num_cols)
-            print(num_images)
+
             # Display the images.
             for i in range(num_images):
                 # Get the image.
