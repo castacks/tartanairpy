@@ -52,6 +52,9 @@ class TartanAirIterator(TartanAirModule):
         if type(camera_name) is not list:
             camera_name = [camera_name]
 
+        # Convert difficulties to format.
+        difficulty = ["Data_{}".format(difficulty) for difficulty in difficulty]
+
         # Save the parameters.
         self.envs = env
         self.difficulties = difficulty
@@ -108,7 +111,7 @@ class TartanAirIterator(TartanAirModule):
 
             # Check that all the requested difficulties are available.
             for difficulty in self.difficulties:
-                assert 'Data_' + difficulty in available_difficulties, 'The difficulty {} is not available in the environment {}.'.format(difficulty, env)
+                assert difficulty in available_difficulties, 'The difficulty {} is not available in the environment {}.'.format(difficulty, env)
          
 
         # The object that will keep all of the data. We will later concatenate all of the data. It takes the form of 
@@ -131,6 +134,8 @@ class TartanAirIterator(TartanAirModule):
             # Iterate over difficulties.
             ###############################
             for difficulty in os.listdir(self.tartanair_data_root + '/' + env):
+                if difficulty not in self.difficulties:
+                    continue
                 diff_dir_gp = self.tartanair_data_root + '/' + env + '/' + difficulty
 
                 # Check that this is a directory.

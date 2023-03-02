@@ -34,7 +34,8 @@ dependencies = [
     "PyYAML",
     "scipy",
     "torch",
-    "torchvision"
+    "torchvision",
+    "pyyaml",
     ]
 
 [project.urls]

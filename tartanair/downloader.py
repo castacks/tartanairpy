@@ -8,6 +8,7 @@ This file contains the download class, which downloads the data from Azure to th
 import os
 
 from colorama import Fore, Style
+import yaml
 
 # Local imports.
 from .tartanair_module import TartanAirModule
@@ -49,7 +50,7 @@ class TartanAirDownloader(TartanAirModule):
                 os.system('chmod +x azcopy')
 
         
-    def download(self, env, difficulty = ['easy'], trajectory_id = ['P000'], modality = [], camera_name = []):
+    def download(self, env = [], difficulty = [], trajectory_id = [], modality = [], camera_name = [], config = None, **kwargs):
         """
         Downloads a trajectory from the TartanAir dataset. A trajectory includes a set of images and a corresponding trajectory text file describing the motion.
 
@@ -60,7 +61,18 @@ class TartanAirDownloader(TartanAirModule):
             modality (str or list): The modality to download. Valid modalities are: rgb, depth, seg. Default is rgb.
             camera_name (str or list): The name of the camera to download. 
         """
-        print("Azure token: {}".format(self.azure_token))
+        if config is not None:
+            print("Using config file: {}".format(config))
+            with open(config, 'r') as f:
+                config = yaml.safe_load(f)
+
+            # Update the parameters.
+            env = config['env']
+            difficulty = config['difficulty']
+            trajectory_id = config['trajectory_id']
+            modality = config['modality']
+            camera_name = config['camera_name']
+
         # Check if azcopy executable exists.
         self.check_azcopy()
         

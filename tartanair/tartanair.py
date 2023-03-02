@@ -9,15 +9,9 @@ from .customizer import TartanAirCustomizer
 from .lister import TartanAirLister
 from .visualizer import TartanAirVisualizer
 from .iterator import TartanAirIterator
+from .evaluator import TartanAirEvaluator
+from .reader import TartanAirTrajectoryReader
 
-# TODO(yoraish):
-'''
-[ ] Auto install azcopy.
-[ ] Check that the inputs are valid.
-[ ] Add a function to customize a trajectory.
-[ ] Verify download of flow.
-[ ] Remove spamming text.
-'''
 print("TartanAir toolbox initialized.")
 
 tartanair_data_root = ""
@@ -27,6 +21,7 @@ customizer = None
 lister = None
 visualizer = None
 iterator = None
+evaluator = None
 
 # Flag for initialization.
 is_init = False
@@ -58,17 +53,23 @@ def init(tartanair_data_root_input, azure_token = None):
     global iterator
     iterator = TartanAirIterator(tartanair_data_root)
 
+    global traj_reader
+    traj_reader = TartanAirTrajectoryReader(tartanair_data_root)
+
+    global evaluator
+    evaluator = TartanAirEvaluator(tartanair_data_root)
+
     global is_init 
     is_init = True
     
 
-def download(env = [], difficulty = [], trajectory_id = [], modality = 'image', camera_name = 'lcam_front'):
+def download(env = [], difficulty = [], trajectory_id = [], modality = 'image', camera_name = 'lcam_front', config = None):
     """
     Download the relevant data from the TartanAir dataset.
     """
     global downloader
     check_init()
-    downloader.download(env, difficulty, trajectory_id, modality, camera_name)
+    downloader.download(env, difficulty, trajectory_id, modality, camera_name, config)
 
 def customize(env, difficulty, trajectory_id, modality = 'image', new_camera_models_params = [{}], num_workers = 1):
     """"
@@ -122,3 +123,27 @@ def iterator( env = None, difficulty = None, trajectory_id = None, modality = No
     global tartanair_data_root
     check_init()
     return iterator.get_iterator(env, difficulty, trajectory_id, modality, camera_name)
+
+def get_traj_np(env, difficulty, trajectory_id, camera_name = None):
+    """
+    Returns the trajectory as a numpy array.
+    """
+    global tartanair_data_root
+    global traj_reader
+    check_init()
+    return traj_reader.get_traj_np(env, difficulty, trajectory_id, camera_name)
+
+def evaluate(est_traj, env, difficulty, trajectory_id, modality, camera_name = None):
+    """
+    Evaluates a trajectory from the TartanAir dataset. A trajectory includes a set of images and a corresponding trajectory text file describing the motion.
+
+    Args:
+        est_traj (str or list): The estimated trajectory to evaluate. This is speficied as a list of 3D poses in NED and format [x, y, z, qx, qy, qz, qw].
+        env (str or list): The environment to evaluate the trajectory from. 
+        difficulty (str or list): The difficulty of the trajectory. Valid difficulties are: easy, medium, hard.
+        trajectory_id (int or list): The id of the trajectory to evaluate.
+        modality (str or list): The modality to evaluate. Valid modalities are: rgb, depth, seg. Default is rgb.
+    """
+    global evaluator    
+    check_init()
+    return evaluator.evaluate(est_traj, env, difficulty, trajectory_id, modality, camera_name)

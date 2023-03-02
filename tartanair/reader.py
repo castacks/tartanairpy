@@ -2,9 +2,13 @@
 Reading images from TartanAir dataset files.
 '''
 
+import os
 import cv2
 import numpy as np
 import cv2
+
+# Local imports.
+from .tartanair_module import TartanAirModule
 
 class TartanAirImageReader():
     '''
@@ -104,3 +108,23 @@ class TartanAirImageReader():
         self.depth_shape = depth.shape
         disp = self.conv_matrix * depth
         return disp
+
+class TartanAirTrajectoryReader(TartanAirModule):
+    '''
+    Load a trajectory from TartanAir dataset.
+    '''
+    def __init__(self, tartanair_data_root):
+        super(TartanAirTrajectoryReader, self).__init__(tartanair_data_root)
+        self.tartanair_data_root = tartanair_data_root
+
+    def get_traj_np(self, env, difficulty, trajectory_id, camera_name):
+        '''
+        Get a trajectory.
+        '''
+        # Construct the path to the trajectory file.
+        difficulty = "Data_{}".format(difficulty)
+        traj_path = os.path.join(self.tartanair_data_root, env, difficulty, trajectory_id, 'pose_' + camera_name + '.txt')
+        # Read the trajectory file.
+        traj_np = np.loadtxt(traj_path, delimiter=' ')
+
+        return traj_np

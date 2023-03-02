@@ -1,0 +1,7 @@
+# Config specifying which trajectories to download from the remote.
+
+env: ['DesertGasStationExposure']
+difficulty: ['easy']
+trajectory_id: ['P000', 'P002']
+modality: ['image']
+camera_name: ['lcam_front']
