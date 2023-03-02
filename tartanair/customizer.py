@@ -22,7 +22,14 @@ import torch.multiprocessing as mp
 from .tartanair_module import TartanAirModule
 
 # Image resampling.
-from .image_resampling.image_sampler import SixPlanarTorch
+# Check if CUDA is available without using torch.
+try:
+    # Safe import cupy.
+    import cupy
+    from .image_resampling.image_sampler import SixPlanarTorch    
+except ImportError:
+    from .image_resampling.image_sampler import SixPlanarNumba as SixPlanarTorch
+
 from .image_resampling.mvs_utils.camera_models import Pinhole, DoubleSphere, LinearSphere, Equirectangular
 from .image_resampling.mvs_utils.shape_struct import ShapeStruct
 from .image_resampling.image_sampler.blend_function import BlendBy2ndOrderGradTorch
@@ -38,7 +45,7 @@ class TartanAirCustomizer(TartanAirModule):
         # Available camera models.
         self.camera_model_name_to_class = {'pinhole': Pinhole, 'doublesphere': DoubleSphere, 'linearsphere': LinearSphere, 'equirect': Equirectangular}
 
-    def customize(self, env, difficulty = [], trajectory_id = ['P000'], modality = [], new_camera_models_params = [], R_raw_new = np.eye(4), num_workers = 1):
+    def customize(self, env, difficulty = [], trajectory_id = [], modality = [], new_camera_models_params = [], R_raw_new = np.eye(4), num_workers = 1):
         ###############################
         # Check the input arguments.
         ###############################
