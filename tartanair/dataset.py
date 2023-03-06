@@ -94,7 +94,8 @@ class TartanAirImageDatasetObject(Dataset):
                         trajectory_ids = [], 
                         modalities = ['image'], 
                         camera_names = ['lcam_front'],
-                        transform = None):
+                        transform = None,
+                        num_workers = 1):
 
         '''
         The TartanAirDatasetObject class implements a PyTorch Dataset object, which can be used to read data from the TartanAir dataset.
@@ -209,7 +210,7 @@ class TartanAirImageDatasetObject(Dataset):
                     trajectory_ids_for_env = self.trajectory_ids
 
                 # Parallelize over trajectories.
-                pool = Pool(processes=4)
+                pool = Pool(processes= num_workers)
                 traj_data = pool.starmap(self.create_traj_entries, [(traj_name, diff_dir_gp) for traj_name in trajectory_ids_for_env])
                 pool.close()
 
