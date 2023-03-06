@@ -21,7 +21,7 @@ ta.init(tartanair_data_root)
 #####################
 
 # Set up the dataset.
-dataset = ta.create_image_dataset(env = 'ConstructionSite', difficulty = 'easy', trajectory_id = ['P000'], modality = ['image', 'depth'], camera_name = ['lcam_front'])
+dataset = ta.create_image_dataset(env = ['ConstructionSite', 'SupermarketExposure'], difficulty = [], trajectory_id = [], modality = ['image', 'depth'], camera_name = ['lcam_front', 'lcam_back', 'lcam_right', 'lcam_left', 'lcam_top', 'lcam_bottom'], transform = None, num_workers=10)
 
 # Print the dataset.
 print(dataset)
@@ -30,8 +30,8 @@ print(dataset)
 # Create a torch dataloader.
 import torch
 from torch.utils.data import Dataset, DataLoader
-'''
-dataloader = DataLoader(dataset, batch_size = 3, shuffle = True, num_workers = 0)
+
+dataloader = DataLoader(dataset, batch_size = 3, shuffle = False, num_workers = 0)
 
 # Show a few images.
 for i_batch, sample_batched in enumerate(dataloader):
@@ -104,7 +104,7 @@ for i_batch, sample_batched in enumerate(dataloader):
 
     if i_batch == 5:
         break
-'''
+
 ####################
 # Ask for all the data from an environment.
 ####################

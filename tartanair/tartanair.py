@@ -26,13 +26,15 @@ evaluator = None
 # Flag for initialization.
 is_init = False
 
-def init(tartanair_data_root_input, azure_token = None):
+def init(tartanair_root, azure_token = None):
     """
     Initialize the TartanAir toolbox.
+
+    :param tartanair_root: The root directory of the TartanAir dataset.
     """
 
     global tartanair_data_root
-    tartanair_data_root = tartanair_data_root_input
+    tartanair_data_root = tartanair_root
 
     global downloader
     # If a token is provided, use it. Otherwise, let the downloader use self.azure_token from the parent class.
@@ -42,7 +44,10 @@ def init(tartanair_data_root_input, azure_token = None):
     dataset = TartanAirDataset(tartanair_data_root)
 
     global customizer
-    customizer = TartanAirCustomizer(tartanair_data_root)
+    try:
+        customizer = TartanAirCustomizer(tartanair_data_root)
+    except:
+        print("Could not initialize customizer.")
 
     global lister
     lister = TartanAirLister(tartanair_data_root)
@@ -63,10 +68,24 @@ def init(tartanair_data_root_input, azure_token = None):
     is_init = True
     
 
-def download(env = [], difficulty = [], trajectory_id = [], modality = 'image', camera_name = 'lcam_front', config = None):
+def download(env = [], difficulty = [], trajectory_id = [], modality = [], camera_name = [], config = None):
     """
-    Download the relevant data from the TartanAir dataset.
+    Download data from the TartanAir dataset. This method will download the data from the Azure server and store it in the `tartanair_root` directory.
+
+    :param env: The environment to download. Can be a list of environments.
+    :type env: str or list
+    :param difficulty: The difficulty of the trajectory. Can be a list of difficulties. Valid difficulties are: easy, hard.
+    :type difficulty: str or list
+    :param trajectory_id: The id of the trajectory to download. Can be a list of trajectory ids of form P000, P001, etc.
+    :type trajectory_id: str or list
+    :param modality: The modality to download. Can be a list of modalities. Valid modalities are: image, depth, seg, imu, lidar. Default will include all.
+    :type modality: str or list
+    :param camera_name: The camera name to download. Can be a list of camera names. Default is will include all. Modalities IMU and LIDAR do not need camera names specified.
+    :type camera_name: str or list
+    :param config: Optional. Path to a yaml file containing the download configuration. If a config file is provided, the other arguments will be ignored.
+    :type config: str
     """
+
     global downloader
     check_init()
     downloader.download(env, difficulty, trajectory_id, modality, camera_name, config)
@@ -74,6 +93,8 @@ def download(env = [], difficulty = [], trajectory_id = [], modality = 'image', 
 def customize(env, difficulty, trajectory_id, modality = 'image', new_camera_models_params = [{}], num_workers = 1):
     """"
     Synthesizes data in new camera-models from the TartanAir dataset.
+    
+    :param env: The environment to customize. Can be a list of environments.
     """
     global customizer
     check_init()
