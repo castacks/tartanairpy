@@ -4,10 +4,12 @@ Date: 2023-02-05
 '''
 
 # General imports.
+from multiprocessing import Pool
 import os
 import sys
 import time
 import numpy as np
+import tqdm
 import yaml
 import torch
 from torch.utils.data import Dataset
@@ -185,10 +187,11 @@ class TartanAirImageDatasetObject(Dataset):
         self.data = []
 
         # The trajectory names.
-        for env in self.envs:
+        for env in tqdm.tqdm(self.envs):
             
             # Iterate over difficulties.
-            for difficulty in os.listdir(tartanair_data_root + '/' + env):
+            available_difficulties = [diff for diff in os.listdir(tartanair_data_root + '/' + env) if 'Data_' in diff]
+            for difficulty in available_difficulties:
                 diff_dir_gp = tartanair_data_root + '/' + env + '/' + difficulty
 
                 # Check that this is a directory.
@@ -197,81 +200,21 @@ class TartanAirImageDatasetObject(Dataset):
 
                 # Get the available trajectory ids.
                 available_trajectory_ids = os.listdir(diff_dir_gp)
-
+                available_trajectory_ids = [traj for traj in available_trajectory_ids if "P" in traj]
+                
                 # If no trajectory ids were passed, then use all of them.
                 if len(self.trajectory_ids) == 0:
                     trajectory_ids_for_env = available_trajectory_ids
                 else:
                     trajectory_ids_for_env = self.trajectory_ids
 
-                # Iterate over trajectories.
-                for traj_name in trajectory_ids_for_env:
-                    traj_dir_gp = os.path.join(diff_dir_gp, traj_name)
+                # Parallelize over trajectories.
+                pool = Pool(processes=4)
+                traj_data = pool.starmap(self.create_traj_entries, [(traj_name, diff_dir_gp) for traj_name in trajectory_ids_for_env])
+                pool.close()
 
-                    # Get the trajectory poses. This is a map from a camera_name to a list of poses.
-                    camera_name_to_motions = {}
-                    for camera_name in self.camera_names:
-                        # If the camera_name is one of fish or equirct, then use the front camera motions.
-                        if 'fish' in camera_name or 'equirct' in camera_name:
-                            cam_side = 'lcam' if 'lcam' in camera_name else 'rcam'
-                            posefile = traj_dir_gp + '/pose_{}_front.txt'.format(cam_side)
-
-                        else:
-                            posefile = traj_dir_gp + f'/pose_{camera_name}.txt'
-                            
-                        poselist = np.loadtxt(posefile).astype(np.float32)
-                        
-                        traj_poses   = self.pos_quats2SEs(poselist) # From xyz, xyzw format, to SE(3) format (camera in world).
-                        traj_matrix  = self.pose2motion(traj_poses) # From SE(3) format, to flattened-tranformation-matrix (1x12) format.
-                        traj_motions = self.SEs2ses(traj_matrix).astype(np.float32) # From flattened-tranformation-matrix (1x12) format, to relative motion (1x6) format.
-                        camera_name_to_motions[camera_name] = traj_motions
-
-                    # Iterate over available frames.
-                    tmp_data_path = os.path.join(traj_dir_gp, self.modalities[0] + '_' + self.camera_names[0])
-                    num_frames_in_traj = len(os.listdir(tmp_data_path))
-
-                    # Memoization of some directory data.
-                    memoized_dir_data = {}
-
-                    for frame_id in range(num_frames_in_traj - 1): # We do not have a motion for the last frame as we do not have a next frame.
-                            
-                        # Create entry.
-                        entry = {camera_name: {'data0' : {}, 'data1' : {}, 'motion' : None} for camera_name in self.camera_names}
-
-                        # Iterate over camera names.
-                        for camera_name in self.camera_names:
-
-                            # Start by adding the motion to the entry.
-                            entry[camera_name]['motion'] = camera_name_to_motions[camera_name][frame_id]
-
-                            # Iterate over modalities.
-                            for modality in self.modalities:
-
-                                # The data files global paths. Sorted.
-                                if (camera_name, modality) not in memoized_dir_data:
-
-                                    # The data folders global path. One directory global path for each camera.
-                                    camera_dir_gps = os.path.join(traj_dir_gp, modality + '_' + camera_name)
-                                    
-                                    # The data files global paths. Sorted.
-                                    data_file_gps = os.listdir(camera_dir_gps)
-                                    data_file_gps.sort()
-                                    memoized_dir_data[(camera_name, modality)] = data_file_gps
-
-                                data_file_gps = memoized_dir_data[(camera_name, modality)]
-                                data0_file_gp = os.path.join(traj_dir_gp, modality + '_' + camera_name, data_file_gps[frame_id])
-                                data1_file_gp = os.path.join(traj_dir_gp, modality + '_' + camera_name, data_file_gps[frame_id + 1])
-
-                                # Check that the data files exists.
-                                assert os.path.exists(data0_file_gp), 'The data file {} does not exist.'.format(data0_file_gp)
-                                assert os.path.exists(data1_file_gp), 'The data file {} does not exist.'.format(data1_file_gp)
-
-                                # Add the data file global path to the entry.
-                                entry[camera_name]['data0'][modality] = data0_file_gp
-                                entry[camera_name]['data1'][modality] = data1_file_gp
-
-                        # Add the entry to the data.
-                        self.data.append(entry)
+                # Concatenate the data.
+                self.data.extend(traj_data[0])
 
         # The number of data entries.
         self.num_data_entries = len(self.data)
@@ -280,6 +223,84 @@ class TartanAirImageDatasetObject(Dataset):
         # self.transform = transform
 
         print('The dataset has {} entries.'.format(self.num_data_entries))
+
+    def create_traj_entries(self, traj_name, diff_dir_gp):
+        traj_data = []
+
+        traj_dir_gp = os.path.join(diff_dir_gp, traj_name)
+
+        # Get the trajectory poses. This is a map from a camera_name to a list of poses.
+        camera_name_to_motions = {}
+        for camera_name in self.camera_names:
+            # If the camera_name is one of fish or equirct, then use the front camera motions.
+            if 'fish' in camera_name or 'equirct' in camera_name:
+                cam_side = 'lcam' if 'lcam' in camera_name else 'rcam'
+                posefile = traj_dir_gp + '/pose_{}_front.txt'.format(cam_side)
+
+            else:
+                posefile = traj_dir_gp + f'/pose_{camera_name}.txt'
+                
+            poselist = np.loadtxt(posefile).astype(np.float32)
+            
+            traj_poses   = self.pos_quats2SEs(poselist) # From xyz, xyzw format, to SE(3) format (camera in world).
+            traj_matrix  = self.pose2motion(traj_poses) # From SE(3) format, to flattened-tranformation-matrix (1x12) format.
+            traj_motions = self.SEs2ses(traj_matrix).astype(np.float32) # From flattened-tranformation-matrix (1x12) format, to relative motion (1x6) format.
+            camera_name_to_motions[camera_name] = traj_motions
+
+        # Iterate over available frames.
+        tmp_data_path = os.path.join(traj_dir_gp, self.modalities[0] + '_' + self.camera_names[0])
+        num_frames_in_traj = len(os.listdir(tmp_data_path))
+
+        ########################################
+        # Memoization of some directory data.
+        ########################################
+        memoized_dir_data = {}
+        # Iterate over camera names.
+        for camera_name in self.camera_names:
+            # Iterate over modalities.
+            for modality in self.modalities:
+                # The data files global paths. Sorted.
+                if (camera_name, modality) not in memoized_dir_data:
+                    # The data folders global path. One directory global path for each camera.
+                    camera_dir_gps = os.path.join(traj_dir_gp, modality + '_' + camera_name)
+                    # The data files global paths. Sorted.
+                    data_file_gps = os.listdir(camera_dir_gps)
+                    data_file_gps.sort()
+                    memoized_dir_data[(camera_name, modality)] = data_file_gps
+
+        for frame_id in range(num_frames_in_traj - 1): # We do not have a motion for the last frame as we do not have a next frame.
+                
+            # Create entry.
+            entry = {camera_name: {'data0' : {}, 'data1' : {}, 'motion' : None} for camera_name in self.camera_names}
+            # Iterate over camera names.
+            for camera_name in self.camera_names:
+
+                # Start by adding the motion to the entry.
+                entry[camera_name]['motion'] = camera_name_to_motions[camera_name][frame_id]
+
+                # Iterate over modalities.
+                for modality in self.modalities:
+
+                    # The data files global paths. Sorted.
+                    if (camera_name, modality) not in memoized_dir_data:
+                        print('Uhh, this should not happen. Could not find the data files for camera {} and modality {} in the memoized data.'.format(camera_name, modality))
+
+                    data_file_gps = memoized_dir_data[(camera_name, modality)]
+                    data0_file_gp = os.path.join(traj_dir_gp, modality + '_' + camera_name, data_file_gps[frame_id])
+                    data1_file_gp = os.path.join(traj_dir_gp, modality + '_' + camera_name, data_file_gps[frame_id + 1])
+
+                    # Check that the data files exists.
+                    assert os.path.exists(data0_file_gp), 'The data file {} does not exist.'.format(data0_file_gp)
+                    assert os.path.exists(data1_file_gp), 'The data file {} does not exist.'.format(data1_file_gp)
+
+                    # Add the data file global path to the entry.
+                    entry[camera_name]['data0'][modality] = data0_file_gp
+                    entry[camera_name]['data1'][modality] = data1_file_gp
+
+            # Add the entry to the data.
+            traj_data.append(entry)
+
+        return traj_data
 
     def __len__(self):
         return self.num_data_entries

@@ -30,7 +30,7 @@ print(dataset)
 # Create a torch dataloader.
 import torch
 from torch.utils.data import Dataset, DataLoader
-'''
+
 dataloader = DataLoader(dataset, batch_size = 3, shuffle = True, num_workers = 0)
 
 # Show a few images.
@@ -104,7 +104,7 @@ for i_batch, sample_batched in enumerate(dataloader):
 
     if i_batch == 5:
         break
-'''
+
 ####################
 # Ask for all the data from an environment.
 ####################
