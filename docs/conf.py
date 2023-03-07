@@ -26,7 +26,7 @@ extensions = [
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
-autodoc_mock_imports = ["colorama", "cupy", "cupy_cuda117", "kornia", "matplotlib", "networkx", "numba", "numpy", "cv2", "Pillow", "plyfile", "pyquaternion", "pytransform3d", "PyYAML", "yaml", "scipy", "torch", "torchvision", "tqdm", "SixPlanarNumba", ".downloader", ".dataset", ".customizer", ".lister", ".visualizer", ".iterator", ".evaluator", ".reader", "TartanAirDownloader", "TartanAirDataset", "TartanAirCustomizer", "TartanAirLister", "TartanAirVisualizer", "TartanAirIterator", "TartanAirEvaluator", "TartanAirTrajectoryReader", 'tartanair.image_resampling.image_sampler']
+autodoc_mock_imports = ["colorama", "cupy", "cupy_cuda117", "kornia", "matplotlib", "networkx", "numba", "numpy", "cv2", "Pillow", "plyfile", "pyquaternion", "pytransform3d", "PyYAML", "yaml", "scipy", "torch", "torchvision", "tqdm", "SixPlanarNumba", ".downloader", ".dataset", ".customizer", ".lister", ".visualizer", ".iterator", ".evaluator", ".reader", "TartanAirDownloader", "TartanAirDataset", "TartanAirCustomizer", "TartanAirLister", "TartanAirVisualizer", "TartanAirIterator", "TartanAirEvaluator", "TartanAirTrajectoryReader", 'tartanair.image_resampling.image_sampler', 'tartanair.image_resampling.mvs_utils.camera_models', 'tartanair.image_resampling.mvs_utils.shape_struct', 'tartanair.image_resampling.mvs_utils.blend_function']
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
