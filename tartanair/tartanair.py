@@ -95,7 +95,7 @@ def download(env = [], difficulty = [], trajectory_id = [], modality = [], camer
 def customize(env, difficulty, trajectory_id, modality, new_camera_models_params = [{}], num_workers = 1):
     """
     Synthesizes raw data into new camera-models. A few camera models are provided, although you can also provide your own camera models. The currently available camera models are:
-    
+
     * 'pinhole': A pinhole camera model.
     * 'doublesphere': A wide-angle camera model with a double sphere distortion model. Source: https://arxiv.org/abs/1807.08957
     * 'linearsphere': A wide-angle camera model with a custom "linear sphere" distortion model.
@@ -175,6 +175,7 @@ def list_envs():
 def visualize(env, difficulty, trajectory_id, modality, camera_name = None):
     """
     Interactively visualizes a trajectory from the TartanAir dataset that is saved locally.
+
     :param env: The environment to visualize. Can be a list of environments.
     :type env: str or list
     :param difficulty: The difficulty of the trajectory. Can be a list of difficulties. Valid difficulties are: `easy`, `hard`.
@@ -221,6 +222,7 @@ def iterator( env = None, difficulty = None, trajectory_id = None, modality = No
 def get_traj_np(env, difficulty, trajectory_id, camera_name = None):
     """
     Returns the trajectory as a numpy array.
+
     :param env: The environment to get the trajectory from. Can be a list of environments.
     :type env: str
     :param difficulty: The difficulty of the trajectory. Can be a list of difficulties. Valid difficulties are: `easy`, `hard`.
@@ -236,7 +238,7 @@ def get_traj_np(env, difficulty, trajectory_id, camera_name = None):
 
 def evaluate(est_traj, env, difficulty, trajectory_id, modality, camera_name = None):
     """
-    Evaluates a trajectory from the TartanAir dataset. A trajectory includes a set of images and a corresponding trajectory text file describing the motion.
+    Evaluates a trajectory from the TartanAir dataset. A trajectory includes a set of images and a corresponding trajectory text file describing the motion. WIP.
 
     Args:
         est_traj (str or list): The estimated trajectory to evaluate. This is speficied as a list of 3D poses in NED and format [x, y, z, qx, qy, qz, qw].
