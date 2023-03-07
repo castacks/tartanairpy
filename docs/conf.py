@@ -9,11 +9,13 @@
 import sys
 import os
 sys.path.append(os.path.abspath('..'))
+sys.path.append(os.path.abspath('../tartanair/image_resampling'))
+
 
 
 project = 'TartanAir'
-copyright = '2023, Yorai Shaoul, Wenshan Wang, Yaoyu Hu, Yuheng Qiu, Shihao Shen.'
-author = 'Yorai Shaoul, Wenshan Wang, Yaoyu Hu, Yuheng Qiu, Shihao Shen.'
+copyright = '2023, Wenshan Wang, Yaoyu Hu, Yuheng Qiu, Shihao Shen, Yorai Shaoul.'
+author =  'Wenshan Wang, Yaoyu Hu, Yuheng Qiu, Shihao Shen, Yorai Shaoul.'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
