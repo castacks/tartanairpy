@@ -26,9 +26,9 @@ from .tartanair_module import TartanAirModule
 try:
     # Safe import cupy.
     import cupy
-    from .image_resampling.image_sampler.six_images import SixPlanarTorch    
+    from .image_resampling.image_sampler import SixPlanarTorch    
 except ImportError:
-    from .image_resampling.image_sampler.six_images_numba import SixPlanarNumba as SixPlanarTorch
+    from .image_resampling.image_sampler import SixPlanarNumba as SixPlanarTorch
 
 from .image_resampling.mvs_utils.camera_models import Pinhole, DoubleSphere, LinearSphere, Equirectangular
 from .image_resampling.mvs_utils.shape_struct import ShapeStruct
