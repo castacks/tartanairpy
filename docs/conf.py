@@ -26,7 +26,7 @@ extensions = [
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
-autodoc_mock_imports = [ "TartanAirDownloader", "TartanAirDataset", "TartanAirCustomizer", "TartanAirLister", "TartanAirVisualizer", "TartanAirIterator", "TartanAirEvaluator", "TartanAirTrajectoryReader"]
+autodoc_mock_imports = ["colorama", "cupy", "cupy_cuda117", "kornia", "matplotlib", "networkx", "numba", "numpy", "opencv_contrib_python", "Pillow", "plyfile", "pyquaternion", "pytransform3d", "PyYAML", "scipy", "torch", "torchvision", "tqdm", "downloader", "dataset", "customizer", "lister", "visualizer", "iterator", "evaluator", "reader", "TartanAirDownloader", "TartanAirDataset", "TartanAirCustomizer", "TartanAirLister", "TartanAirVisualizer", "TartanAirIterator", "TartanAirEvaluator", "TartanAirTrajectoryReader"]
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
