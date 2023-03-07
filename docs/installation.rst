@@ -17,5 +17,6 @@ That's it! You're ready to go.
     pip install -i https://test.pypi.org/simple/ tartanair
 
 Requirements
-=====================================
-Currently the TartanAir Python package was only tested on Ubuntu 20.04.4 LTS. We will be testing on other operating systems in the future.
+------------
+
+Currently the TartanAir Python package was only tested on Ubuntu 20.04. We will be testing on other operating systems in the future.
