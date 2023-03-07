@@ -7,7 +7,8 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 import sys
-sys.path.insert(0, '/home/yoraish/code/tartanairpy2')
+sys.path.append('..')
+import tartanair
 
 project = 'TartanAir'
 copyright = '2023, Yorai Shaoul, Wenshan Wang, Yaoyu Hu, Yuheng Qiu, Shihao Shen.'
