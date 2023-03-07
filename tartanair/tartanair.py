@@ -1,7 +1,3 @@
-# General imports.
-import os
-import numpy as np
-
 # Local imports.
 from .downloader import TartanAirDownloader
 from .dataset import TartanAirDataset
@@ -238,7 +234,7 @@ def get_traj_np(env, difficulty, trajectory_id, camera_name = None):
 
 def evaluate(est_traj, env, difficulty, trajectory_id, modality, camera_name = None):
     """
-    Evaluates a trajectory from the TartanAir dataset. A trajectory includes a set of images and a corresponding trajectory text file describing the motion. WIP.
+    Evaluates a trajectory from the TartanAir dataset. A trajectory includes a set of images and a corresponding trajectory text file describing the motion. In progress.
 
     Args:
         est_traj (str or list): The estimated trajectory to evaluate. This is speficied as a list of 3D poses in NED and format [x, y, z, qx, qy, qz, qw].
