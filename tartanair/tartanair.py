@@ -1,7 +1,7 @@
 # Local imports.
 from .downloader import TartanAirDownloader
 from .dataset import TartanAirDataset
-# from .customizer import TartanAirCustomizer
+from .customizer import TartanAirCustomizer
 from .lister import TartanAirLister
 from .visualizer import TartanAirVisualizer
 from .iterator import TartanAirIterator
@@ -40,11 +40,11 @@ def init(tartanair_root, azure_token = None):
     global dataset
     dataset = TartanAirDataset(tartanair_data_root)
 
-    # global customizer
-    # try:
-    #     customizer = TartanAirCustomizer(tartanair_data_root)
-    # except:
-    #     print("Could not initialize customizer.")
+    global customizer
+    try:
+        customizer = TartanAirCustomizer(tartanair_data_root)
+    except:
+        print("Could not initialize customizer.")
 
     global lister
     lister = TartanAirLister(tartanair_data_root)
@@ -119,9 +119,9 @@ def customize(env, difficulty, trajectory_id, modality, new_camera_models_params
     :param num_workers: The number of workers to use for the customizer. Default is 1.
     :type num_workers: int
     """
-    # global customizer
+    global customizer
     check_init()
-    # customizer.customize(env, difficulty, trajectory_id, modality, new_camera_models_params, num_workers=num_workers)
+    customizer.customize(env, difficulty, trajectory_id, modality, new_camera_models_params, num_workers=num_workers)
 
 def create_image_dataset(env, difficulty = None, trajectory_id = None, modality = None, camera_name = None, transform = None, num_workers = 1):
     """
