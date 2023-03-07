@@ -12,7 +12,7 @@ sys.path.append(os.path.abspath('..'))
 
 
 project = 'TartanAir'
-copyright = '2023, Wenshan Wang, Yaoyu Hu, Yuheng Qiu, Shihao Shen, Yorai Shaoul.'
+copyright = 'Carnegie Mellon University, 2023, Wenshan Wang, Yaoyu Hu, Yuheng Qiu, Shihao Shen, Yorai Shaoul.'
 author =  'Wenshan Wang, Yaoyu Hu, Yuheng Qiu, Shihao Shen, Yorai Shaoul.'
 
 # -- General configuration ---------------------------------------------------
