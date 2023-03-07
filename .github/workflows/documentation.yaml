@@ -13,7 +13,7 @@ jobs:
           pip install sphinx sphinx_rtd_theme
       - name: Install TartanAir package
         run: |
-          pip install colorama kornia matplotlib networkx numpy opencv_contrib_python Pillow plyfile pyquaternion pytransform3d PyYAML scipy torch torchvision tqdm
+          pip install colorama kornia matplotlib networkx numpy opencv_contrib_python Pillow plyfile pyquaternion pytransform3d PyYAML scipy tqdm
 
       - name: Sphinx build
         run: |
