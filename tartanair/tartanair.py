@@ -93,12 +93,13 @@ def download(env = [], difficulty = [], trajectory_id = [], modality = [], camer
     downloader.download(env, difficulty, trajectory_id, modality, camera_name, config)
 
 def customize(env, difficulty, trajectory_id, modality, new_camera_models_params = [{}], num_workers = 1):
-    """"
+    """
     Synthesizes raw data into new camera-models. A few camera models are provided, although you can also provide your own camera models. The currently available camera models are:
-    - 'pinhole': A pinhole camera model.
-    - 'doublesphere': A wide-angle camera model with a double sphere distortion model. Source: https://arxiv.org/abs/1807.08957
-    - 'linearsphere': A wide-angle camera model with a custom "linear sphere" distortion model.
-    - 'equirect': An equirectangular camera model.
+    
+    * 'pinhole': A pinhole camera model.
+    * 'doublesphere': A wide-angle camera model with a double sphere distortion model. Source: https://arxiv.org/abs/1807.08957
+    * 'linearsphere': A wide-angle camera model with a custom "linear sphere" distortion model.
+    * 'equirect': An equirectangular camera model.
     
     :param env: The environment to customize. Can be a list of environments.
     :type env: str or list

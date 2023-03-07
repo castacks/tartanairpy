@@ -5,7 +5,7 @@ Examples
 
 TartanAir V2 is a flexible dataset when used with this Python package. Using it, you can download, iterate, and modify the raw data. Here are some examples of what you can do with it.
 
-Download
+Download Example
 -------------------------------------
 
 Download via Python API
@@ -43,7 +43,7 @@ The config file if of the following format:
     modality: ['image']
     camera_name: ['lcam_front']
 
-Customization
+Customization Example
 -------------------------------------
 
 TartanAir V2 allows you to synthesize your own dataset by modifying the raw data. For example, by specifying a new camera model and generating images using it.
@@ -97,3 +97,26 @@ TartanAir V2 allows you to synthesize your own dataset by modifying the raw data
                  modality = ['image'], 
                  new_camera_models_params=[cam_model_0, cam_model_1], 
                  num_workers = 2)
+
+Data Iteration Example
+-------------------------------------
+
+Create a data iterator to get samples from the TartanAir V2 dataset. The samples include data in the specified modalities.
+
+.. code-block:: python
+
+    import tartanair as ta
+
+    # Initialize TartanAir.
+    tartanair_data_root = '/my/path/to/root/folder/for/tartanair-v2'
+    ta.init(tartanair_data_root)
+
+    # Create iterator.
+    ta_iterator = ta.iterator(env = 'ConstructionSite',
+                              difficulty = 'easy',
+                              trajectory_id = 'P000',
+                              modality = 'image',
+                              camera_name = 'lcam_front')
+
+    for i in range(100):
+        sample = next(ta_iterator)
