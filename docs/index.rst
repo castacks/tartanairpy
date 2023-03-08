@@ -28,5 +28,5 @@ All the environments have recorded trajectories that were designed to be challen
    :caption: Getting Started:
 
    installation
-   usage
    examples
+   usage
