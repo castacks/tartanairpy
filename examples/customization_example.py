@@ -15,7 +15,7 @@ sys.path.append('..')
 import tartanair as ta
 
 # Create a TartanAir object.
-tartanair_data_root = '/media/yoraish/overflow/data/tartanair-v2_eval_data_siximages'
+tartanair_data_root = '/media/yoraish/overflow/data/tartanair-v2'
 ta.init(tartanair_data_root)
 
 # Create the requested camera models and their parameters.
@@ -43,4 +43,4 @@ cam_model_1 = {'name': 'doublesphere',
                         'fov_degree': 195},
                 'R_raw_new': R_raw_new1}
 
-ta.customize(env = 'SupermarketExposure', difficulty = 'easy', trajectory_id = ['P000'], modality = ['image'], new_camera_models_params=[cam_model_0, cam_model_1], num_workers = 2)
+ta.customize(env = 'HQWesternSaloonExposure', difficulty = 'easy', trajectory_id = ['P000'], modality = ['image'], new_camera_models_params=[cam_model_0, cam_model_1], num_workers = 2)

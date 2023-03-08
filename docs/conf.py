@@ -7,11 +7,13 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 import sys
-sys.path.insert(0, '/home/yoraish/code/tartanairpy2')
+import os
+sys.path.append(os.path.abspath('..'))
+
 
 project = 'TartanAir'
-copyright = '2023, Yorai Shaoul, Wenshan Wang, Yaoyu Hu, Yuheng Qiu, Shihao Shen.'
-author = 'Yorai Shaoul, Wenshan Wang, Yaoyu Hu, Yuheng Qiu, Shihao Shen.'
+copyright = 'Carnegie Mellon University, 2023, Wenshan Wang, Yaoyu Hu, Yuheng Qiu, Shihao Shen, Yorai Shaoul.'
+author =  'Wenshan Wang, Yaoyu Hu, Yuheng Qiu, Shihao Shen, Yorai Shaoul.'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -24,11 +26,10 @@ extensions = [
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
-
-
+autodoc_mock_imports = ["colorama", "cupy", "cupy_cuda117", "kornia", "matplotlib", "networkx", "numba", "numpy", "cv2", "Pillow", "plyfile", "pyquaternion", "pytransform3d", "PyYAML", "yaml", "scipy", "torch", "torchvision", "tqdm", "SixPlanarNumba", ".downloader", ".dataset", ".customizer", ".lister", ".visualizer", ".iterator", ".evaluator", ".reader", "TartanAirDownloader", "TartanAirDataset", "TartanAirCustomizer", "TartanAirLister", "TartanAirVisualizer", "TartanAirIterator", "TartanAirEvaluator", "TartanAirTrajectoryReader", 'tartanair.image_resampling.image_sampler', 'tartanair.image_resampling.mvs_utils.camera_models', 'tartanair.image_resampling.mvs_utils.shape_struct', 'tartanair.image_resampling.mvs_utils.blend_function']
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'furo'
+html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
