@@ -35,6 +35,7 @@ dependencies = [
     "torch",
     "torchvision",
     "pyyaml",
+    "wget"
     ]
 
 [project.urls]

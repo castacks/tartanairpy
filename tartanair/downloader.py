@@ -9,6 +9,7 @@ import os
 
 from colorama import Fore, Style
 import yaml
+import wget
 
 # Local imports.
 from .tartanair_module import TartanAirModule
@@ -41,7 +42,7 @@ class TartanAirDownloader(TartanAirModule):
 
             # TODO(yoraish): test this on mac.
             elif os.name == 'posix':
-                os.system('wget https://aka.ms/downloadazcopy-v10-linux')
+                wget.download('https://aka.ms/downloadazcopy-v10-linux')
                 os.system('tar -xvf downloadazcopy-v10-linux')
                 os.system("mv azcopy_linux_amd64*/azcopy .")
 
