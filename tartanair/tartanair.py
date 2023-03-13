@@ -88,7 +88,7 @@ def download(env = [], difficulty = [], trajectory_id = [], modality = [], camer
     check_init()
     downloader.download(env, difficulty, trajectory_id, modality, camera_name, config)
 
-def customize(env, difficulty, trajectory_id, modality, new_camera_models_params = [{}], num_workers = 1):
+def customize(env, difficulty, trajectory_id, modality, new_camera_models_params = [{}], num_workers = 1, device = "cpu"):
     """
     Synthesizes raw data into new camera-models. A few camera models are provided, although you can also provide your own camera models. The currently available camera models are:
 
@@ -121,7 +121,7 @@ def customize(env, difficulty, trajectory_id, modality, new_camera_models_params
     """
     global customizer
     check_init()
-    customizer.customize(env, difficulty, trajectory_id, modality, new_camera_models_params, num_workers=num_workers)
+    customizer.customize(env, difficulty, trajectory_id, modality, new_camera_models_params, num_workers=num_workers, device=device)
 
 def create_image_dataset(env, difficulty = None, trajectory_id = None, modality = None, camera_name = None, transform = None, num_workers = 1):
     """
