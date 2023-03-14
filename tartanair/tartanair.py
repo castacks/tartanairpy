@@ -244,7 +244,7 @@ def evaluate_traj(est_traj,
              do_align = True,
              gt_traj = None):
     """
-    Evaluates a trajectory from the TartanAir dataset. A trajectory includes a set of images and a corresponding trajectory text file describing the motion.
+    Evaluates a trajectory from the TartanAir dataset. A trajectory includes a set of images and a corresponding trajectory text file describing the motion. In progress.
 
     Args:
         est_traj (np.array): The estimated trajectory to evaluate. This is specified as an array of 3D poses in NED and format [x, y, z, qx, qy, qz, qw].
