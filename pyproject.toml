@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "tartanair"
-version = "0.0.98"
+version = "0.0.99"
 authors = [
   { name="Yorai Shaoul", email="yorai@cmu.edu" },
   { name="Wenshan Wang", email="wenshanw@cs.cmu.edu " } 
@@ -20,7 +20,6 @@ classifiers = [
 
 dependencies = [
     "colorama",
-    "cupy",
     "kornia",
     "matplotlib",
     "networkx",
@@ -36,6 +35,7 @@ dependencies = [
     "torch",
     "torchvision",
     "pyyaml",
+    "wget"
     ]
 
 [project.urls]

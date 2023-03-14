@@ -22,13 +22,7 @@ import torch.multiprocessing as mp
 from .tartanair_module import TartanAirModule
 
 # Image resampling.
-# Check if CUDA is available without using torch.
-try:
-    # Safe import cupy.
-    import cupy
-    from .image_resampling.image_sampler import SixPlanarTorch    
-except ImportError:
-    from .image_resampling.image_sampler import SixPlanarNumba as SixPlanarTorch
+from .image_resampling.image_sampler import SixPlanarNumba
 
 from .image_resampling.mvs_utils.camera_models import Pinhole, DoubleSphere, LinearSphere, Equirectangular
 from .image_resampling.mvs_utils.shape_struct import ShapeStruct
@@ -45,7 +39,7 @@ class TartanAirCustomizer(TartanAirModule):
         # Available camera models.
         self.camera_model_name_to_class = {'pinhole': Pinhole, 'doublesphere': DoubleSphere, 'linearsphere': LinearSphere, 'equirect': Equirectangular}
 
-    def customize(self, env, difficulty = [], trajectory_id = [], modality = [], new_camera_models_params = [], R_raw_new = np.eye(4), num_workers = 1):
+    def customize(self, env, difficulty = [], trajectory_id = [], modality = [], new_camera_models_params = [], R_raw_new = np.eye(4), num_workers = 1, device = 'cpu'):
         ###############################
         # Check the input arguments.
         ###############################
@@ -65,6 +59,9 @@ class TartanAirCustomizer(TartanAirModule):
             modality = [modality]
         if not isinstance(new_camera_models_params, list):
             new_camera_models_params = [new_camera_models_params]
+
+        # Keep track of requested device.
+        self.device = device
 
         # Check that all the required files are available.
         required_cam_sides = set([cam_params['raw_side'] for cam_params in new_camera_models_params])
@@ -283,7 +280,8 @@ class TartanAirCustomizer(TartanAirModule):
     def sample_image_worker(self, argslist): 
         frame_ix, new_cam_model_object, R_raw_new, modality, new_cam_model_name, cam_name, side_to_frame_gfps, new_data_dir_path, modality_to_reader, modality_to_interpolation, modality_to_writer = argslist
 
-        sampler = SixPlanarTorch(new_cam_model_object.fov_degree, new_cam_model_object, R_raw_new)
+        sampler = SixPlanarNumba(new_cam_model_object.fov_degree, new_cam_model_object, R_raw_new)
+        sampler.device = self.device
 
         raw_images = {}
         for side in ['front', 'back', 'left', 'right', 'top', 'bottom']:
