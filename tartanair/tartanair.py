@@ -232,17 +232,45 @@ def get_traj_np(env, difficulty, trajectory_id, camera_name = None):
     check_init()
     return traj_reader.get_traj_np(env, difficulty, trajectory_id, camera_name)
 
-def evaluate(est_traj, env, difficulty, trajectory_id, modality, camera_name = None):
+def evaluate_traj(est_traj,
+             env = None, 
+             difficulty = None, 
+             trajectory_id = None, 
+             camera_name = None, 
+             enforce_length = True, 
+             plot = False, 
+             plot_out_path = None, 
+             do_scale = True, 
+             do_align = True,
+             gt_traj = None):
     """
-    Evaluates a trajectory from the TartanAir dataset. A trajectory includes a set of images and a corresponding trajectory text file describing the motion. In progress.
+    Evaluates a trajectory from the TartanAir dataset. A trajectory includes a set of images and a corresponding trajectory text file describing the motion.
 
     Args:
-        est_traj (str or list): The estimated trajectory to evaluate. This is speficied as a list of 3D poses in NED and format [x, y, z, qx, qy, qz, qw].
+        est_traj (np.array): The estimated trajectory to evaluate. This is specified as an array of 3D poses in NED and format [x, y, z, qx, qy, qz, qw].
         env (str or list): The environment to evaluate the trajectory from. 
         difficulty (str or list): The difficulty of the trajectory. Valid difficulties are: easy, medium, hard.
         trajectory_id (int or list): The id of the trajectory to evaluate.
-        modality (str or list): The modality to evaluate. Valid modalities are: rgb, depth, seg. Default is rgb.
+        camera_name (str or list): The camera name to evaluate the trajectory from. Choices are `lcam_front`, `lcam_right`, `lcam_back`, `lcam_left`, `lcam_top`, `lcam_bottom`, `rcam_front`, `rcam_right`, `rcam_back`, `rcam_left`, `rcam_top`, `rcam_bottom`, `lcam_fish`, `rcam_fish`, `lcam_equirect`, `rcam_equirect`.
+        enforce_length (bool): If False, the ground truth trajectory will be truncated to the length of the estimated trajectory. If False, the trajectories will be required to match in length. Default is True.
+        plot (bool): If True, a plot of the trajectory will be generated and saved to the specified path. Default is False.
+        plot_out_path (str): The path to save the plot to, including the filename and extension (e.g., "/my/cool/path/plot.png"). Default is None.
+        do_scale (bool): If True, the trajectory will be scaled to match the ground truth trajectory. Default is True.
+        do_align (bool): If True, the trajectory will be aligned to match the ground truth trajectory. Default is True.
+        gt_traj (np.array): Optionally, the ground truth trajectory to evaluate against passed directly. This is specified as an array of 3D poses in NED and format [x, y, z, qx, qy, qz, qw]. If None, the ground truth trajectory will be loaded from the dataset. Default is None.
+
     """
     global evaluator    
     check_init()
-    return evaluator.evaluate(est_traj, env, difficulty, trajectory_id, modality, camera_name)
+    return evaluator.evaluate_traj(est_traj,
+                                   gt_traj, 
+                                   env, 
+                                   difficulty, 
+                                   trajectory_id, 
+                                   camera_name, 
+                                   enforce_length, 
+                                   plot, 
+                                   plot_out_path, 
+                                   do_scale, 
+                                   do_align)
+
