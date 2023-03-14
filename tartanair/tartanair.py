@@ -233,6 +233,7 @@ def get_traj_np(env, difficulty, trajectory_id, camera_name = None):
     return traj_reader.get_traj_np(env, difficulty, trajectory_id, camera_name)
 
 def evaluate_traj(est_traj,
+             gt_traj = None,
              env = None, 
              difficulty = None, 
              trajectory_id = None, 
@@ -241,23 +242,32 @@ def evaluate_traj(est_traj,
              plot = False, 
              plot_out_path = None, 
              do_scale = True, 
-             do_align = True,
-             gt_traj = None):
+             do_align = True):
     """
     Evaluates a trajectory from the TartanAir dataset. A trajectory includes a set of images and a corresponding trajectory text file describing the motion. In progress.
 
-    Args:
-        est_traj (np.array): The estimated trajectory to evaluate. This is specified as an array of 3D poses in NED and format [x, y, z, qx, qy, qz, qw].
-        env (str or list): The environment to evaluate the trajectory from. 
-        difficulty (str or list): The difficulty of the trajectory. Valid difficulties are: easy, medium, hard.
-        trajectory_id (int or list): The id of the trajectory to evaluate.
-        camera_name (str or list): The camera name to evaluate the trajectory from. Choices are `lcam_front`, `lcam_right`, `lcam_back`, `lcam_left`, `lcam_top`, `lcam_bottom`, `rcam_front`, `rcam_right`, `rcam_back`, `rcam_left`, `rcam_top`, `rcam_bottom`, `lcam_fish`, `rcam_fish`, `lcam_equirect`, `rcam_equirect`.
-        enforce_length (bool): If False, the ground truth trajectory will be truncated to the length of the estimated trajectory. If False, the trajectories will be required to match in length. Default is True.
-        plot (bool): If True, a plot of the trajectory will be generated and saved to the specified path. Default is False.
-        plot_out_path (str): The path to save the plot to, including the filename and extension (e.g., "/my/cool/path/plot.png"). Default is None.
-        do_scale (bool): If True, the trajectory will be scaled to match the ground truth trajectory. Default is True.
-        do_align (bool): If True, the trajectory will be aligned to match the ground truth trajectory. Default is True.
-        gt_traj (np.array): Optionally, the ground truth trajectory to evaluate against passed directly. This is specified as an array of 3D poses in NED and format [x, y, z, qx, qy, qz, qw]. If None, the ground truth trajectory will be loaded from the dataset. Default is None.
+    :param est_traj: The estimated trajectory to evaluate. This is specified as an array of 3D poses in NED and format [x, y, z, qx, qy, qz, qw].
+    :type est_traj: np.array
+    :param gt_traj: The ground truth trajectory to evaluate against. This is specified as an array of 3D poses in NED and format [x, y, z, qx, qy, qz, qw]. If None, will use the ground truth trajectory from the TartanAir dataset.
+    :type gt_traj: np.array
+    :param env: The environment to evaluate the trajectory from. If passing a gt_traj, this is ignored.
+    :type env: str
+    :param difficulty: The difficulty of the trajectory. Can be a list of difficulties. Valid difficulties are: `easy`, `hard`. If passing a gt_traj, this is ignored.
+    :type difficulty: str
+    :param trajectory_id: The id of the trajectory to ground truth trajectory. Of form `P000`, `P001`, etc. If passing a gt_traj, this is ignored.
+    :type trajectory_id: str
+    :param camera_name: The camera name to evaluate the trajectory for. Choices are `lcam_front`, `lcam_right`, `lcam_back`, `lcam_left`, `lcam_top`, `lcam_bottom`, `rcam_front`, `rcam_right`, `rcam_back`, `rcam_left`, `rcam_top`, `rcam_bottom`, `lcam_fish`, `rcam_fish`, `lcam_equirect`, `rcam_equirect`.
+    :type camera_name: str
+    :param enforce_length: If False, the ground truth trajectory will be truncated to the length of the estimated trajectory. If True, the estimated trajectory will be required to match the length of the ground truth trajectory.
+    :type enforce_length: bool
+    :param plot: If True, will plot the trajectory and save to plot_out_path.
+    :type plot: bool
+    :param plot_out_path: The path to save the plot to. Disregarded if plot is False.
+    :type plot_out_path: str
+    :param do_scale: If True, will scale the estimated trajectory to match the ground truth trajectory. A single scale factor will be applied to all dimensions.
+    :type do_scale: bool
+    :param do_align: If True, will align the estimated trajectory to match the ground truth trajectory.
+    :type do_align: bool
 
     """
     global evaluator    
