@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Reference &mdash; TartanAir  documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Examples" href="examples.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            TartanAir
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#initialization">Initialization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#tartanair.init"><code class="docutils literal notranslate"><span class="pre">init()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#download">Download</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#tartanair.download"><code class="docutils literal notranslate"><span class="pre">download()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#list">List</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#tartanair.list_envs"><code class="docutils literal notranslate"><span class="pre">list_envs()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#data-iteration">Data Iteration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#tartanair.iterator"><code class="docutils literal notranslate"><span class="pre">iterator()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-a-pytorch-dataset">Creating a PyTorch Dataset</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#tartanair.create_image_dataset"><code class="docutils literal notranslate"><span class="pre">create_image_dataset()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#customization">Customization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#tartanair.customize"><code class="docutils literal notranslate"><span class="pre">customize()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#visualization">Visualization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#tartanair.visualize"><code class="docutils literal notranslate"><span class="pre">visualize()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#trajectories-in-numpy">Trajectories in NumPy</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#tartanair.get_traj_np"><code class="docutils literal notranslate"><span class="pre">get_traj_np()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#evaluation">Evaluation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#tartanair.evaluate_traj"><code class="docutils literal notranslate"><span class="pre">evaluate_traj()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">TartanAir</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">API Reference</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/usage.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h1>
+<section id="initialization">
+<h2>Initialization<a class="headerlink" href="#initialization" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="tartanair.init">
+<span class="sig-prename descclassname"><span class="pre">tartanair.</span></span><span class="sig-name descname"><span class="pre">init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tartanair_root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">azure_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tartanair.init" title="Permalink to this definition"></a></dt>
+<dd><p>Initialize the TartanAir toolbox. Call this method before using any other method in the toolbox.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tartanair_root</strong> (<em>str</em>) – The root directory of the TartanAir dataset.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="download">
+<h2>Download<a class="headerlink" href="#download" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="tartanair.download">
+<span class="sig-prename descclassname"><span class="pre">tartanair.</span></span><span class="sig-name descname"><span class="pre">download</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">difficulty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trajectory_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modality</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">camera_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tartanair.download" title="Permalink to this definition"></a></dt>
+<dd><p>Download data from the TartanAir dataset. This method will download the data from the Azure server and store it in the <cite>tartanair_root</cite> directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> (<em>str</em><em> or </em><em>list</em>) – The environment to download. Can be a list of environments.</p></li>
+<li><p><strong>difficulty</strong> (<em>str</em><em> or </em><em>list</em>) – The difficulty of the trajectory. Can be a list of difficulties. Valid difficulties are: easy, hard.</p></li>
+<li><p><strong>trajectory_id</strong> (<em>str</em><em> or </em><em>list</em>) – The id of the trajectory to download. Can be a list of trajectory ids of form P000, P001, etc.</p></li>
+<li><p><strong>modality</strong> (<em>str</em><em> or </em><em>list</em>) – The modality to download. Can be a list of modalities. Valid modalities are: image, depth, seg, imu, lidar. Default will include all.</p></li>
+<li><p><strong>camera_name</strong> (<em>str</em><em> or </em><em>list</em>) – The camera name to download. Can be a list of camera names. Default will include all. Choices are <cite>lcam_front</cite>, <cite>lcam_right</cite>, <cite>lcam_back</cite>, <cite>lcam_left</cite>, <cite>lcam_top</cite>, <cite>lcam_bottom</cite>, <cite>rcam_front</cite>, <cite>rcam_right</cite>, <cite>rcam_back</cite>, <cite>rcam_left</cite>, <cite>rcam_top</cite>, <cite>rcam_bottom</cite>, <cite>lcam_fish</cite>, <cite>rcam_fish</cite>, <cite>lcam_equirect</cite>, <cite>rcam_equirect</cite>.
+Modalities IMU and LIDAR do not need camera names specified.</p></li>
+<li><p><strong>config</strong> (<em>str</em>) – Optional. Path to a yaml file containing the download configuration. If a config file is provided, the other arguments will be ignored.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="list">
+<h2>List<a class="headerlink" href="#list" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="tartanair.list_envs">
+<span class="sig-prename descclassname"><span class="pre">tartanair.</span></span><span class="sig-name descname"><span class="pre">list_envs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tartanair.list_envs" title="Permalink to this definition"></a></dt>
+<dd><p>List all the environments in the TartanAir dataset.
+:return: A dictionary with the local and remote environment names.
+:rtype: dict</p>
+</dd></dl>
+
+</section>
+<section id="data-iteration">
+<h2>Data Iteration<a class="headerlink" href="#data-iteration" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="tartanair.iterator">
+<span class="sig-prename descclassname"><span class="pre">tartanair.</span></span><span class="sig-name descname"><span class="pre">iterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">difficulty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trajectory_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modality</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">camera_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tartanair.iterator" title="Permalink to this definition"></a></dt>
+<dd><p>Creates an iterator for the TartanAir dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> (<em>str</em><em> or </em><em>list</em>) – The environment to iterate over. Can be a list of environments.</p></li>
+<li><p><strong>difficulty</strong> (<em>str</em><em> or </em><em>list</em>) – The difficulty of the trajectory. Can be a list of difficulties. Valid difficulties are: <cite>easy</cite>, <cite>hard</cite>.</p></li>
+<li><p><strong>trajectory_id</strong> (<em>str</em><em> or </em><em>list</em>) – The id of the trajectory to iterate over. Can be a list of trajectory ids of form <cite>P000</cite>, <cite>P001</cite>, etc.</p></li>
+<li><p><strong>modality</strong> (<em>str</em><em> or </em><em>list</em>) – The modality to iterate over. Can be a list of modalities. Valid modalities are: <cite>image</cite>, <cite>depth</cite>, <cite>seg</cite>.</p></li>
+<li><p><strong>camera_name</strong> (<em>str</em><em> or </em><em>list</em>) – The camera name to iterate over. Can be a list of camera names. Default will include all. Choices are <cite>lcam_front</cite>, <cite>lcam_right</cite>, <cite>lcam_back</cite>, <cite>lcam_left</cite>, <cite>lcam_top</cite>, <cite>lcam_bottom</cite>, <cite>rcam_front</cite>, <cite>rcam_right</cite>, <cite>rcam_back</cite>, <cite>rcam_left</cite>, <cite>rcam_top</cite>, <cite>rcam_bottom</cite>, <cite>lcam_fish</cite>, <cite>rcam_fish</cite>, <cite>lcam_equirect</cite>, <cite>rcam_equirect</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An iterator over the TartanAir dataset.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>generator</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="creating-a-pytorch-dataset">
+<h2>Creating a PyTorch Dataset<a class="headerlink" href="#creating-a-pytorch-dataset" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="tartanair.create_image_dataset">
+<span class="sig-prename descclassname"><span class="pre">tartanair.</span></span><span class="sig-name descname"><span class="pre">create_image_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">difficulty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trajectory_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modality</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">camera_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tartanair.create_image_dataset" title="Permalink to this definition"></a></dt>
+<dd><p>Creates a frame-pair PyTorch dataset for a specified subset of the TartanAir dataset. Pairs of consecutive frames are returned, alongside the transform between the poses of the cameras that took the images.
+This dataset handles images in modalities such as ‘image’, ‘depth’, and ‘seg’.
+Each dataset batch contains samples of the form, for example:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="p">{</span><span class="s1">&#39;lcam_front&#39;</span><span class="p">:</span> 
+<span class="go">        {&#39;image_0&#39;: tensor(B, 3, H, W), </span>
+<span class="go">         &#39;image_1&#39;: tensor(B, 3, H, W), </span>
+<span class="go">         &#39;depth_0&#39;: tensor(B, H, W), </span>
+<span class="go">         &#39;depth_1&#39;: tensor(B, H, W), </span>
+<span class="go">         &#39;motion&#39;: tensor (B, 6)}</span>
+<span class="go">        }</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> (<em>str</em><em> or </em><em>list</em>) – The environment to create the dataset from. Can be a list of environments.</p></li>
+<li><p><strong>difficulty</strong> (<em>str</em><em> or </em><em>list</em>) – The difficulty of the trajectory. Can be a list of difficulties. Valid difficulties are: <cite>easy</cite>, <cite>hard</cite>.</p></li>
+<li><p><strong>trajectory_id</strong> (<em>str</em><em> or </em><em>list</em>) – The id of the trajectory to create the dataset from. Can be a list of trajectory ids of form <cite>P000</cite>, <cite>P001</cite>, etc.</p></li>
+<li><p><strong>modality</strong> (<em>str</em><em> or </em><em>list</em>) – The modality to create the dataset from. Can be a list of modalities. Valid modalities are: <cite>image</cite>, <cite>depth</cite>, <cite>seg</cite>.</p></li>
+<li><p><strong>camera_name</strong> (<em>str</em><em> or </em><em>list</em>) – The camera name to create the dataset from. Can be a list of camera names. Default will include all. Choices are <cite>lcam_front</cite>, <cite>lcam_right</cite>, <cite>lcam_back</cite>, <cite>lcam_left</cite>, <cite>lcam_top</cite>, <cite>lcam_bottom</cite>, <cite>rcam_front</cite>, <cite>rcam_right</cite>, <cite>rcam_back</cite>, <cite>rcam_left</cite>, <cite>rcam_top</cite>, <cite>rcam_bottom</cite>, <cite>lcam_fish</cite>, <cite>rcam_fish</cite>, <cite>lcam_equirect</cite>, <cite>rcam_equirect</cite>.</p></li>
+<li><p><strong>transform</strong> (<em>torchvision.transforms</em>) – Optional. A transform to apply to the images. Default is None.</p></li>
+<li><p><strong>num_workers</strong> (<em>int</em>) – The number of workers to use for the dataset preprocessing. Default is 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A PyTorch dataset.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.utils.data.Dataset</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="customization">
+<h2>Customization<a class="headerlink" href="#customization" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="tartanair.customize">
+<span class="sig-prename descclassname"><span class="pre">tartanair.</span></span><span class="sig-name descname"><span class="pre">customize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">difficulty</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trajectory_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modality</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_camera_models_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[{}]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cpu'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tartanair.customize" title="Permalink to this definition"></a></dt>
+<dd><p>Synthesizes raw data into new camera-models. A few camera models are provided, although you can also provide your own camera models. The currently available camera models are:</p>
+<ul class="simple">
+<li><p>‘pinhole’: A pinhole camera model.</p></li>
+<li><p>‘doublesphere’: A wide-angle camera model with a double sphere distortion model. Source: <a class="reference external" href="https://arxiv.org/abs/1807.08957">https://arxiv.org/abs/1807.08957</a></p></li>
+<li><p>‘linearsphere’: A wide-angle camera model with a custom “linear sphere” distortion model.</p></li>
+<li><p>‘equirect’: An equirectangular camera model.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> (<em>str</em><em> or </em><em>list</em>) – The environment to customize. Can be a list of environments.</p></li>
+<li><p><strong>difficulty</strong> (<em>str</em><em> or </em><em>list</em>) – The difficulty of the trajectory. Can be a list of difficulties. Valid difficulties are: <cite>easy</cite>, <cite>hard</cite>.</p></li>
+<li><p><strong>trajectory_id</strong> (<em>str</em><em> or </em><em>list</em>) – The id of the trajectory to customize. Can be a list of trajectory ids of form <cite>P000</cite>, <cite>P001</cite>, etc.</p></li>
+<li><p><strong>modality</strong> (<em>str</em><em> or </em><em>list</em>) – The modality to be customized. Can be a list of modalities. Valid modalities are: <cite>image</cite>, <cite>depth</cite>, <cite>seg</cite>.</p></li>
+<li><p><strong>new_camera_models_params</strong> (<em>list</em>) – <p>A list of dictionaries containing the parameters for the new camera models. Each dictionary should contain the following keys:</p>
+<ul>
+<li><p><cite>name</cite>: The name of the camera model. Valid camera models are: <cite>pinhole</cite>, <cite>doublesphere</cite>, <cite>linearsphere</cite>, <cite>equirect</cite>.</p></li>
+<li><p><cite>raw_side</cite>: The raw camera side. Can be one of <cite>left</cite>, <cite>right</cite>.</p></li>
+<li><p><cite>R_raw_new</cite>: The rotation matrix from the raw camera frame, with z pointing out of the image frame, x right, y down, to the new camera frame.</p></li>
+<li><dl class="simple">
+<dt><cite>params</cite>: A dictionary containing the parameters for the new camera model. The parameters for each camera model are:</dt><dd><ul>
+<li><p><cite>pinhole</cite>: <cite>fx</cite>, <cite>fy</cite>, <cite>cx</cite>, <cite>cy</cite>, <cite>height</cite>, <cite>width</cite>.</p></li>
+<li><p><cite>doublesphere</cite>: <cite>fx</cite>, <cite>fy</cite>, <cite>cx</cite>, <cite>cy</cite>, <cite>height</cite>, <cite>width</cite>, <cite>xi</cite>, <cite>alpha</cite>, <cite>fov_degree</cite>.</p></li>
+<li><p><cite>linearsphere</cite>: <cite>fx</cite>, <cite>fy</cite>, <cite>cx</cite>, <cite>cy</cite>, <cite>height</cite>, <cite>width</cite>, <cite>fov_degree</cite>.</p></li>
+<li><p><cite>equirect</cite>: <cite>height</cite>, <cite>width</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</p></li>
+<li><p><strong>num_workers</strong> (<em>int</em>) – The number of workers to use for the customizer. Default is 1.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="visualization">
+<h2>Visualization<a class="headerlink" href="#visualization" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="tartanair.visualize">
+<span class="sig-prename descclassname"><span class="pre">tartanair.</span></span><span class="sig-name descname"><span class="pre">visualize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">difficulty</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trajectory_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modality</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">camera_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tartanair.visualize" title="Permalink to this definition"></a></dt>
+<dd><p>Interactively visualizes a trajectory from the TartanAir dataset that is saved locally.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> (<em>str</em><em> or </em><em>list</em>) – The environment to visualize. Can be a list of environments.</p></li>
+<li><p><strong>difficulty</strong> (<em>str</em><em> or </em><em>list</em>) – The difficulty of the trajectory. Can be a list of difficulties. Valid difficulties are: <cite>easy</cite>, <cite>hard</cite>.</p></li>
+<li><p><strong>trajectory_id</strong> (<em>str</em><em> or </em><em>list</em>) – The id of the trajectory to visualize. Can be a list of trajectory ids of form <cite>P000</cite>, <cite>P001</cite>, etc.</p></li>
+<li><p><strong>modality</strong> (<em>str</em><em> or </em><em>list</em>) – The modality to visualize. Can be a list of modalities. Valid modalities are: <cite>image</cite>, <cite>depth</cite>, <cite>seg</cite>.</p></li>
+<li><p><strong>camera_name</strong> (<em>str</em><em> or </em><em>list</em>) – The camera name to visualize. Can be a list of camera names. Default will include all. Choices are <cite>lcam_front</cite>, <cite>lcam_right</cite>, <cite>lcam_back</cite>, <cite>lcam_left</cite>, <cite>lcam_top</cite>, <cite>lcam_bottom</cite>, <cite>rcam_front</cite>, <cite>rcam_right</cite>, <cite>rcam_back</cite>, <cite>rcam_left</cite>, <cite>rcam_top</cite>, <cite>rcam_bottom</cite>, <cite>lcam_fish</cite>, <cite>rcam_fish</cite>, <cite>lcam_equirect</cite>, <cite>rcam_equirect</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="trajectories-in-numpy">
+<h2>Trajectories in NumPy<a class="headerlink" href="#trajectories-in-numpy" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="tartanair.get_traj_np">
+<span class="sig-prename descclassname"><span class="pre">tartanair.</span></span><span class="sig-name descname"><span class="pre">get_traj_np</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">difficulty</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trajectory_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">camera_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tartanair.get_traj_np" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the trajectory as a numpy array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> (<em>str</em>) – The environment to get the trajectory from. Can be a list of environments.</p></li>
+<li><p><strong>difficulty</strong> (<em>str</em>) – The difficulty of the trajectory. Can be a list of difficulties. Valid difficulties are: <cite>easy</cite>, <cite>hard</cite>.</p></li>
+<li><p><strong>trajectory_id</strong> (<em>str</em>) – The id of the trajectory to get. Can be a list of trajectory ids of form <cite>P000</cite>, <cite>P001</cite>, etc.</p></li>
+<li><p><strong>camera_name</strong> – The camera name to get the trajectory from. Can be a list of camera names. Default will include all. Choices are <cite>lcam_front</cite>, <cite>lcam_right</cite>, <cite>lcam_back</cite>, <cite>lcam_left</cite>, <cite>lcam_top</cite>, <cite>lcam_bottom</cite>, <cite>rcam_front</cite>, <cite>rcam_right</cite>, <cite>rcam_back</cite>, <cite>rcam_left</cite>, <cite>rcam_top</cite>, <cite>rcam_bottom</cite>, <cite>lcam_fish</cite>, <cite>rcam_fish</cite>, <cite>lcam_equirect</cite>, <cite>rcam_equirect</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The trajectory as a numpy array. The array is of shape (N, 7) where N is the number of poses in the trajectory. The poses are in NED format and are of the form [x, y, z, qx, qy, qz, qw].</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="evaluation">
+<h2>Evaluation<a class="headerlink" href="#evaluation" title="Permalink to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="tartanair.evaluate_traj">
+<span class="sig-prename descclassname"><span class="pre">tartanair.</span></span><span class="sig-name descname"><span class="pre">evaluate_traj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">est_traj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gt_traj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">difficulty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trajectory_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">camera_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enforce_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_out_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_align</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tartanair.evaluate_traj" title="Permalink to this definition"></a></dt>
+<dd><p>Evaluates a trajectory from the TartanAir dataset. A trajectory includes a set of images and a corresponding trajectory text file describing the motion. In progress.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>est_traj</strong> (<em>np.array</em>) – The estimated trajectory to evaluate. This is specified as an array of 3D poses in NED and format [x, y, z, qx, qy, qz, qw].</p></li>
+<li><p><strong>gt_traj</strong> (<em>np.array</em>) – The ground truth trajectory to evaluate against. This is specified as an array of 3D poses in NED and format [x, y, z, qx, qy, qz, qw]. If None, will use the ground truth trajectory from the TartanAir dataset.</p></li>
+<li><p><strong>env</strong> (<em>str</em>) – The environment to evaluate the trajectory from. If passing a gt_traj, this is ignored.</p></li>
+<li><p><strong>difficulty</strong> (<em>str</em>) – The difficulty of the trajectory. Can be a list of difficulties. Valid difficulties are: <cite>easy</cite>, <cite>hard</cite>. If passing a gt_traj, this is ignored.</p></li>
+<li><p><strong>trajectory_id</strong> (<em>str</em>) – The id of the trajectory to ground truth trajectory. Of form <cite>P000</cite>, <cite>P001</cite>, etc. If passing a gt_traj, this is ignored.</p></li>
+<li><p><strong>camera_name</strong> (<em>str</em>) – The camera name to evaluate the trajectory for. Choices are <cite>lcam_front</cite>, <cite>lcam_right</cite>, <cite>lcam_back</cite>, <cite>lcam_left</cite>, <cite>lcam_top</cite>, <cite>lcam_bottom</cite>, <cite>rcam_front</cite>, <cite>rcam_right</cite>, <cite>rcam_back</cite>, <cite>rcam_left</cite>, <cite>rcam_top</cite>, <cite>rcam_bottom</cite>, <cite>lcam_fish</cite>, <cite>rcam_fish</cite>, <cite>lcam_equirect</cite>, <cite>rcam_equirect</cite>.</p></li>
+<li><p><strong>enforce_length</strong> (<em>bool</em>) – If False, the ground truth trajectory will be truncated to the length of the estimated trajectory. If True, the estimated trajectory will be required to match the length of the ground truth trajectory.</p></li>
+<li><p><strong>plot</strong> (<em>bool</em>) – If True, will plot the trajectory and save to plot_out_path.</p></li>
+<li><p><strong>plot_out_path</strong> (<em>str</em>) – The path to save the plot to. Disregarded if plot is False.</p></li>
+<li><p><strong>do_scale</strong> (<em>bool</em>) – If True, will scale the estimated trajectory to match the ground truth trajectory. A single scale factor will be applied to all dimensions.</p></li>
+<li><p><strong>do_align</strong> (<em>bool</em>) – If True, will align the estimated trajectory to match the ground truth trajectory.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary containing the evaluation metrics, which include ATE, RPE, the ground truth trajectory, and the estimated trajectory after alignment and scaling if those were requested</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="examples.html" class="btn btn-neutral float-left" title="Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Carnegie Mellon University, 2023, Wenshan Wang, Yaoyu Hu, Yuheng Qiu, Shihao Shen, Yorai Shaoul..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
