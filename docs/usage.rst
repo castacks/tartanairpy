@@ -36,4 +36,4 @@ Trajectories in NumPy
 
 Evaluation
 ----------
-.. autofunction:: tartanair.evaluate
+.. autofunction:: tartanair.evaluate_traj
