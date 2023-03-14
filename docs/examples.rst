@@ -120,3 +120,32 @@ Create a data iterator to get samples from the TartanAir V2 dataset. The samples
 
     for i in range(100):
         sample = next(ta_iterator)
+
+Evaluation Example
+-------------------------------------
+
+TartanAir also provides tools for evaluating estimated trajectories against the ground truth. The evaluation is based on the ATE and RPE metrics, which can be computed for the entire trajectory, a subset of the trajectory, and also a scaled and shifted version of the estimated trajectory that matched the ground truth better, if that is requested.
+
+.. code-block:: python
+
+    import tartanair as ta
+    import numpy as np
+
+    # Initialize TartanAir.
+    tartanair_data_root = '/my/path/to/root/folder/for/tartanair-v2'
+    ta.init(tartanair_data_root)
+
+    # Create an example trajectory. This is a noisy version of the ground truth trajectory.
+    env = 'AbandonedCableExposure'
+    difficulty = 'easy'
+    trajectory_id = 'P002'
+    camera_name = 'lcam_front'
+    gt_traj = ta.get_traj_np(env, difficulty, trajectory_id, camera_name)
+    est_traj = gt_traj + np.random.normal(0, 0.1, gt_traj.shape)  
+
+    # Pass the ground truth trajectory directly to the evaluation function.
+    results = ta.evaluate_traj(est_traj, gt_traj = gt_traj, enforce_length = True, plot = True, plot_out_path = plot_out_path, do_scale = True, do_align = True)
+
+    # Or pass the environment, difficulty, and trajectory id to the evaluation function.
+    plot_out_path = "evaluator_example_plot.png"
+    results = ta.evaluate_traj(est_traj, env, difficulty, trajectory_id, camera_name, enforce_length = True, plot = True, plot_out_path = plot_out_path, do_scale = True, do_align = True)
