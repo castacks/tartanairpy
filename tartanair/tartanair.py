@@ -226,6 +226,8 @@ def get_traj_np(env, difficulty, trajectory_id, camera_name = None):
     :param trajectory_id: The id of the trajectory to get. Can be a list of trajectory ids of form `P000`, `P001`, etc.
     :type trajectory_id: str
     :param camera_name: The camera name to get the trajectory from. Can be a list of camera names. Default will include all. Choices are `lcam_front`, `lcam_right`, `lcam_back`, `lcam_left`, `lcam_top`, `lcam_bottom`, `rcam_front`, `rcam_right`, `rcam_back`, `rcam_left`, `rcam_top`, `rcam_bottom`, `lcam_fish`, `rcam_fish`, `lcam_equirect`, `rcam_equirect`.
+    :return: The trajectory as a numpy array. The array is of shape (N, 7) where N is the number of poses in the trajectory. The poses are in NED format and are of the form [x, y, z, qx, qy, qz, qw].
+    :rtype: np.array
     """
     global tartanair_data_root
     global traj_reader
@@ -268,6 +270,9 @@ def evaluate_traj(est_traj,
     :type do_scale: bool
     :param do_align: If True, will align the estimated trajectory to match the ground truth trajectory.
     :type do_align: bool
+
+    :return: A dictionary containing the evaluation metrics, which include ATE, RPE, the ground truth trajectory, and the estimated trajectory after alignment and scaling if those were requested
+    :rtype: dict
 
     """
     global evaluator    
