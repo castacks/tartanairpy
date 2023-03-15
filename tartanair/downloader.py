@@ -6,6 +6,7 @@ This file contains the download class, which downloads the data from Azure to th
 '''
 # General imports.
 import os
+import sys
 
 from colorama import Fore, Style
 import yaml
@@ -40,8 +41,18 @@ class TartanAirDownloader(TartanAirModule):
                 os.system('powershell.exe -Command "Remove-Item downloadazcopy-v10-windows.zip"')
                 os.system('azcopy.exe')
 
-            # TODO(yoraish): test this on mac.
-            elif os.name == 'posix':
+            # If on mac.
+            elif os.name == 'posix' and sys.platform == 'darwin':
+                wget.download('https://aka.ms/downloadazcopy-v10-mac')
+                os.system('tar -xvf downloadazcopy-v10-mac')
+                os.system("mv azcopy_darwin_amd64*/azcopy .")
+
+                os.system('rm downloadazcopy-v10-mac* -r')
+                os.system('rm azcopy_linux* -r')
+                os.system('chmod +x azcopy')
+
+            # If on linux.
+            elif os.name == 'posix' and sys.platform == 'linux':
                 wget.download('https://aka.ms/downloadazcopy-v10-linux')
                 os.system('tar -xvf downloadazcopy-v10-linux')
                 os.system("mv azcopy_linux_amd64*/azcopy .")
@@ -49,6 +60,9 @@ class TartanAirDownloader(TartanAirModule):
                 os.system('rm downloadazcopy-v10-linux* -r')
                 os.system('rm azcopy_linux* -r')
                 os.system('chmod +x azcopy')
+            
+            else:
+                raise Exception("Azcopy executable not found for your OS ({}, {}). Please download it manually and place it in the current directory.".format(os.name, sys.platform))
 
         
     def download(self, env = [], difficulty = [], trajectory_id = [], modality = [], camera_name = [], config = None, **kwargs):
