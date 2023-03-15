@@ -54,8 +54,20 @@ MacOS
         python3 -m pip uninstall torchvision
         python3 -m pip install torchvision
 
-5. `wget` is not installed properly by `pip`. Please install it manually using the following command:
+5. `wget` is not installed by default on MacOS. Please install it manually using the following command:
 
     .. code-block:: bash
 
-        python3 -m pip install wget
+        brew install wget
+
+6. URLLib may not find your certificates on Mac, and you'll see something like
+
+    .. code-block:: bash
+
+        urllib.error.URLError: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1123)>
+
+    Please run this in terminal to fix (adapt to your Python version):
+    
+        .. code-block:: bash
+    
+            /Applications/Python\ 3.8/Install\ Certificates.command

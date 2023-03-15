@@ -43,22 +43,22 @@ class TartanAirDownloader(TartanAirModule):
 
             # If on mac.
             elif os.name == 'posix' and sys.platform == 'darwin':
-                wget.download('https://aka.ms/downloadazcopy-v10-mac')
+                os.system('wget https://aka.ms/downloadazcopy-v10-mac')
                 os.system('tar -xvf downloadazcopy-v10-mac')
                 os.system("mv azcopy_darwin_amd64*/azcopy .")
 
                 os.system('rm downloadazcopy-v10-mac* -r')
-                os.system('rm azcopy_linux* -r')
+                os.system('rm -r azcopy_darwin*')
                 os.system('chmod +x azcopy')
 
             # If on linux.
             elif os.name == 'posix' and sys.platform == 'linux':
-                wget.download('https://aka.ms/downloadazcopy-v10-linux')
+                os.system('wget https://aka.ms/downloadazcopy-v10-linux')
                 os.system('tar -xvf downloadazcopy-v10-linux')
                 os.system("mv azcopy_linux_amd64*/azcopy .")
 
                 os.system('rm downloadazcopy-v10-linux* -r')
-                os.system('rm azcopy_linux* -r')
+                os.system('rm -r azcopy_linux*')
                 os.system('chmod +x azcopy')
             
             else:
