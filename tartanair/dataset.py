@@ -207,8 +207,8 @@ class TartanAirImageDatasetObject(Dataset):
         env_entries = []
 
         # Iterate over difficulties.
-        available_difficulties = [diff for diff in os.listdir(self.tartanair_data_root + '/' + env) if 'Data_' in diff]
-        for difficulty in available_difficulties:
+        available_difficulties = [diff for diff in os.listdir(self.tartanair_data_root + '/' + env) if ('Data_' in diff) and (diff in ['Data_' + d for d in self.difficulties])]
+        for difficulty in available_difficulties: 
             diff_dir_gp = self.tartanair_data_root + '/' + env + '/' + difficulty
 
             # Check that this is a directory.
