@@ -41,7 +41,7 @@ class TartanAirDownloader(TartanAirModule):
                 os.system('powershell.exe -Command "Remove-Item downloadazcopy-v10-windows.zip"')
                 os.system('azcopy.exe')
 
-            # If on mac.
+            # If on Mac.
             elif os.name == 'posix' and sys.platform == 'darwin':
                 os.system('wget https://aka.ms/downloadazcopy-v10-mac')
                 os.system('tar -xvf downloadazcopy-v10-mac')
@@ -51,7 +51,7 @@ class TartanAirDownloader(TartanAirModule):
                 os.system('rm -r azcopy_darwin*')
                 os.system('chmod +x azcopy')
 
-            # If on linux.
+            # If on Linux.
             elif os.name == 'posix' and sys.platform == 'linux':
                 os.system('wget https://aka.ms/downloadazcopy-v10-linux')
                 os.system('tar -xvf downloadazcopy-v10-linux')
