@@ -11,8 +11,8 @@ import unittest
 import sys
 
 # Local imports.
-sys.path.append('../src/')
-from tartanair.tartanair import TartanAir
+sys.path.append('..')
+import tartanair as ta
 
 class TestTartanAir(unittest.TestCase):
     def test_download(self):

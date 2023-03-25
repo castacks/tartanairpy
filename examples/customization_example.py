@@ -32,8 +32,8 @@ R_raw_new1 = Rotation.from_euler('xyz', [45, 0, 0], degrees=True).as_matrix().to
 cam_model_1 = {'name': 'doublesphere',
                 'raw_side': 'left',
                 'params':
-                        {'fx': 300, 
-                        'fy': 300, 
+                        {'fx': 250, 
+                        'fy':  250, 
                         'cx': 500, 
                         'cy': 500, 
                         'width': 1000, 
@@ -43,4 +43,4 @@ cam_model_1 = {'name': 'doublesphere',
                         'fov_degree': 195},
                 'R_raw_new': R_raw_new1}
 
-ta.customize(env = 'HQWesternSaloonExposure', difficulty = 'easy', trajectory_id = ['P000'], modality = ['image'], new_camera_models_params=[cam_model_0, cam_model_1], num_workers = 2, device='cuda') # Or cpu.
+ta.customize(env = 'ModularNeighborhoodIntExt', difficulty = 'easy', trajectory_id = ['P000'], modality = ['image'], new_camera_models_params=[cam_model_1, cam_model_0], num_workers = 2, device='cuda') # Or cpu.

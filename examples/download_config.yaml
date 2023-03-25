@@ -1,7 +1,9 @@
 # Config specifying which trajectories to download from the remote.
 
-env: ['DesertGasStationExposure']
+env: ['ModularNeighborhoodIntExt']
 difficulty: ['easy']
-trajectory_id: ['P000', 'P002']
+trajectory_id: ['P000', 'P003', 'P004', 'P005']
+# modality: ['image', 'depth']
 modality: ['image']
-camera_name: ['lcam_front']
+camera_name: ['lcam_fish', 'lcam_equirect']
+# camera_name: ['lcam_front', 'lcam_right', 'lcam_left', 'lcam_back', 'lcam_top', 'lcam_bottom']

@@ -17,7 +17,7 @@ traj_name = 'P001'
 # Start with initialization.
 # Create a TartanAir object.
 tartanair_data_root = './data/tartanair-v2'
-azure_token = "?sv=2021-10-04&st=2023-03-01T1sp=rl&sig=LojCTa60TcA9ApMiMofliedxuu5cxg%3D"
+azure_token = "?sv=2021-10-04&st=2023-03-01T16%3A34%3A50Z&se=2023l&sig=LojCTa60TcA9ApMiMofliedxujeX0AOZdoC3O5u5cxg%3D"
 ta.init(tartanair_data_root, azure_token)
 
 ############################

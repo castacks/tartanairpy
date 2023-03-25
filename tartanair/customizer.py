@@ -282,10 +282,29 @@ class TartanAirCustomizer(TartanAirModule):
 
         sampler = SixPlanarNumba(new_cam_model_object.fov_degree, new_cam_model_object, R_raw_new)
         sampler.device = self.device
+        create_figures = False
 
         raw_images = {}
         for side in ['front', 'back', 'left', 'right', 'top', 'bottom']:
-            raw_images[side] = modality_to_reader[modality](side_to_frame_gfps[side][frame_ix])
+            # Revert to below:
+            if not create_figures:
+                raw_images[side] = modality_to_reader[modality](side_to_frame_gfps[side][frame_ix])
+            else:
+                img = modality_to_reader[modality](side_to_frame_gfps[side][frame_ix])
+                img[0:20, :, :] = 255
+                img[-20:, :, :] = 255
+                img[:, 0:20, :] = 255
+                img[:, -20:, :] = 255
+                # Draw a circle in the center of the image.
+                cv2.circle(img, (320, 320), 100, (0, 0, 255), -1)
+                # Write Front in the circle.
+                if side == 'bottom':
+                    cv2.putText(img, side, (260, 320), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
+
+                else:
+                    cv2.putText(img, side, (280, 320), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
+                
+                raw_images[side] = img
 
         # Resample the six raw images to the new camera model.
         if modality_to_interpolation[modality] == "blend":
@@ -299,6 +318,38 @@ class TartanAirCustomizer(TartanAirModule):
         out_fp = os.path.join(new_data_dir_path, out_fn)
         print("Writing", out_fp)
         modality_to_writer[modality](out_fp, new_image)
+
+        if create_figures:
+            # Save the concatenated raw image cross next to the new image.
+            out_vis_img = np.zeros((new_image.shape[0], new_image.shape[1] * 3, new_image.shape[2]), dtype=np.uint8) + 255
+            front_img = cv2.resize(raw_images['front'], (new_image.shape[1]//3, new_image.shape[0]//3))
+            back_img = cv2.resize(raw_images['back'], (new_image.shape[1]//3, new_image.shape[0]//3))
+            left_img = cv2.resize(raw_images['left'], (new_image.shape[1]//3, new_image.shape[0]//3))
+            right_img = cv2.resize(raw_images['right'], (new_image.shape[1]//3, new_image.shape[0]//3))
+            top_img = cv2.resize(raw_images['top'], (new_image.shape[1]//3, new_image.shape[0]//3))
+            bottom_img = cv2.resize(raw_images['bottom'], (new_image.shape[1]//3, new_image.shape[0]//3))
+
+            print("Putting image of shape ", left_img.shape, " at (", left_img.shape[0]+out_vis_img.shape[0]//3 - out_vis_img.shape[0]//3 , ", " , left_img.shape[1], ")")
+
+            out_vis_img[out_vis_img.shape[0]//3:left_img.shape[0]+out_vis_img.shape[0]//3, 0:left_img.shape[1], :] = left_img
+            out_vis_img[out_vis_img.shape[0]//3:front_img.shape[0]+out_vis_img.shape[0]//3, front_img.shape[1]:front_img.shape[1]*2, :] = front_img
+            out_vis_img[out_vis_img.shape[0]//3:right_img.shape[0]+out_vis_img.shape[0]//3, right_img.shape[1]*2:right_img.shape[1]*3, :] = right_img
+            out_vis_img[0:top_img.shape[0], top_img.shape[1]:top_img.shape[1]*2, :] = top_img
+            out_vis_img[out_vis_img.shape[0]-bottom_img.shape[0]:out_vis_img.shape[0], bottom_img.shape[1]:bottom_img.shape[1]*2, :] = bottom_img
+            out_vis_img[out_vis_img.shape[0]//3:back_img.shape[0]+out_vis_img.shape[0]//3, back_img.shape[1]*3:back_img.shape[1]*4, :] = back_img
+            
+            # Add the new image.
+            new_image[new_image == 127] = 255
+            out_vis_img[:, out_vis_img.shape[1]//2:out_vis_img.shape[1]//2+new_image.shape[1], :] = new_image
+
+            # Add arrow from left to right. Before teh new image.
+            cv2.arrowedLine(out_vis_img, (out_vis_img.shape[1]//2 -125, out_vis_img.shape[0]//2), (out_vis_img.shape[1]//2 - 15, out_vis_img.shape[0]//2), (0, 0, 255), 5)
+
+            out_vis_fn = str(frame_ix).zfill(6) + "_{}_{}_{}_vis.png".format(cam_name, modality, new_cam_model_name)
+            out_vis_fp = os.path.join(new_data_dir_path, out_vis_fn)
+            print("Writing", out_vis_fp)
+            modality_to_writer[modality](out_vis_fp, out_vis_img)
+
 
 
     def check_six_images_exist(self, env = [], difficulty = [], trajectory_id = [], modality = [], raw_side = ''):

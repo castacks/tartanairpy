@@ -8,6 +8,7 @@ To install the TartanAir Python package:
 
     pip install tartanair
 
+TartanAir depends on PyTorch for some customization functionalities. Please install it on your system (we don't do it for you to avoid version conflicts). Please follow the instructions on the PyTorch website: https://pytorch.org/get-started/locally/ .
 That's it! You're ready to go.
 
 **Note while we are in development, please install using the following command:**   

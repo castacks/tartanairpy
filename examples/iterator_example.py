@@ -13,12 +13,12 @@ sys.path.append('..')
 import tartanair as ta
 
 # Create a TartanAir object.
-tartanair_data_root = '/media/yoraish/overflow/data/tartanair-v2_training_data'
+tartanair_data_root = '/media/yoraish/overflow/data/tartanair-v2'
  
 ta.init(tartanair_data_root)
 
 # List available trajectories.
-ta_iterator = ta.iterator(env = 'ConstructionSite', difficulty = 'easy', trajectory_id = 'P000', modality = 'image', camera_name = 'lcam_front')
+ta_iterator = ta.iterator(env = ['PolarSciFiExposure'], difficulty = 'easy', trajectory_id = [], modality = 'image', camera_name = ['lcam_left'])
 
 for i in range(100):
     print(next(ta_iterator))
