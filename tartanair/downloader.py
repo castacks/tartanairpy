@@ -10,7 +10,6 @@ import sys
 
 from colorama import Fore, Style
 import yaml
-import wget
 
 # Local imports.
 from .tartanair_module import TartanAirModule

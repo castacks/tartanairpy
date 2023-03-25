@@ -127,3 +127,15 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Images.
+*.png
+*.jpg
+
+# Sphinx documentation.
+docs/_build/
+docs/_static/
+_build
+
+# Examples data.
+examples/data/

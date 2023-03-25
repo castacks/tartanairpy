@@ -82,7 +82,7 @@ class TrajectoryEvaluatorATE(TrajectoryEvaluatorBase):
     
 
         # Align the estimated trajectory to the ground truth trajectory, get the alignment transformation, and the scale if requested.
-        if do_align:
+        if do_align: # TODO(yoraish): Should this be if (do_align or do_scale)?
             est_traj_aligned, s = self.align_and_scale_traj_to_gt(gt_traj, est_traj, do_scale)
             print(Fore.GREEN + "ATE Scale factor: " + str(s) + Style.RESET_ALL)
         else:
