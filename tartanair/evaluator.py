@@ -76,8 +76,8 @@ class TartanAirEvaluator(TartanAirModule):
                                             do_scale=do_scale, 
                                             do_align=do_align)
 
-        ate, gt_traj, est_traj_aligned   = ate_evaluator.compute_ate(do_scale=True,
-                                        do_align=True)
+        ate, gt_traj, est_traj_aligned   = ate_evaluator.compute_ate(do_scale=do_scale,
+                                        do_align=do_align)
         print(f'---> ATE: {ate} m.')
 
         rpe_evaluator = TrajectoryEvaluatorRPE(gt_traj = gt_traj.copy(),
@@ -87,14 +87,14 @@ class TartanAirEvaluator(TartanAirModule):
                                                     do_scale=do_scale,
                                                     do_align=do_align)
 
-        rpe, gt_traj, est_traj_aligned = rpe_evaluator.compute_rpe(do_scale=True,
-                                        do_align=True)
+        rpe, gt_traj, est_traj_aligned = rpe_evaluator.compute_rpe(do_scale=do_scale,
+                                        do_align=do_align)
         print(f'---> RPE: {rpe}.')
 
         output = {
             'ate': ate,
             'rpe': rpe,
-            'gt_traj': gt_traj,
-            'est_traj': est_traj_aligned
+            'gt_traj': gt_traj[:, 1:], # Removing the index column.
+            'est_traj': est_traj_aligned[:, 1:] # Removing the index column.
         }
         return output 
