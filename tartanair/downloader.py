@@ -107,6 +107,9 @@ class TartanAirDownloader(TartanAirModule):
 
         # Download the trajectories.
         for env_i in env:
+            # Start by downloading the trajectory's analyze folder txt files in full.
+            self.download_analyze(env_i)
+
             for difficulty_i in difficulty:
                 for trajectory_id_i in trajectory_id:
 
@@ -124,7 +127,6 @@ Modality: {}
 Camera name: {}
 Destination: {}
 """.format(env_i, difficulty_i, trajectory_id_i, modality, camera_name, dest_env))
-
 
 
                     azure_url = "https://tartanairv2.blob.core.windows.net/data-raw/" + env_i + "/" + difficulty_str + "/" + trajectory_id_i + "/" + self.azure_token
@@ -185,3 +187,18 @@ Destination: {}
 
                 print(Fore.GREEN +  'seg cmd: ', cmd_seg, Style.RESET_ALL)
                 os.system(cmd_seg)
+
+    def download_analyze(self, env):
+        """Download the analyze folder of a trajectory. It contains text files enumerating the frames that exist in environment trajectories.
+
+        Args:
+            env (str): The environment name.
+        """
+        # Download the analyze folder.
+        azure_url = "https://tartanairv2.blob.core.windows.net/data-raw/" + env + "/analyze/" + self.azure_token
+        dest_env = os.path.join(self.tartanair_data_root, env)
+
+        cmd = './azcopy copy "{}" {} --recursive --as-subdir=true' .format(azure_url, dest_env)
+        cmd += " --include-pattern 'data_*.txt'"
+        print(Fore.GREEN +  'analyze cmd: ', cmd, Style.RESET_ALL)
+        os.system(cmd)
