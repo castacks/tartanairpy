@@ -7,6 +7,7 @@ from .visualizer import TartanAirVisualizer
 from .iterator import TartanAirIterator
 from .evaluator import TartanAirEvaluator
 from .reader import TartanAirTrajectoryReader
+from .dataloader import TartanAirDataLoader
 
 print("TartanAir toolbox initialized.")
 
@@ -18,6 +19,7 @@ lister = None
 visualizer = None
 iterator = None
 evaluator = None
+dataloader = None
 
 # Flag for initialization.
 is_init = False
@@ -60,6 +62,9 @@ def init(tartanair_root, azure_token = None):
 
     global evaluator
     evaluator = TartanAirEvaluator(tartanair_data_root)
+
+    global dataloader
+    dataloader = TartanAirDataLoader(tartanair_data_root)
 
     global is_init 
     is_init = True
@@ -122,6 +127,38 @@ def customize(env, difficulty, trajectory_id, modality, new_camera_models_params
     global customizer
     check_init()
     customizer.customize(env, difficulty, trajectory_id, modality, new_camera_models_params, num_workers=num_workers, device=device)
+
+def dataloader(env, 
+            difficulty = [], 
+            trajectory_id = [], 
+            modality = [], 
+            camname = [], 
+            new_image_shape_hw = [640, 640], 
+            subset_framenum = 360, 
+            frame_skip = 0, 
+            seq_length = 1, 
+            seq_stride = 1, 
+            batch_size = 8, 
+            num_workers = 2, 
+            shuffle = False):
+    """
+    Create a dataloader object, reading data from the TartanAir dataset, and return it. Note that under the hood a very powerful data cacher is used, which allows for efficient data loading and mini-batch serving. This method effectively creates a config file to this data cacher, and returns an iterator object that can be used to load data. 
+    """
+    global dataloader
+    check_init()
+    return dataloader.get_data_cacher(env = env, 
+            difficulty = difficulty, 
+            trajectory_id = trajectory_id, 
+            modality = modality, 
+            camera_name = camname, 
+            new_image_shape_hw = new_image_shape_hw, 
+            subset_framenum = subset_framenum, 
+            frame_skip = frame_skip, 
+            seq_length = seq_length, 
+            seq_stride = seq_stride, 
+            batch_size = batch_size, 
+            num_workers = num_workers, 
+            shuffle = shuffle)
 
 def create_image_dataset(env, difficulty = None, trajectory_id = None, modality = None, camera_name = None, transform = None, num_workers = 1):
     """
