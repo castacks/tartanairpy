@@ -132,17 +132,52 @@ def dataloader(env,
             difficulty = [], 
             trajectory_id = [], 
             modality = [], 
-            camname = [], 
+            camera_name = [], 
             new_image_shape_hw = [640, 640], 
             subset_framenum = 360, 
-            frame_skip = 0, 
             seq_length = 1, 
             seq_stride = 1, 
+            frame_skip = 0, 
             batch_size = 8, 
-            num_workers = 2, 
-            shuffle = False):
+            num_workers = 0, 
+            shuffle = False, 
+            verbose = False):
     """
-    Create a dataloader object, reading data from the TartanAir dataset, and return it. Note that under the hood a very powerful data cacher is used, which allows for efficient data loading and mini-batch serving. This method effectively creates a config file to this data cacher, and returns an iterator object that can be used to load data. 
+    Create a dataloader object, reading data from the TartanAir-V2 dataset and serving it in mini-batches. Note that under the hood a powerful data-cacher is employed, which allows for efficient data loading and mini-batch serving concurrently. The dataloader operates in the following way:
+
+    1. It loads a subset of the dataset to RAM.
+    2. It serves mini-batches from this subset. The mini-batches are of data-sequences. So for example, if the sequence length is 2, then the mini-batch will have samples of 2 frames each. A batch size of 16 means that the mini-batch will contain 16 pairs of images, for the example of images. The samples do not have to be consecutive, and the 'skip' between the samples can be specified. The sequences also do not have to start from consecutive indices, and the stride between the sequences can be specified.
+    3. The dataloader will load a new subset of the dataset to RAM while the mini-batches are loaded from the first subset, and switch the subsets when the first subset is exhausted. If the first subset is exhausted before the mini-batches are loaded, then the dataloader will keep loading mini-batches from the first subset until the second subset is loaded.
+
+
+    :param env: The environments to load. Can be a list of environments or a single environment.
+    :type env: str or list
+    :param difficulty: The difficulty of the trajectory. Can be a list of difficulties or a single difficulty. Valid difficulties are: easy, hard. If empty, all difficulties will be loaded.
+    :type difficulty: str or list
+    :param trajectory_id: The id of the trajectory to load. Can be a list of trajectory ids of form P000, P001, etc.
+    :type trajectory_id: str or list
+    :param modality: The modality to load. Can be a list of modalities or a single modality. Valid modalities are: image, depth, seg, flow, imu, lidar. If empty, a sample of a few modalities will be loaded. Please specify your requested modalities explicitly or be pleasantly surprised by the data you get.
+    :type modality: str or list
+    :param camera_name: The camera name to load. Can be a list of camera names or a single camera name. Valid camera names are: lcam_front, lcam_rear, lcam_left, lcam_right, lcam_fish, lcam_equirect, rcam_front, rcam_rear, rcam_left, rcam_right, rcam_fish, rcam_equirect. If empty, all cameras will be loaded.
+    :type camera_name: str or list
+    :param new_image_shape_hw: The new image shape to resize the images to [height, width]. If empty, the original image shape [640, 640] will be used.
+    :type new_image_shape_hw: list
+    :param subset_framenum: The number of frames to load in a single subset on the RAM, per modality type. If empty, 360 frames will be loaded. Notice that this is an upper bound on the bath size as well, as batches are harvested from the subset that has been loaded to RAM, so they can be at most as large as the subset.
+    :type subset_framenum: int
+    :param frame_skip: The number of frames to skip between consecutive frames in a sequence. If empty, no frames will be skipped.
+    :type frame_skip: int
+    :param seq_length: The length of the sequences to be loaded. If empty, a sequence length of 1 will be used. It is possible to pass a dictionary mapping modalities to sequence lengths, in which case the sequence length for each modality will be set to the corresponding value. For example, if the dictionary is {'image': 2, 'depth': 1}, then the sequence length for the image modality will be 2 (pairs of consecutive images), and the sequence length for the depth modality will be 1.
+    :type seq_length: int or dict
+    :param seq_stride: The stride between the sequences. If empty, a stride of 1 will be used.  
+    :type seq_stride: int
+    :param batch_size: The batch size to load. If empty, a batch size of 8 will be used.    
+    :type batch_size: int
+    :param num_workers: The number of workers to use for the dataloader. If empty, 0 workers will be used.
+    :type num_workers: int
+    :param shuffle: Whether to shuffle the data. If empty, the data will not be shuffled. Note that the shuffle is within the subset, not across subsets.
+    :type shuffle: bool
+    :param verbose: Whether to print information regarding memory usage and trajectory loading. If empty, no verbose information will be printed.
+    :type verbose: bool
     """
     global dataloader
     check_init()
@@ -150,15 +185,16 @@ def dataloader(env,
             difficulty = difficulty, 
             trajectory_id = trajectory_id, 
             modality = modality, 
-            camera_name = camname, 
+            camera_name = camera_name, 
             new_image_shape_hw = new_image_shape_hw, 
             subset_framenum = subset_framenum, 
-            frame_skip = frame_skip, 
             seq_length = seq_length, 
             seq_stride = seq_stride, 
+            frame_skip = frame_skip, 
             batch_size = batch_size, 
             num_workers = num_workers, 
-            shuffle = shuffle)
+            shuffle = shuffle, 
+            verbose = verbose)
 
 def create_image_dataset(env, difficulty = None, trajectory_id = None, modality = None, camera_name = None, transform = None, num_workers = 1):
     """
@@ -188,7 +224,7 @@ def create_image_dataset(env, difficulty = None, trajectory_id = None, modality 
     :type transform: torchvision.transforms
     :param num_workers: The number of workers to use for the dataset preprocessing. Default is 1.
     :type num_workers: int
-    :return: A PyTorch dataset.
+    :return: A MultiDatasets object. Please see the examples for usage.
     :rtype: torch.utils.data.Dataset
     """
     global dataset
