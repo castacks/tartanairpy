@@ -22,7 +22,7 @@ ta.init(tartanair_data_root)
 # Specify the environments, difficulties, and trajectory ids to load.
 envs = ['ArchVizTinyHouseDayExposure']
 difficulties = ['hard']
-trajectory_ids = [] #['P000', 'P001']
+trajectory_ids = ['P000', 'P001']
 
 # Specify the modalities to load.
 modalities = ['image', 'depth', 'pose']
@@ -47,7 +47,7 @@ dataloader = ta.dataloader(env = envs,
             difficulty = difficulties, 
             trajectory_id = trajectory_ids, 
             modality = modalities, 
-            camname = camnames, 
+            camera_name = camnames, 
             new_image_shape_hw = new_image_shape_hw, 
             subset_framenum = subset_framenum, 
             seq_length = seq_length, 

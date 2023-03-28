@@ -136,7 +136,7 @@ TartanAir-V2 includes a powerful parallelized dataloader. It can be used to load
                 difficulty = difficulties, 
                 trajectory_id = trajectory_ids, 
                 modality = modalities, 
-                camname = camnames, 
+                camear_name = camnames, 
                 new_image_shape_hw = new_image_shape_hw, 
                 subset_framenum = subset_framenum, 
                 seq_length = seq_length, 
