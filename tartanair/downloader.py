@@ -199,6 +199,6 @@ Destination: {}
         dest_env = os.path.join(self.tartanair_data_root, env)
 
         cmd = './azcopy copy "{}" {} --recursive --as-subdir=true' .format(azure_url, dest_env)
-        cmd += " --include-pattern 'data_*.txt'"
+        cmd += " --include-pattern 'data_*.txt';motion_*.npy'"
         print(Fore.GREEN +  'analyze cmd: ', cmd, Style.RESET_ALL)
         os.system(cmd)
