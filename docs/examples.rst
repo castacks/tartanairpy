@@ -98,7 +98,7 @@ TartanAir V2 allows you to synthesize your own dataset by modifying the raw data
                  new_camera_models_params=[cam_model_0, cam_model_1], 
                  num_workers = 2)
 
-DataLoader Example
+Dataloader Example
 -------------------------------------
 TartanAir-V2 includes a powerful parallelized dataloader. It can be used to load data from the dataset and serve mini-batches in parallel, and also to apply (some) transformations to the data on the fly. We highly recommend that you use it for efficient data loading.
 

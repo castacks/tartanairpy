@@ -14,8 +14,8 @@ List
 ----
 .. autofunction:: tartanair.list_envs
 
-Creating a PyTorch DataLoader
---------------------------
+DataLoader
+-----------------------------
 .. autofunction:: tartanair.dataloader
 
 Customization
