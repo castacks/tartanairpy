@@ -12,3 +12,6 @@
 [submodule "tartanair/image_resampling/mvs_utils"]
 	path = tartanair/image_resampling/mvs_utils
 	url = git@github.com:castacks/mvs_utils.git
+[submodule "tartanair/data_cacher"]
+	path = tartanair/data_cacher
+	url = git@github.com:Amigoshan/data_cacher.git
