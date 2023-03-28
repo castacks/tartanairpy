@@ -68,18 +68,16 @@ class TartanAirDataLoader(TartanAirModule):
                         camera_name = None, 
                         new_image_shape_hw = [640, 640],
                         subset_framenum = 56, # <--- Note in the docs that this is an upper bound on the batch size.
-                        frame_skip = 0,
-                        seq_length = 2,
+                        seq_length = 1, # This can also be a dictionary, mapping each modality name to a sequence length.
                         seq_stride = 1,
+                        frame_skip = 0,
                         batch_size=1,
                         num_workers=1,
-                        shuffle=False):
+                        shuffle=False, 
+                        verbose=False,):
 
         '''
         Create a dataloader object, reading data from the TartanAir dataset, and return it. Note that under the hood a very powerful data cacher is used, which allows for efficient data loading and mini-batch serving. This method effectively creates a config file to this data cacher, and returns an iterator object that can be used to load data. This method effectively populates a config dictionary and uses it to create a dataloader object.
-
-        Args:
-
         '''
 
         # Add default values to empty inputs.
@@ -110,6 +108,8 @@ class TartanAirDataLoader(TartanAirModule):
         if type(seq_length) is int:
             seq_length = {mod: seq_length for mod in modality}
         elif type(seq_length) is dict:
+            # Remap modality names.
+            seq_length = {self.modality_name_remaps[mod]: seq_length[mod] for mod in seq_length}
             for mod in modality:
                 mod = self.modality_name_remaps[mod]
                 if mod not in seq_length:
@@ -135,9 +135,8 @@ class TartanAirDataLoader(TartanAirModule):
                 # If no trajectory id was given, then use all trajectories.
                 available_traj_ids = trajectory_id
                 if not trajectory_id:
-                    print("WARNING: No trajectory id was specified. Defaulting to all trajectories.")
                     available_traj_ids = self.get_available_trajectory_ids(env_name, diff)
-                    print("Available trajectories for env {} and difficulty {}: {}".format(env_name, diff, available_traj_ids))
+                    print("WARNING: No trajectory id was specified for env {} and difficulty {}. Defaulting to all available trajectories: {}".format(env_name, diff, available_traj_ids))
                 for traj_id in available_traj_ids:
                     # Build the data entry.                    
                     data_entry = {}
@@ -161,17 +160,13 @@ class TartanAirDataLoader(TartanAirModule):
                     # Add the data entry to the config with the key being the path to the frame-enumeration file.
                     config['data'][os.path.join(self.tartanair_data_root, env_name, "analyze", 'data_' + env_name + '_Data_' + diff + '_' + traj_id + '.txt')] = data_entry
 
-        print("Config: {}".format(config))
-
-
-
-
         # Create the data loader from the config.
         trainDataloader = MultiDatasets(config, 
                         'local', 
                         batch= batch_size, 
                         workernum= num_workers,
-                        shuffle= shuffle)
+                        shuffle= shuffle,
+                        verbose= verbose)
 
         return trainDataloader
 
@@ -206,10 +201,7 @@ class TartanAirDataLoader(TartanAirModule):
 
             # Add the modality entry to the data entry.
             data_entry['modality'][type] = modality_entry
-            data_entry['modality'][type]['type'] = type
-
-            print(modality_entry)
-    
+            data_entry['modality'][type]['type'] = type    
 
 
     def get_available_trajectory_ids(self, env_name, diff):
@@ -226,46 +218,5 @@ class TartanAirDataLoader(TartanAirModule):
                     traj_ids.append(f)
 
             return traj_ids
-
-
-
-
-
-
-# {
-#     'task': 'flowvo', 
-#     'transform_data_augment': True, 
-#     'transform_flow_norm_factor': 0.05, 
-#     'transform_uncertainty': True, 
-#     'transform_input_size': [160, 160], 
-#     'dataset_frame_skip': 0, 
-#     'dataset_seq_stride': 1, 
-#     'data': {
-#         '/media/yoraish/overflow/data/tartanair-v2/HQWesternSaloonExposure/analyze/data_HQWesternSaloonExposure_Data_easy_P000.txt': 
-#         {
-#         'modality': {
-#             'img0': {
-#             'type': 'rgb_lcam_front', 'cacher_size': [160, 160], 'length': 3}, 
-#             'lcam_left': {
-#             'type': 'rgb_lcam_left', 'cacher_size': [160, 160], 'length': 3}, 
-#             'lcam_back': {
-#             'type': 'rgb_lcam_back', 'cacher_size': [160, 160], 'length': 3}, 
-#             'lcam_right': {
-#             'type': 'rgb_lcam_right', 'cacher_size': [160, 160], 'length': 3}, 
-#             'lcam_top': {
-#             'type': 'rgb_lcam_top', 'cacher_size': [160, 160], 'length': 3}, 
-#             'lcam_bottom': {
-#             'type': 'rgb_lcam_bottom', 'cacher_size': [160, 160], 'length': 3}, 
-#             'depth0': {
-#             'type': 'depth_lcam_bottom', 'cacher_size': [160, 160], 'length': 1}}, 
-#         'cacher': {
-#             'data_root_key': 'tartan2', 
-#             'subset_framenum': 120, 
-#             'worker_num': 2}, 
-#         'transform': {
-#             'resize_factor': 2.5}, 
-#          'dataset': None}}}
-
-
 
 

@@ -14,13 +14,9 @@ List
 ----
 .. autofunction:: tartanair.list_envs
 
-Data Iteration
---------------
-.. autofunction:: tartanair.iterator
-
-Creating a PyTorch Dataset
+Creating a PyTorch DataLoader
 --------------------------
-.. autofunction:: tartanair.create_image_dataset
+.. autofunction:: tartanair.dataloader
 
 Customization
 -------------
@@ -37,3 +33,7 @@ Trajectories in NumPy
 Evaluation
 ----------
 .. autofunction:: tartanair.evaluate_traj
+
+Data Iteration
+--------------
+.. autofunction:: tartanair.iterator
