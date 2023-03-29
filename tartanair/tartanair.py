@@ -80,7 +80,7 @@ def download(env = [], difficulty = [], trajectory_id = [], modality = [], camer
     :type difficulty: str or list
     :param trajectory_id: The id of the trajectory to download. Can be a list of trajectory ids of form P000, P001, etc.
     :type trajectory_id: str or list
-    :param modality: The modality to download. Can be a list of modalities. Valid modalities are: image, depth, seg, imu, lidar. Default will include all.
+    :param modality: The modality to download. Can be a list of modalities. Valid modalities are: image, depth, seg, imu{_acc, _gyro...}, lidar. Default will include all.
     :type modality: str or list
     :param camera_name: The camera name to download. Can be a list of camera names. Default will include all. Choices are `lcam_front`, `lcam_right`, `lcam_back`, `lcam_left`, `lcam_top`, `lcam_bottom`, `rcam_front`, `rcam_right`, `rcam_back`, `rcam_left`, `rcam_top`, `rcam_bottom`, `lcam_fish`, `rcam_fish`, `lcam_equirect`, `rcam_equirect`.
      Modalities IMU and LIDAR do not need camera names specified.
@@ -156,7 +156,7 @@ def dataloader(env,
     :type difficulty: str or list
     :param trajectory_id: The id of the trajectory to load. Can be a list of trajectory ids of form P000, P001, etc.
     :type trajectory_id: str or list
-    :param modality: The modality to load. Can be a list of modalities or a single modality. Valid modalities are: image, depth, seg, flow, imu, lidar. If empty, a sample of a few modalities will be loaded. Please specify your requested modalities explicitly or be pleasantly surprised by the data you get.
+    :param modality: The modality to load. Can be a list of modalities or a single modality. Valid modalities are: image, depth, seg, flow, imu{_acc, _gyro, ...}, lidar. If empty, a sample of a few modalities will be loaded. Please specify your requested modalities explicitly or be pleasantly surprised by the data you get.
     :type modality: str or list
     :param camera_name: The camera name to load. Can be a list of camera names or a single camera name. Valid camera names are: lcam_front, lcam_rear, lcam_left, lcam_right, lcam_fish, lcam_equirect, rcam_front, rcam_rear, rcam_left, rcam_right, rcam_fish, rcam_equirect. If empty, all cameras will be loaded.
     :type camera_name: str or list

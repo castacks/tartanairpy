@@ -32,6 +32,7 @@ class TartanAirDataLoader(TartanAirModule):
             'rgb': 'rgb',
             'image': 'rgb',
             'imu': 'imu_acc',
+            'imu_acc': 'imu_acc',
             'depth': 'depth',
             'lidar': 'lidar',
             'pose': 'pose',
@@ -46,7 +47,7 @@ class TartanAirDataLoader(TartanAirModule):
             'seg': 1,
             'flow': 1,
             'pose': 1,
-            'imu': 10,
+            'imu_acc': 10,
             'lidar': 1,
         }
 
@@ -56,7 +57,7 @@ class TartanAirDataLoader(TartanAirModule):
             'seg': [640, 640],
             'flow': [640, 640],
             'pose': [7],
-            'imu': [3],
+            'imu_acc': [3],
             'lidar': [3],
         }
 
@@ -191,6 +192,11 @@ class TartanAirDataLoader(TartanAirModule):
             # Build the modality entry.
             modality_entry = {}
             mod = type.split('_')[0]
+
+            # Account for modality names that have `_` in them.
+            if mod == 'imu':
+                mod = '_'.join(type.split('_')[:2])
+
             if mod in ['rgb', 'depth', 'seg', 'flow']:
                 modality_entry['cacher_size'] = new_image_shape_hw
             else: # 'lidar', 'imu', 'pose', etc.

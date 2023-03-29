@@ -23,6 +23,9 @@ class TartanAirDownloader(TartanAirModule):
         else:
             self.azure_token = azure_token
 
+        # The modalities that have a camera associated with them and that we'll download the pose file along with.
+        self.modalities_with_camera = ['image', 'depth', 'seg', 'flow', 'pose']
+
     def check_azcopy(self):
         # Check if azcopy executable exists.
         if not os.path.exists('./azcopy'):
@@ -142,19 +145,32 @@ Destination: {}
                             
                             for modality_i in modality:
                                 for camera_name_i in camera_name:
-
+                                    
+                                    ############################
                                     # If requested an image (RGB), then add the image -- the naming convention is a bit different so it gets a special treatment.
+                                    ############################
                                     if modality_i == 'image' and camera_name_i.split("_")[1] in ['front', 'left', 'right', 'back', 'top', 'bottom']:
                                         cmd += "*" + camera_name_i + ".png;"
+                                    
+                                    ############################
+                                    # If requesting flow, which is only available for the front camera, then add the flow image.
+                                    ############################
+                                    elif modality_i == 'flow' and camera_name_i.split("_")[1] in ['front']:
+                                        cmd += "*flow.png;"
+
+                                    ############################
+                                    # If not rgb image, stick to the regular naming convention: camera_name_modality.
+                                    ############################
                                     else:
                                         # NOTE(yorais): This may add weird file names, like lidar_lcam_front, if both a special modality and a camera name are specified. This is okay for now, as those files are not downloaded as they do not exist.
                                         cmd += "*" + camera_name_i + "_" + modality_i + "*;"
 
-                                    # Add pose file. If the camera is 'regular', meaning in [front, left, right, back, top, bottom], then add the pose file directly from the name of the camera. Otherwise, add the pose file from the front camera (for fisheye and equirect).
                                     
+                                    ############################
+                                    # Add pose file. If the camera is 'regular', meaning in [front, left, right, back, top, bottom], then add the pose file directly from the name of the camera. Otherwise, add the pose file from the front camera (for fisheye and equirect).
+                                    ############################
                                     if camera_name_i.split("_")[1] in ['front', 'left', 'right', 'back', 'top', 'bottom']:
                                         cmd += "pose_" + camera_name_i + ".txt;" 
-                                    
                                     elif camera_name_i.split("_")[1] in ['fish', 'equirect']:
                                         cmd += "pose_" + camera_name_i.split("_")[0] + "_front.txt;"
 
@@ -163,6 +179,11 @@ Destination: {}
                             os.system(cmd)
 
                     # Download special modalities that are not images.
+                    # The input modality for the imu can be of the form 'imu', 'imu_acc', 'imu_gyro', etc. All of those are in the same directory, so we change them to 'imu' to download the whole directory.
+                    
+                    modality = ['imu' if 'imu' in m else m for m in modality]
+                    modality = list(set(modality))
+
                     if 'lidar' in modality or 'imu' in modality:
                         for mty in [m for m in modality if m in ['lidar', 'imu']]:
 
@@ -199,6 +220,6 @@ Destination: {}
         dest_env = os.path.join(self.tartanair_data_root, env)
 
         cmd = './azcopy copy "{}" {} --recursive --as-subdir=true' .format(azure_url, dest_env)
-        cmd += " --include-pattern 'data_*.txt';motion_*.npy'"
+        cmd += " --include-pattern 'data_*.txt;motion_*.npy'"
         print(Fore.GREEN +  'analyze cmd: ', cmd, Style.RESET_ALL)
         os.system(cmd)
