@@ -273,7 +273,6 @@ class TartanAirImageDatasetObject(Dataset):
                         
                     # Create entry.
                     entry = {camera_name: {'data0' : {}, 'data1' : {}, 'motion' : None} for camera_name in self.camera_names}
-                    # Parallelize this??
                     # Iterate over camera names.
                     for camera_name in self.camera_names:
 

@@ -185,7 +185,7 @@ class TartanAirCustomizer(TartanAirModule):
                             # Get all the frame file names and sort them.
                             side_to_frame_gfps = {}
                             for side in ['front', 'back', 'left', 'right', 'top', 'bottom']:
-                                side_to_frame_gfps[side] = [os.path.join(tartanair_path, env_name, rel_traj_path, "{}_{}_{}".format(modality, cam_name, side), f) for f in os.listdir(os.path.join(tartanair_path, env_name, rel_traj_path, "{}_{}_{}".format(modality, cam_name, side)))]
+                                side_to_frame_gfps[side] = [os.path.join(tartanair_path, env_name, rel_traj_path, "{}_{}_{}".format(modality, cam_name, side), f) for f in os.listdir(os.path.join(tartanair_path, env_name, rel_traj_path, "{}_{}_{}".format(modality, cam_name, side))) if f.endswith(".png") and not f.startswith(".")]
                                 side_to_frame_gfps[side].sort(key = lambda x: int(x.split("/")[-1].split("_")[0]))
 
                             # For each frame, get the six raw images and resample them to the new camera model.
