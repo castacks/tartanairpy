@@ -25,6 +25,14 @@ Currently the TartanAir Python package was only tested on Ubuntu 20.04. We will 
 Known Installation Issues and Solutions
 ---------------------------------------
 
+Ubuntu
+~~~~~~
+1. Downloading does not work. It could be that you are missing `wget`. Get it using the following command:
+
+    .. code-block:: bash
+
+        sudo apt install wget
+
 MacOS
 ~~~~~
 1. `PyYAML` fails to install with `pip` on MacOS. Please install it manually using the following command:
