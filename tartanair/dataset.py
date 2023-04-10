@@ -265,6 +265,11 @@ class TartanAirImageDatasetForSlowLoaderObject(Dataset):
             # Iterate over trajectories.
             for traj_name in trajectory_ids_for_env:
                 traj_dir_gp = os.path.join(diff_dir_gp, traj_name)
+
+                # Check it it exists.
+                if not os.path.isdir(traj_dir_gp):
+                    print(Fore.RED + 'The trajectory {} does not exist. Skipping it.'.format(traj_dir_gp) + Style.RESET_ALL)
+                    continue
                 
                 # Get the trajectory poses. This is a map from a camera_name to a list of poses.
                 camera_name_to_motions = {}
