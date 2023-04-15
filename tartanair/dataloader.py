@@ -131,7 +131,7 @@ class TartanAirDataLoader(TartanAirModule):
         config['data'] = {}
 
         # Create a composed data specification text file for this data cacher. This is saved with a common name, ta_data_spec.txt, and is stored in the root directory of the TartanAir dataset. The contents are a composition of all the data specifications for each environment, difficulty, and trajectory.
-        data_spec_fpath = os.path.join(self.tartanair_data_root, 'ta_data_spec.txt') # TODO(yoraish): this will be created every time we use this method. It should be overwritten and limit spam, but still not great that a new file is created.
+        data_spec_fpath = 'ta_data_spec.txt'
         if os.path.isfile(data_spec_fpath):
             os.remove(data_spec_fpath)
 
