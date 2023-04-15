@@ -16,6 +16,7 @@ from torch.utils.data import Dataset
 from scipy.spatial.transform import Rotation
 import torchvision.transforms.functional as TF
 import torchvision.transforms as transforms
+from colorama import Fore, Back, Style
 
 # Local imports.
 from .tartanair_module import TartanAirModule
