@@ -150,10 +150,15 @@ class TartanAirDataLoader(TartanAirModule):
             for diff in available_diffs:
 
                 # If no trajectory id was given, then use all trajectories.
-                available_traj_ids = trajectory_id
+                available_traj_ids = self.get_available_trajectory_ids(env_name, diff)
                 if not trajectory_id:
-                    available_traj_ids = self.get_available_trajectory_ids(env_name, diff)
                     print(Fore.GREEN + "WARNING: No trajectory id was specified for env {} and difficulty {}. Defaulting to all available trajectories: {}".format(env_name, diff, available_traj_ids),  Style.RESET_ALL)
+                else:
+                    for traj_id in trajectory_id:
+                        if traj_id not in available_traj_ids:
+                            print(Fore.RED + "WARNING: Trajectory id {} was specified for env {} and difficulty {}, but it is not available. It is skipped.".format(traj_id, env_name, diff),  Style.RESET_ALL)
+                    available_traj_ids = [traj_id for traj_id in available_traj_ids if traj_id in trajectory_id]
+                
                 for traj_id in available_traj_ids:
                     # Build the data entry.         
 
