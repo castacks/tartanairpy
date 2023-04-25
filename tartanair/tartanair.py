@@ -1,6 +1,6 @@
 # Local imports.
 from .downloader import TartanAirDownloader
-from .dataset import TartanAirDataset
+from .dataset import TartanAirDataset, TartanAirSlowLoaderCreator
 from .customizer import TartanAirCustomizer
 from .lister import TartanAirLister
 from .visualizer import TartanAirVisualizer
@@ -20,6 +20,7 @@ visualizer = None
 iterator = None
 evaluator = None
 dataloader = None
+slowloader = None
 
 # Flag for initialization.
 is_init = False
@@ -65,6 +66,9 @@ def init(tartanair_root, azure_token = None):
 
     global dataloader
     dataloader = TartanAirDataLoader(tartanair_data_root)
+
+    global slowloader
+    slowloader = TartanAirSlowLoaderCreator(tartanair_data_root)
 
     global is_init 
     is_init = True
@@ -220,8 +224,6 @@ def create_image_dataset(env, difficulty = None, trajectory_id = None, modality 
     :type modality: str or list
     :param camera_name: The camera name to create the dataset from. Can be a list of camera names. Default will include all. Choices are `lcam_front`, `lcam_right`, `lcam_back`, `lcam_left`, `lcam_top`, `lcam_bottom`, `rcam_front`, `rcam_right`, `rcam_back`, `rcam_left`, `rcam_top`, `rcam_bottom`, `lcam_fish`, `rcam_fish`, `lcam_equirect`, `rcam_equirect`.
     :type camera_name: str or list
-    :param transform: Optional. A transform to apply to the images. Default is None.
-    :type transform: torchvision.transforms
     :param num_workers: The number of workers to use for the dataset preprocessing. Default is 1.
     :type num_workers: int
     :return: A MultiDatasets object. Please see the examples for usage.
@@ -230,6 +232,42 @@ def create_image_dataset(env, difficulty = None, trajectory_id = None, modality 
     global dataset
     check_init()
     return dataset.create_image_dataset(env, difficulty, trajectory_id, modality, camera_name, transform, num_workers)
+
+
+def create_image_slowloader(env,  difficulty = None,  trajectory_id = None,  modality = None,  camera_name = None, batch_size = 1, shuffle = True, num_workers=1):
+    """
+    Creates a frame-pair PyTorch dataset for a specified subset of the TartanAir dataset. Pairs of consecutive frames are returned, alongside the poses of the cameras that took the images.
+    This dataset handles images in modalities such as 'image', 'depth', and 'seg'.
+    Each dataset batch contains samples of the form, for example:
+
+    >>> {'rgb_lcam_front': tensor(B, S, H, W, 3),
+        ...
+        'depth_lcam_front': tensor(B, S, H, W),
+        ...
+        'pose_lcam_front': tensor(B, S, 7), # xyz, xyzw.
+        ...
+        'motion_lcam_front': tensor(B, S-1, 6), # Optional.
+    }
+
+    :param env: The environment to create the dataset from. Can be a list of environments.
+    :type env: str or list
+    :param difficulty: The difficulty of the trajectory. Can be a list of difficulties. Valid difficulties are: `easy`, `hard`.
+    :type difficulty: str or list
+    :param trajectory_id: The id of the trajectory to create the dataset from. Can be a list of trajectory ids of form `P000`, `P001`, etc.
+    :type trajectory_id: str or list
+    :param modality: The modality to create the dataset from. Can be a list of modalities. Valid modalities are: `image`, `depth`, `seg`.
+    :type modality: str or list
+    :param camera_name: The camera name to create the dataset from. Can be a list of camera names. Default will include all. Choices are `lcam_front`, `lcam_right`, `lcam_back`, `lcam_left`, `lcam_top`, `lcam_bottom`, `rcam_front`, `rcam_right`, `rcam_back`, `rcam_left`, `rcam_top`, `rcam_bottom`, `lcam_fish`, `rcam_fish`, `lcam_equirect`, `rcam_equirect`.
+    :type camera_name: str or list
+    :param num_workers: The number of workers to use for the dataset preprocessing. Default is 1.
+    :type num_workers: int
+    :return: A MultiDatasets object. Please see the examples for usage.
+    :rtype: torch.utils.data.Dataset
+    """
+    global slowloader
+    check_init()
+    return slowloader.create_image_slowloader(env,  difficulty,  trajectory_id,  modality,  camera_name, batch_size, shuffle, num_workers)
+
 
 def list_envs():
     """

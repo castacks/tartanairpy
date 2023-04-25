@@ -131,7 +131,7 @@ class TartanAirDataLoader(TartanAirModule):
         config['data'] = {}
 
         # Create a composed data specification text file for this data cacher. This is saved with a common name, ta_data_spec.txt, and is stored in the root directory of the TartanAir dataset. The contents are a composition of all the data specifications for each environment, difficulty, and trajectory.
-        data_spec_fpath = os.path.join(self.tartanair_data_root, 'ta_data_spec.txt') # TODO(yoraish): this will be created every time we use this method. It should be overwritten and limit spam, but still not great that a new file is created.
+        data_spec_fpath = 'ta_data_spec.txt'
         if os.path.isfile(data_spec_fpath):
             os.remove(data_spec_fpath)
 
@@ -150,10 +150,15 @@ class TartanAirDataLoader(TartanAirModule):
             for diff in available_diffs:
 
                 # If no trajectory id was given, then use all trajectories.
-                available_traj_ids = trajectory_id
+                available_traj_ids = self.get_available_trajectory_ids(env_name, diff)
                 if not trajectory_id:
-                    available_traj_ids = self.get_available_trajectory_ids(env_name, diff)
                     print(Fore.GREEN + "WARNING: No trajectory id was specified for env {} and difficulty {}. Defaulting to all available trajectories: {}".format(env_name, diff, available_traj_ids),  Style.RESET_ALL)
+                else:
+                    for traj_id in trajectory_id:
+                        if traj_id not in available_traj_ids:
+                            print(Fore.RED + "WARNING: Trajectory id {} was specified for env {} and difficulty {}, but it is not available. It is skipped.".format(traj_id, env_name, diff),  Style.RESET_ALL)
+                    available_traj_ids = [traj_id for traj_id in available_traj_ids if traj_id in trajectory_id]
+                
                 for traj_id in available_traj_ids:
                     # Build the data entry.         
 
@@ -162,10 +167,15 @@ class TartanAirDataLoader(TartanAirModule):
                         env_diff_traj_data_spec_fpath = os.path.join(self.tartanair_data_root, env_name, "analyze", 'data_' + env_name + '_Data_' + diff + '_' + traj_id + '.txt')
 
                         # Read the data spec file.
-                        with open(env_diff_traj_data_spec_fpath, 'r') as f2:
-                            # Write all but the last line.
-                            for line in f2.readlines():
-                                f.write(line)
+                        # with open(env_diff_traj_data_spec_fpath, 'r') as f2:
+                        # Create a new data spec file for this trajectory, where it is broken down into smaller pseudo-trajectories.
+                        # This is done to allow for the data cacher to cache the data in small trajectory portions, such that the data is shuffled also when the RAM memory allocation is small.
+                        pseudo_traj_length = max(max(seq_length.values()) * seq_stride * (frame_skip + 1) * 2, 20)
+                        pseudo_traj_spec_list = self.traj_spec_file_to_pseudo_traj_spec_list(env_diff_traj_data_spec_fpath, pseudo_traj_length)
+                        # Write all but the last line.
+                        # for line in f2.readlines():
+                        for line in pseudo_traj_spec_list:
+                            f.write(line)
 
         # Build the data entry. It is shared for the entire dataset.
         data_entry = {}
@@ -199,6 +209,35 @@ class TartanAirDataLoader(TartanAirModule):
                         verbose= verbose)
 
         return trainDataloader
+
+    def traj_spec_file_to_pseudo_traj_spec_list(self, traj_spec_fpath, pseudo_traj_length):
+        '''
+        Read the trajectory specification file and break it down into smaller pseudo-trajectories. This is done to allow for the data cacher to cache the data in small trajectory portions, such that the data is shuffled also when the RAM memory allocation is small.
+        '''
+        pseudo_traj_spec_list = []
+        with open(traj_spec_fpath, 'r') as f:
+            lines = f.readlines()
+
+            # Get the current traj header.
+            traj_header = lines[0]
+            lines = lines[1:]
+
+            # The only thing that we'll change is the number of files, which is the last number in the string.
+            numless_header = traj_header[:traj_header.rfind(' ') + 1]
+
+            for i in range(0, len(lines)):
+                if i % pseudo_traj_length == 0:
+                    # Add a new line. If we have more than traj_len lines left, then add the full traj_len. Otherwise, add the remaining lines.
+                    if i + pseudo_traj_length < len(lines):
+                        pseudo_traj_spec_list.append(numless_header + str(pseudo_traj_length) + '\n')
+
+                    else:
+                        pseudo_traj_spec_list.append(numless_header + str(len(lines) - i) + '\n')
+                
+                # Append the line.
+                pseudo_traj_spec_list.append(lines[i])
+
+        return pseudo_traj_spec_list
 
     def add_modality_entries(self, data_entry, modality, camera_name, new_image_shape_hw, seq_length, subset_framenum, num_workers):
 

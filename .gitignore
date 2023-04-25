@@ -139,3 +139,9 @@ _build
 
 # Examples data.
 examples/data/
+azcopy
+requirements.txt
+.vscode/settings.json
+docs/make.bat
+.gitignore
+docs/Makefile
