@@ -73,6 +73,8 @@ def init(tartanair_root, azure_token = None):
     global is_init 
     is_init = True
     
+    return True
+    
 
 def download(env = [], difficulty = [], trajectory_id = [], modality = [], camera_name = [], config = None):
     """

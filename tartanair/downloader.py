@@ -175,7 +175,7 @@ Destination: {}
                                         cmd += "pose_" + camera_name_i.split("_")[0] + "_front.txt;"
 
                             cmd += "'"
-                            print(Fore.GREEN +  'The cmd: ', cmd, Style.RESET_ALL)
+                            # print(Fore.GREEN +  'The cmd: ', cmd, Style.RESET_ALL)
                             os.system(cmd)
 
                     # Download special modalities that are not images.
@@ -190,7 +190,7 @@ Destination: {}
                             azure_url_special = "https://tartanairv2.blob.core.windows.net/data-raw/" + env_i + "/" + difficulty_str + "/" + trajectory_id_i + "/" + mty + "/" + self.azure_token
                             dest_env_special = os.path.join(self.tartanair_data_root, env_i, difficulty_str, trajectory_id_i)
                             cmd_special = './azcopy copy "{}" {} --recursive --as-subdir=true' .format(azure_url_special, dest_env_special)
-                            print(Fore.GREEN +  'A cmd: ', cmd_special, Style.RESET_ALL)
+                            # print(Fore.GREEN +  'A cmd: ', cmd_special, Style.RESET_ALL)
                             os.system(cmd_special)
 
 
@@ -206,7 +206,7 @@ Destination: {}
                 dest_env_seg = os.path.join(self.tartanair_data_root, env_i)
                 cmd_seg = './azcopy copy "{}" {} --recursive --as-subdir=true' .format(azure_url_seg, dest_env_seg)
 
-                print(Fore.GREEN +  'seg cmd: ', cmd_seg, Style.RESET_ALL)
+                # print(Fore.GREEN +  'seg cmd: ', cmd_seg, Style.RESET_ALL)
                 os.system(cmd_seg)
 
     def download_analyze(self, env):
@@ -221,5 +221,5 @@ Destination: {}
 
         cmd = './azcopy copy "{}" {} --recursive --as-subdir=true' .format(azure_url, dest_env)
         cmd += " --include-pattern 'data_*.txt;motion_*.npy'"
-        print(Fore.GREEN +  'analyze cmd: ', cmd, Style.RESET_ALL)
+        # print(Fore.GREEN +  'analyze cmd: ', cmd, Style.RESET_ALL)
         os.system(cmd)
