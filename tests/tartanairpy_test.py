@@ -193,26 +193,30 @@ class TartanAirTest(unittest.TestCase):
         assert len(glob.glob(os.path.join(downloaded_data_dir_path, 'image_lcam_front', '*.png'))) == len(glob.glob(os.path.join(downloaded_data_dir_path, 'image_lcam_custom0_pinhole', '*.png')))
         print(Fore.GREEN + "Customization on CPU OK." + Style.RESET_ALL)
 
-        R_raw_new1 = Rotation.from_euler('xyz', [45, 0, 0], degrees=True).as_matrix().tolist()
+        # Test on GPU as well, if it is available.
+        import torch
+        if torch.cuda.device_count() > 0:
+                
+            R_raw_new1 = Rotation.from_euler('xyz', [45, 0, 0], degrees=True).as_matrix().tolist()
 
-        cam_model_1 = {'name': 'doublesphere',
-                        'raw_side': 'left',
-                        'params':
-                                {'fx': 250, 
-                                'fy':  250, 
-                                'cx': 500, 
-                                'cy': 500, 
-                                'width': 1000, 
-                                'height': 1000, 
-                                'alpha': 0.6, 
-                                'xi': -0.2, 
-                                'fov_degree': 195},
-                        'R_raw_new': R_raw_new1}
+            cam_model_1 = {'name': 'doublesphere',
+                            'raw_side': 'left',
+                            'params':
+                                    {'fx': 250, 
+                                    'fy':  250, 
+                                    'cx': 500, 
+                                    'cy': 500, 
+                                    'width': 1000, 
+                                    'height': 1000, 
+                                    'alpha': 0.6, 
+                                    'xi': -0.2, 
+                                    'fov_degree': 195},
+                            'R_raw_new': R_raw_new1}
 
-        ta.customize(env = env, difficulty = difficulty, trajectory_id = [traj_name], modality = ['image'], new_camera_models_params=[cam_model_1], num_workers = 2, device='cuda') 
-        assert len(glob.glob(os.path.join(downloaded_data_dir_path, 'image_lcam_front', '*.png'))) == len(glob.glob(os.path.join(downloaded_data_dir_path, 'image_lcam_custom0_doublesphere', '*.png')))
-   
-        print(Fore.GREEN + "Customization on GPU OK." + Style.RESET_ALL)
+            ta.customize(env = env, difficulty = difficulty, trajectory_id = [traj_name], modality = ['image'], new_camera_models_params=[cam_model_1], num_workers = 2, device='cuda') 
+            assert len(glob.glob(os.path.join(downloaded_data_dir_path, 'image_lcam_front', '*.png'))) == len(glob.glob(os.path.join(downloaded_data_dir_path, 'image_lcam_custom0_doublesphere', '*.png')))
+    
+            print(Fore.GREEN + "Customization on GPU OK." + Style.RESET_ALL)
 
     ############################
     # Test Data Listing.
