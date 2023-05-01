@@ -84,6 +84,28 @@ for i in range(1000):
         break
     # Visualize some images.
     # The shape of an image batch is (B, S, H, W, C), where B is the batch size, S is the sequence length, H is the height, W is the width, and C is the number of channels.
+
+    # Create image cross.
+    left = batch['rgb_lcam_left'][0][0]
+    front = batch['rgb_lcam_front'][0][0]
+    right = batch['rgb_lcam_right'][0][0]
+    back = batch['rgb_lcam_back'][0][0]
+    top = batch['rgb_lcam_top'][0][0]
+    bottom = batch['rgb_lcam_bottom'][0][0]
+    cross_mid = np.concatenate([left, front, right, back], axis=1)
+    cross_top = np.concatenate([np.zeros_like(top), top, np.zeros_like(top), np.zeros_like(top)], axis=1)
+    cross_bottom = np.concatenate([np.zeros_like(bottom), bottom, np.zeros_like(bottom), np.zeros_like(bottom)], axis=1)
+    cross = np.concatenate([cross_top, cross_mid, cross_bottom], axis=0)
+
+    # Resize.
+    cross = cv2.resize(cross, (cross.shape[1]//4, cross.shape[0]//4))
+
+    # Show the image cross.
+    cv2.imshow('cross', cross)
+    cv2.imwrite('cross.png', cross)
+    cv2.waitKey(0)
+
+
     images = []
     for b in range(batch['rgb_lcam_front'].shape[0]):
         images.append(batch['rgb_lcam_front'][b][0])

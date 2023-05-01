@@ -146,3 +146,4 @@ docs/make.bat
 .gitignore
 docs/Makefile
 examples/ta_data_spec.txt
+*.txt

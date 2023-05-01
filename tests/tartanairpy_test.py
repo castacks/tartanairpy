@@ -6,6 +6,7 @@ Test file for the TartanAir dataset toolbox.
 '''
 
 # General imports.
+import glob
 import os
 import unittest
 import sys
@@ -17,13 +18,13 @@ import numpy as np
 sys.path.append("..")
 import tartanair as ta
 
-class TestTartanAir(unittest.TestCase):
+class TartanAirTest(unittest.TestCase):
     def __init__(self, *args, **kwargs):
-        super(TestTartanAir, self).__init__(*args, **kwargs)
+        super(TartanAirTest, self).__init__(*args, **kwargs)
 
         # Kick start the initialization.
         self.tartanair_data_root = './sample_tartanair_v2_data_root'
-        self.azure_token = "?sv=2021-10-04&st=-31T14%3A42%3A13Z&se=2023-07-01T14%3A42%3A00Z&sr=c&sp=rl&sig=IoZEVe1B5kQuZI5WzDSdGqiW%2BC9w8QKvmiK7QuaBhaA%3D"
+        self.azure_token = "?sv=2BC9w8QKvmiK7QuaBhaA%3D"
         
 
     def test_test(self):
@@ -33,6 +34,9 @@ class TestTartanAir(unittest.TestCase):
         a = 'a'
         self.assertEqual(a, 'a')
 
+    ############################
+    # Test the initialization. 
+    ############################
     def test_init(self):
         '''
         Test the initialization of the TartanAir toolbox.
@@ -46,7 +50,9 @@ class TestTartanAir(unittest.TestCase):
         self.assertEqual(success, True)
         print(Fore.GREEN + "..Initialization OK." + Style.RESET_ALL)
         
-
+    ############################
+    # Test download.     
+    ############################
     def test_download(self):
         '''
         Test the download of a single trajectory.
@@ -65,6 +71,9 @@ class TestTartanAir(unittest.TestCase):
 
         print(Fore.GREEN + "..Download OK." + Style.RESET_ALL)
 
+    ############################
+    # Test the dataloader.
+    ############################
     def test_dataloader(self):
         '''
         Test the dataloader.
@@ -142,6 +151,143 @@ class TestTartanAir(unittest.TestCase):
 
         print(Fore.GREEN + "..Dataloader OK." + Style.RESET_ALL)
 
+    ############################
+    # Test customization.
+    ############################
+    def test_customization(self):
+
+        # Initialize tartanair.
+        ta.init(self.tartanair_data_root, self.azure_token)
+
+        # Check that we have the data.
+        if os.path.exists(os.path.join(self.tartanair_data_root, 'ArchVizTinyHouseDayExposure', 'Data_hard', 'P000',  'image_lcam_front')) and \
+            os.path.exists(os.path.join(self.tartanair_data_root, 'ArchVizTinyHouseDayExposure', 'Data_hard', 'P000', 'image_lcam_left')) and \
+            os.path.exists(os.path.join(self.tartanair_data_root, 'ArchVizTinyHouseDayExposure', 'Data_hard', 'P000', 'image_lcam_right')) and \
+            os.path.exists(os.path.join(self.tartanair_data_root, 'ArchVizTinyHouseDayExposure', 'Data_hard', 'P000', 'image_lcam_back')) and \
+            os.path.exists(os.path.join(self.tartanair_data_root, 'ArchVizTinyHouseDayExposure', 'Data_hard', 'P000', 'image_lcam_top')) and \
+            os.path.exists(os.path.join(self.tartanair_data_root, 'ArchVizTinyHouseDayExposure', 'Data_hard', 'P000', 'image_lcam_bottom')):
+            print(Fore.GREEN + "..Data found." + Style.RESET_ALL)
+        else:
+            print(Fore.RED + "..Data not found. Downloading." + Style.RESET_ALL)
+            # Request the download.
+            envs = ["ArchVizTinyHouseDayExposure"]
+
+            ta.download(env = envs, difficulty = ['hard'], trajectory_id = ["P000"],  modality = ['image', 'pose'],  camera_name = ['lcam_front' ,'lcam_left' ,'lcam_right' ,'lcam_back' ,'lcam_top' ,'lcam_bottom'])
+
+        env = 'ArchVizTinyHouseDayExposure'
+        difficulty = ['hard']
+        traj_name = 'P000'
+        downloaded_data_dir_path = os.path.join(self.tartanair_data_root, env, 'Data_' + difficulty[0], traj_name)
+
+        from scipy.spatial.transform import Rotation
+        R_raw_new0 = Rotation.from_euler('y', 90, degrees=True).as_matrix().tolist()
+
+        cam_model_0 = {'name': 'pinhole', 
+                        'raw_side': 'left', # TartanAir has two cameras, one on the left and one on the right. This parameter specifies which camera to use.
+                    'params': 
+                                {'fx': 32, 'fy': 32, 'cx': 32, 'cy': 32, 'width': 64, 'height': 64},
+                        'R_raw_new': R_raw_new0}
+
+
+        ta.customize(env = env, difficulty = difficulty, trajectory_id = [traj_name], modality = ['image'], new_camera_models_params=[cam_model_0], num_workers = 2, device='cpu') 
+        assert len(glob.glob(os.path.join(downloaded_data_dir_path, 'image_lcam_front', '*.png'))) == len(glob.glob(os.path.join(downloaded_data_dir_path, 'image_lcam_custom0_pinhole', '*.png')))
+        print(Fore.GREEN + "Customization on CPU OK." + Style.RESET_ALL)
+
+        R_raw_new1 = Rotation.from_euler('xyz', [45, 0, 0], degrees=True).as_matrix().tolist()
+
+        cam_model_1 = {'name': 'doublesphere',
+                        'raw_side': 'left',
+                        'params':
+                                {'fx': 250, 
+                                'fy':  250, 
+                                'cx': 500, 
+                                'cy': 500, 
+                                'width': 1000, 
+                                'height': 1000, 
+                                'alpha': 0.6, 
+                                'xi': -0.2, 
+                                'fov_degree': 195},
+                        'R_raw_new': R_raw_new1}
+
+        ta.customize(env = env, difficulty = difficulty, trajectory_id = [traj_name], modality = ['image'], new_camera_models_params=[cam_model_1], num_workers = 2, device='cuda') 
+        assert len(glob.glob(os.path.join(downloaded_data_dir_path, 'image_lcam_front', '*.png'))) == len(glob.glob(os.path.join(downloaded_data_dir_path, 'image_lcam_custom0_doublesphere', '*.png')))
+   
+        print(Fore.GREEN + "Customization on GPU OK." + Style.RESET_ALL)
+
+    ############################
+    # Test Data Listing.
+    ############################
+
+    def test_env_listing(self):
+            
+        # Initialize tartanair.
+        ta.init(self.tartanair_data_root, self.azure_token)
+
+        # Check that we have the data.
+        if os.path.exists(os.path.join(self.tartanair_data_root, 'ArchVizTinyHouseDayExposure', 'Data_hard', 'P000',  'image_lcam_front')):
+            print(Fore.GREEN + "..Data found." + Style.RESET_ALL)
+        else:
+            print(Fore.RED + "..Data not found. Downloading." + Style.RESET_ALL)
+            # Request the download.
+            envs = ["ArchVizTinyHouseDayExposure"]
+
+            ta.download(env = envs, difficulty = ['hard'], trajectory_id = ["P000"],  modality = ['image', 'pose'],  camera_name = ['lcam_front'])
+
+        # Get the data listing.
+        available_envs = ta.list_envs()
+        assert "ArchVizTinyHouseDayExposure" in available_envs['local']
+
+        print(Fore.GREEN + "..Env listing OK." + Style.RESET_ALL)
+
+    ############################
+    # Test Evaluation.
+    ############################
+    def test_evaluation(self):
+
+        # Initialize tartanair.
+        ta.init(self.tartanair_data_root, self.azure_token)
+
+        # Check that we have the data.
+        if os.path.exists(os.path.join(self.tartanair_data_root, 'ArchVizTinyHouseDayExposure', 'Data_hard', 'P000',  'pose_lcam_front.txt')):
+            print(Fore.GREEN + "..Data found." + Style.RESET_ALL)
+
+        else:
+            print(Fore.RED + "..Data not found. Downloading." + Style.RESET_ALL)
+            # Request the download.
+            envs = ["ArchVizTinyHouseDayExposure"]
+
+            ta.download(env = envs, difficulty = ['hard'], trajectory_id = ["P000"],  modality = ['pose'],  camera_name = ['lcam_front'])
+
+
+        # Create an example trajectory. This is a noisy version of the ground truth trajectory.
+        env = 'ArchVizTinyHouseDayExposure'
+        difficulty = 'hard'
+        trajectory_id = 'P000'
+        camera_name = 'lcam_front'
+        gt_traj = ta.get_traj_np(env, difficulty, trajectory_id, camera_name)
+        est_traj = np.zeros_like(gt_traj)
+        est_traj[:, :3] = gt_traj[:, :3] + np.random.normal(0, 0.2, gt_traj[:, :3].shape)  
+        est_traj[:, 3:] = gt_traj[:, 3:] + np.random.normal(0, 0.01, gt_traj[:, 3:].shape)
+
+        # Get the evaluation results.
+        plot_out_path = "evaluator_example.png"
+        results0 = ta.evaluate_traj(est_traj, env = env, 
+                                   difficulty = difficulty, 
+                                   trajectory_id = trajectory_id, 
+                                   camera_name = camera_name, 
+                                   enforce_length = True, 
+                                   plot = True, 
+                                   plot_out_path = plot_out_path, 
+                                   do_scale = True, 
+                                   do_align = True)
+
+        # Optionally pass the ground truth trajectory directly to the evaluation function.
+        results1 = ta.evaluate_traj(est_traj, gt_traj = gt_traj, enforce_length = True, plot = True, plot_out_path = plot_out_path, do_scale = True, do_align = True)
+
+        # Check that the results are the same.
+        assert results0['ate'] == results1['ate']
+
+        print(Fore.GREEN + "..Evaluation OK." + Style.RESET_ALL)
 
 if __name__ == '__main__':
     unittest.main()

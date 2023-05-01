@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "tartanair"
-version = "1.0.1"
+version = "1.0.2"
 authors = [
   { name="Yorai Shaoul", email="yorai@cmu.edu" },
   { name="Wenshan Wang", email="wenshanw@cs.cmu.edu " } 
@@ -34,6 +34,7 @@ dependencies = [
     "scipy",
     "torchvision",
     "pyyaml",
+    "pandas"
     ]
 
 [project.urls]
