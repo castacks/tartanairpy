@@ -32,10 +32,9 @@ dependencies = [
     "pytransform3d",
     "PyYAML",
     "scipy",
-    "torchvision",
     "pyyaml",
     "pandas"
     ]
 
 [project.urls]
-"Homepage" = "http://theairlab.org/tartanair-dataset/"
+"Homepage" = "https://tartanair.org"
