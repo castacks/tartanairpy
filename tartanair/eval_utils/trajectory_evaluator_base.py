@@ -25,7 +25,7 @@ class TrajectoryEvaluatorBase():
 
         # Set up the plot directory.
         if not plot_gfp :
-            self.plot_gfp  = os.path.dirname(est_traj)
+            self.plot_gfp  = "./"
         else:
             self.plot_gfp  = plot_gfp
 

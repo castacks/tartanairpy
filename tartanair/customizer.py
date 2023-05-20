@@ -24,7 +24,7 @@ from .tartanair_module import TartanAirModule
 # Image resampling.
 from .image_resampling.image_sampler import SixPlanarNumba
 
-from .image_resampling.mvs_utils.camera_models import Pinhole, DoubleSphere, LinearSphere, Equirectangular
+from .image_resampling.mvs_utils.camera_models import Pinhole, DoubleSphere, LinearSphere, Equirectangular, PinholeRadTanFast, EUCM
 from .image_resampling.mvs_utils.shape_struct import ShapeStruct
 from .image_resampling.image_sampler.blend_function import BlendBy2ndOrderGradTorch
 
@@ -37,7 +37,12 @@ class TartanAirCustomizer(TartanAirModule):
         self.data_root = tartanair_data_root
 
         # Available camera models.
-        self.camera_model_name_to_class = {'pinhole': Pinhole, 'doublesphere': DoubleSphere, 'linearsphere': LinearSphere, 'equirect': Equirectangular}
+        self.camera_model_name_to_class = {'pinhole': Pinhole, 
+                                           'doublesphere': DoubleSphere, 
+                                           'linearsphere': LinearSphere, 
+                                           'equirect': Equirectangular,
+                                           'radtan': PinholeRadTanFast,
+                                           'eucm': EUCM}
 
     def customize(self, env, difficulty = [], trajectory_id = [], modality = [], new_camera_models_params = [], R_raw_new = np.eye(4), num_workers = 1, device = 'cpu'):
         ###############################
