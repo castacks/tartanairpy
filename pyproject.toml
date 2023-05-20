@@ -35,7 +35,8 @@ dependencies = [
     "pyyaml",
     "pandas",
     "imageio",
-    "einops"
+    "einops",
+    "tqdm"
     ]
 
 [project.urls]
