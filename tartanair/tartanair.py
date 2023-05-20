@@ -105,8 +105,9 @@ def customize(env, difficulty, trajectory_id, modality, new_camera_models_params
 
     * 'pinhole': A pinhole camera model.
     * 'doublesphere': A wide-angle camera model with a double sphere distortion model. Source: https://arxiv.org/abs/1807.08957
-    * 'linearsphere': A wide-angle camera model with a custom "linear sphere" distortion model.
+    * 'linearsphere': A wide-angle camera model with a custom "linear sphere" distortion model. There is a constant azimuth/elevation delta between vertical/horizontal lines.
     * 'equirect': An equirectangular camera model.
+    * 'eucm': Enhanced Unified Camera Model. Source: https://ieeexplore.ieee.org/document/7342909
     
     :param env: The environment to customize. Can be a list of environments.
     :type env: str or list
@@ -118,7 +119,7 @@ def customize(env, difficulty, trajectory_id, modality, new_camera_models_params
     :type modality: str or list
     :param new_camera_models_params: A list of dictionaries containing the parameters for the new camera models. Each dictionary should contain the following keys:
             
-        * `name`: The name of the camera model. Valid camera models are: `pinhole`, `doublesphere`, `linearsphere`, `equirect`.
+        * `name`: The name of the camera model. Valid camera models are: `pinhole`, `doublesphere`, `linearsphere`, `equirect`, `eucm`.
         * `raw_side`: The raw camera side. Can be one of `left`, `right`.
         * `R_raw_new`: The rotation matrix from the raw camera frame, with z pointing out of the image frame, x right, y down, to the new camera frame.
         * `params`: A dictionary containing the parameters for the new camera model. The parameters for each camera model are:
@@ -126,6 +127,8 @@ def customize(env, difficulty, trajectory_id, modality, new_camera_models_params
             * `doublesphere`: `fx`, `fy`, `cx`, `cy`, `height`, `width`, `xi`, `alpha`, `fov_degree`.
             * `linearsphere`: `fx`, `fy`, `cx`, `cy`, `height`, `width`, `fov_degree`.
             * `equirect`: `height`, `width`.
+            * `eucm`: `fx`, `fy`, `cx`, `cy`, `height`, `width`, `alpha`, `beta`, `fov_degree`.
+            
     :type new_camera_models_params: list
     :param num_workers: The number of workers to use for the customizer. Default is 1.
     :type num_workers: int

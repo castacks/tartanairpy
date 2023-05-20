@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "tartanair"
-version = "1.0.2"
+version = "1.0.4"
 authors = [
   { name="Yorai Shaoul", email="yorai@cmu.edu" },
   { name="Wenshan Wang", email="wenshanw@cs.cmu.edu " } 
@@ -33,7 +33,9 @@ dependencies = [
     "PyYAML",
     "scipy",
     "pyyaml",
-    "pandas"
+    "pandas",
+    "imageio",
+    "einops"
     ]
 
 [project.urls]
