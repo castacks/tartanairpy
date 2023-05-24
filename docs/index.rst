@@ -30,3 +30,4 @@ All the environments have recorded trajectories that were designed to be challen
    installation
    examples
    usage
+   troubleshooting
