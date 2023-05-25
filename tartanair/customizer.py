@@ -10,6 +10,7 @@ from multiprocessing import Pool
 import multiprocessing
 import os
 import time
+from colorama import Fore, Style
 import cv2
 import numpy as np
 from scipy.spatial.transform import Rotation
@@ -151,6 +152,10 @@ class TartanAirCustomizer(TartanAirModule):
             if self.env_folders and env_name not in self.env_folders:
                 continue
             for rel_traj_path in env_trajs: 
+                # Proceed only if the trajectory is in the list of trajectories to be processed.
+                if trajectory_id and rel_traj_path.split("/")[-1] not in trajectory_id:
+                    continue
+
                 traj_path = os.path.join(tartanair_path, env_name, rel_traj_path)
 
                 # For this trajectory folder, create the appropriate folders for each new data input and populate those with resampled images.
@@ -382,8 +387,8 @@ class TartanAirCustomizer(TartanAirModule):
                 # Iterate trajectory.
                 if not trajectory_id:
                     diff_path = os.path.join(self.data_root, env_folder, difficulty_folder)
-                    trajectory_id = os.listdir(diff_path)                
-                for traj_id_folder in trajectory_id:
+                    env_trajectory_id = os.listdir(diff_path)                
+                for traj_id_folder in env_trajectory_id:
 
                     # Iterate modality.
                     if not modality:
