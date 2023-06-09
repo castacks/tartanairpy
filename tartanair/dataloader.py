@@ -9,7 +9,6 @@ Output batches will be of the form:
 '''
 
 # TODO(yoraish): there is a notation discrepancy between 'rgb' and 'image'. Should fix this and probably stick with 'image' as this is the name used in the dataset. 
-# TODO(yoraish): support naming between 'imu_acc' and 'imu_gyro' etc. Currently only 'imu' is supported and is mapped to 'imu_acc'.
 
 # General imports.
 import os
@@ -34,6 +33,8 @@ class TartanAirDataLoader(TartanAirModule):
             'image': 'rgb',
             'imu': 'imu_acc',
             'imu_acc': 'imu_acc',
+            'imu_gyro': 'imu_gyro',
+            'imu_time': 'imu_time',
             'depth': 'depth',
             'lidar': 'lidar',
             'pose': 'pose',
@@ -49,6 +50,8 @@ class TartanAirDataLoader(TartanAirModule):
             'flow': 1,
             'pose': 1,
             'imu_acc': 10,
+            'imu_gyro': 10,
+            'imu_time': 10,
             'lidar': 1,
         }
 
@@ -59,6 +62,8 @@ class TartanAirDataLoader(TartanAirModule):
             'flow': [640, 640],
             'pose': [7],
             'imu_acc': [3],
+            'imu_gyro': [3],
+            'imu_time': [1],
             'lidar': [3],
         }
 

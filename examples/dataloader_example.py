@@ -22,24 +22,13 @@ ta.init(tartanair_data_root)
 
 # Specify the environments, difficulties, and trajectory ids to load.
 envs = [
-"AbandonedCableExposure",
-"AbandonedFactoryExposure",
-"AbandonedSchoolExposure",
-"AmericanDinerExposure",
-"ArchVizTinyHouseDayExposure",
-"CarweldingExposure",
-"HQWesternSaloonExposure",
-"JapaneseCityExposure",
-"MiddleEastExposure",
-"ModularNeighborhoodIntExt",
-"OldScandinaviaExposure",
-"ShoreCavesExposure",
+    "ArchVizTinyHouseDayExposure",
 ]
 difficulties = []
 trajectory_ids = ['P000']
 
 # Specify the modalities to load.
-modalities = ['image', 'depth', 'pose']
+modalities = ['image', 'pose', 'imu_gyro', 'imu_time']
 camnames = ['lcam_front', 'lcam_left', 'lcam_right', 'lcam_back', 'lcam_top', 'lcam_bottom']
 
 # Specify dataloader configuration. The dataloader operates in the following way:
@@ -50,9 +39,9 @@ camnames = ['lcam_front', 'lcam_left', 'lcam_right', 'lcam_back', 'lcam_top', 'l
 new_image_shape_hw = [640, 640] # If None, no resizing is performed. If a value is passed, then the image is resized to this shape.
 subset_framenum = 200 # This is the number of frames in a subset. Notice that this is an upper bound on the batch size. Ideally, make this number large to utilize your RAM efficiently. Information about the allocated memory will be provided in the console.
 frame_skip = 0 # This is the number of frames to skip between each frame. For example, if the frame skip is 2 and the sequence length is 3, then the dataloader will load frames [0, 3, 6], [1, 4, 7], [2, 5, 8], etc.
-seq_length = {'image': 2, 'depth': 1, 'pose': 2} # This is the length of the data-sequences. For example, if the sequence length is 2, then the dataloader will load pairs of images.
+seq_length = {'image': 2, 'pose': 2, 'imu_gyro': 10, 'imu_time': 10} # This is the length of the data-sequences. For example, if the sequence length is 2, then the dataloader will load pairs of images.
 seq_stride = 1 # This is the stride between the data-sequences. For example, if the sequence length is 2 and the stride is 1, then the dataloader will load pairs of images [0,1], [1,2], [2,3], etc. If the stride is 2, then the dataloader will load pairs of images [0,1], [2,3], [4,5], etc.
-batch_size = 16 # This is the number of data-sequences in a mini-batch.
+batch_size = 4 # This is the number of data-sequences in a mini-batch.
 num_workers = 8 # This is the number of workers to use for loading the data.
 shuffle = True # Whether to shuffle the data. Let's set this to False for now, so that we can see the data loading in a nice video. Yes it is nice don't argue with me please. Just look at it! So nice. :)\
 
@@ -102,19 +91,6 @@ for i in range(1000):
 
     # Show the image cross.
     cv2.imshow('cross', cross)
-    cv2.imwrite('cross.png', cross)
-    cv2.waitKey(0)
-
-
-    images = []
-    for b in range(batch['rgb_lcam_front'].shape[0]):
-        images.append(batch['rgb_lcam_front'][b][0])
-    # Visualize the images.
-    outimg = np.concatenate(images, axis=1)
-    outimg = cv2.resize(outimg, (outimg.shape[1]//4, outimg.shape[0]//4))
-    cv2.imshow('outimg', outimg)
     cv2.waitKey(1)
-    
-    
-        
+
 dataloader.stop_cachers()
