@@ -8,7 +8,7 @@ Output batches will be of the form:
 
 '''
 
-# TODO(yoraish): there is a notation discrepancy between 'rgb' and 'image'. Should fix this and probably stick with 'image' as this is the name used in the dataset. 
+# TODO(yoraish): there is a notation discrepancy between 'rgb' and 'image'. Should fix this and probably stick with 'image' as this is the name used in the dataset.
 # TODO(yoraish): support naming between 'imu_acc' and 'imu_gyro' etc. Currently only 'imu' is supported and is mapped to 'imu_acc'.
 
 # General imports.
@@ -22,7 +22,7 @@ from .data_cacher.MultiDatasets import MultiDatasets
 
 class TartanAirDataLoader(TartanAirModule):
     '''
-    The TartanAirDataset class contains the _information_ about the TartanAir dataset, and implements no functionality. All functionalities are implemented in inherited classes like the TartanAirDownloader, and the interface is via the TartanAir class.   
+    The TartanAirDataset class contains the _information_ about the TartanAir dataset, and implements no functionality. All functionalities are implemented in inherited classes like the TartanAirDownloader, and the interface is via the TartanAir class.
     '''
     def __init__(self, tartanair_data_root):
         # Call the parent class constructor.
@@ -62,12 +62,12 @@ class TartanAirDataLoader(TartanAirModule):
             'lidar': [3],
         }
 
-    def get_data_cacher(self, 
-                        env, 
-                        difficulty = None, 
-                        trajectory_id = None, 
-                        modality = None, 
-                        camera_name = None, 
+    def get_data_cacher(self,
+                        env,
+                        difficulty = None,
+                        trajectory_id = None,
+                        modality = None,
+                        camera_name = None,
                         new_image_shape_hw = [640, 640],
                         subset_framenum = 56, # <--- Note in the docs that this is an upper bound on the batch size.
                         seq_length = 1, # This can also be a dictionary, mapping each modality name to a sequence length.
@@ -75,7 +75,7 @@ class TartanAirDataLoader(TartanAirModule):
                         frame_skip = 0,
                         batch_size=1,
                         num_workers=1,
-                        shuffle=False, 
+                        shuffle=False,
                         verbose=False,):
 
         '''
@@ -140,6 +140,13 @@ class TartanAirDataLoader(TartanAirModule):
             print("Building data cacher for env {}...".format(env_name))
             # If no difficulty was given, then use all difficulties.
             if not difficulty:
+                difficulty = []
+                for diff in ['easy', 'hard']:
+                    tartanair_diff_path = os.path.join(self.tartanair_data_root, env_name, 'Data_' + diff)
+                    if os.path.isdir(tartanair_diff_path):
+                        difficulty.append(tartanair_diff_path)
+                    else:
+                        raise ValueError("No data found for env {} and difficulty {}. Please check the path to the TartanAir dataset.".format(env_name, diff))
                 available_diffs = [diff for diff in ['easy', 'hard'] if os.path.isdir(os.path.join(self.tartanair_data_root, env_name, 'Data_' + diff))]
                 print([os.path.join(self.tartanair_data_root, env_name, 'Data_' + diff) for diff in ['easy', 'hard']])
                 print(Fore.GREEN + "WARNING: No difficulty was specified for env {}. Defaulting to all available difficulties: {}".format(env_name, available_diffs),  Style.RESET_ALL)
@@ -158,9 +165,9 @@ class TartanAirDataLoader(TartanAirModule):
                         if traj_id not in available_traj_ids:
                             print(Fore.RED + "WARNING: Trajectory id {} was specified for env {} and difficulty {}, but it is not available. It is skipped.".format(traj_id, env_name, diff),  Style.RESET_ALL)
                     available_traj_ids = [traj_id for traj_id in available_traj_ids if traj_id in trajectory_id]
-                
+
                 for traj_id in available_traj_ids:
-                    # Build the data entry.         
+                    # Build the data entry.
 
                     # Read the data specification file and concatenate it to the data spec file.
                     with open(data_spec_fpath, 'a') as f:
@@ -201,9 +208,9 @@ class TartanAirDataLoader(TartanAirModule):
 
         print(config)
         # Create the data loader from the config.
-        trainDataloader = MultiDatasets(config, 
-                        'local', 
-                        batch= batch_size, 
+        trainDataloader = MultiDatasets(config,
+                        'local',
+                        batch= batch_size,
                         workernum= num_workers,
                         shuffle= shuffle,
                         verbose= verbose)
@@ -233,7 +240,7 @@ class TartanAirDataLoader(TartanAirModule):
 
                     else:
                         pseudo_traj_spec_list.append(numless_header + str(len(lines) - i) + '\n')
-                
+
                 # Append the line.
                 pseudo_traj_spec_list.append(lines[i])
 
@@ -269,13 +276,13 @@ class TartanAirDataLoader(TartanAirModule):
                 modality_entry['cacher_size'] = new_image_shape_hw
             else: # 'lidar', 'imu', 'pose', etc.
                 modality_entry['cacher_size'] = self.modality_default_cacher_size[mod]
-            
+
             modality_entry['length'] = seq_length[mod]
             modality_entry['subset_framenum'] = subset_framenum
 
             # Add the modality entry to the data entry.
             data_entry['modality'][type] = modality_entry
-            data_entry['modality'][type]['type'] = type    
+            data_entry['modality'][type]['type'] = type
 
 
     def get_available_trajectory_ids(self, env_name, diff):
