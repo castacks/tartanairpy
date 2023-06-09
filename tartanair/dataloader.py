@@ -32,7 +32,7 @@ class TartanAirDataLoader(TartanAirModule):
         self.modality_name_remaps = {
             'rgb': 'rgb',
             'image': 'rgb',
-            'imu': 'imu_acc',
+            'imu_gyro': 'imu_gyro',
             'imu_acc': 'imu_acc',
             'depth': 'depth',
             'lidar': 'lidar',
@@ -48,6 +48,7 @@ class TartanAirDataLoader(TartanAirModule):
             'seg': 1,
             'flow': 1,
             'pose': 1,
+            'imu_gyro': 10,
             'imu_acc': 10,
             'lidar': 1,
         }
@@ -58,6 +59,7 @@ class TartanAirDataLoader(TartanAirModule):
             'seg': [640, 640],
             'flow': [640, 640],
             'pose': [7],
+            'imu_gyro': [3],
             'imu_acc': [3],
             'lidar': [3],
         }
