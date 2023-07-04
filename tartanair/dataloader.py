@@ -39,7 +39,9 @@ class TartanAirDataLoader(TartanAirModule):
             'lidar': 'lidar',
             'pose': 'pose',
             'seg': 'seg',
-            'flow': 'flow'
+            'flow': 'flow',
+            'cam_time': 'cam_time',
+            'imu_pos': 'imu_pos'
         }
 
 
@@ -53,6 +55,8 @@ class TartanAirDataLoader(TartanAirModule):
             'imu_gyro': 10,
             'imu_time': 10,
             'lidar': 1,
+            'cam_time': 1,
+            'imu_pos': 10
         }
 
         self.modality_default_cacher_size = {
@@ -64,6 +68,7 @@ class TartanAirDataLoader(TartanAirModule):
             'imu_acc': [3],
             'imu_gyro': [3],
             'imu_time': [1],
+            'imu_pos': [3],
             'lidar': [3],
         }
 
