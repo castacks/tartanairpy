@@ -13,6 +13,7 @@ import time
 from colorama import Fore, Style
 import cv2
 import numpy as np
+import pandas as pd
 from scipy.spatial.transform import Rotation
 
 # PyTorch imports.
@@ -25,7 +26,7 @@ from .tartanair_module import TartanAirModule
 # Image resampling.
 from .image_resampling.image_sampler import SixPlanarNumba
 
-from .image_resampling.mvs_utils.camera_models import Pinhole, DoubleSphere, LinearSphere, Equirectangular, PinholeRadTanFast, EUCM
+from .image_resampling.mvs_utils.camera_models import Pinhole, DoubleSphere, LinearSphere, Equirectangular, PinholeRadTanFast, EUCM, CameraModel
 from .image_resampling.mvs_utils.shape_struct import ShapeStruct
 from .image_resampling.image_sampler.blend_function import BlendBy2ndOrderGradTorch
 
@@ -387,7 +388,10 @@ class TartanAirCustomizer(TartanAirModule):
                 # Iterate trajectory.
                 if not trajectory_id:
                     diff_path = os.path.join(self.data_root, env_folder, difficulty_folder)
-                    env_trajectory_id = os.listdir(diff_path)                
+                    env_trajectory_id = os.listdir(diff_path)
+                else:
+                    env_trajectory_id = trajectory_id
+
                 for traj_id_folder in env_trajectory_id:
 
                     # Iterate modality.
@@ -469,7 +473,8 @@ class TartanAirCustomizer(TartanAirModule):
         return image
 
     def read_rgb(self, fn ):
-        return self.ocv_read(fn)
+        img = self.ocv_read(fn)
+        return cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 
     def read_dist(self, fn ): # read a depth image and convert it to distance
         depth = self.read_dep(fn)
