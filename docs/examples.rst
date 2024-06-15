@@ -20,11 +20,11 @@ Download via Python API
     ta.init(tartanair_data_root)
 
     # Download a trajectory.
-    ta.download(env = "DesertGasStationExposure", 
+    ta.download(env = "DesertGasStation", 
                 difficulty = ['easy', 'hard'], 
-                trajectory_id = ["P000", "P002"],  
                 modality = ['image', 'depth'],  
-                camera_name = ['lcam_front'])
+                camera_name = ['lcam_front'],
+                unzip = True)
 
 
 Download via a yaml config file
@@ -37,11 +37,11 @@ The config file if of the following format:
 
 .. code-block:: yaml
 
-    env: ['DesertGasStationExposure']
+    env: ['DesertGasStation']
     difficulty: ['easy']
-    trajectory_id: ['P000', 'P002']
     modality: ['image']
     camera_name: ['lcam_front']
+    unzip: True
 
 Customization Example
 -------------------------------------

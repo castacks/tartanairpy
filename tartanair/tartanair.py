@@ -25,7 +25,7 @@ slowloader = None
 # Flag for initialization.
 is_init = False
 
-def init(tartanair_root, azure_token = None):
+def init(tartanair_root):
     """
     Initialize the TartanAir toolbox. Call this method before using any other method in the toolbox.
 
@@ -38,7 +38,7 @@ def init(tartanair_root, azure_token = None):
 
     global downloader
     # If a token is provided, use it. Otherwise, let the downloader use self.azure_token from the parent class.
-    downloader = TartanAirDownloader(tartanair_data_root, azure_token = azure_token)
+    downloader = TartanAirDownloader(tartanair_data_root)
 
     global dataset
     dataset = TartanAirDataset(tartanair_data_root)
@@ -76,7 +76,7 @@ def init(tartanair_root, azure_token = None):
     return True
     
 
-def download(env = [], difficulty = [], trajectory_id = [], modality = [], camera_name = [], config = None):
+def download(env = [], difficulty = [], trajectory_id = [], modality = [], camera_name = [], config = None, unzip = False):
     """
     Download data from the TartanAir dataset. This method will download the data from the Azure server and store it in the `tartanair_root` directory.
 
@@ -97,7 +97,7 @@ def download(env = [], difficulty = [], trajectory_id = [], modality = [], camer
 
     global downloader
     check_init()
-    downloader.download(env, difficulty, trajectory_id, modality, camera_name, config)
+    downloader.download(env, difficulty, modality, camera_name, config, unzip)
 
 def customize(env, difficulty, trajectory_id, modality, new_camera_models_params = [{}], num_workers = 1, device = "cpu"):
     """
