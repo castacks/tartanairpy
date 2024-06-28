@@ -31,3 +31,8 @@ All the environments have recorded trajectories that were designed to be challen
    examples
    usage
    troubleshooting
+
+License
+==========================================================
+
+Similar to `TartanAir V1 <https://theairlab.org/tartanair-dataset/>`_, the TartanAir V2 dataset is licensed under a `Creative Commons Attribution 4.0 International License <https://creativecommons.org/licenses/by/4.0/>`_ and the toolkit is licensed under a `BSD-3-Clause License <https://opensource.org/license/BSD-3-Clause>`_.
