@@ -45,6 +45,8 @@ class TartanAirCustomizer(TartanAirModule):
                                            #'radtan': PinholeRadTanFast,
                                            #'eucm': EUCM
                                            }
+        
+        self.depth_shape = None
 
     def customize(self, env, difficulty = [], trajectory_id = [], modality = [], new_camera_models_params = [], R_raw_new = np.eye(4), num_workers = 1, device = 'cpu'):
         ###############################

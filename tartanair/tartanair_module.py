@@ -34,6 +34,8 @@ class TartanAirModule():
                             'rcam_fish',
                             'rcam_equirect']
 
+        self.camera_directions = ["front", "right", "back", "left", "top", "bottom"]
+
         self.modality_names = ['image', 'depth', 'seg', 'imu', 'lidar', 'flow']
 
         self.env_names = [
