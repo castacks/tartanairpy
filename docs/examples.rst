@@ -221,3 +221,28 @@ TartanAir also provides tools for evaluating estimated trajectories against the 
     # Or pass the environment, difficulty, and trajectory id to the evaluation function.
     plot_out_path = "evaluator_example_plot.png"
     results = ta.evaluate_traj(est_traj, env, difficulty, trajectory_id, camera_name, enforce_length = True, plot = True, plot_out_path = plot_out_path, do_scale = True, do_align = True)
+
+Flow Sampling Example
+-------------------------------------
+
+TartanAir V2 also includes a power dense correspondense sampling tool that can be used to calculate desnse correspondences between any points in the same environment. 
+
+
+The tool supports sampling dense correspondence between any combination of pinhole, fisheye(doublesphere), and equirectangular cameras. Yes, you can sample dense correspondences between different camera models such as pinhole and equirectangular.
+
+
+Given a pair of RGB and depth image cubes and two direction, the tool will compute dense correspondense represented as optical flow and a occlusion mask signaling is the pixel directly observable.
+
+Please refer to flow_sampling_example.py for a complete example.
+
+.. image:: images/flow_sampling/flow_sampling_example.png
+   :alt: Algorithm
+   :align: center
+   :width: 80%
+
+To learn more about how the resampling happens, see `Flow Sampling <flow_sampling_label>`_.
+
+.. toctree::
+   :maxdepth: 1
+
+   flow_sampling

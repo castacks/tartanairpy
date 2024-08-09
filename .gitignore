@@ -129,8 +129,6 @@ dmypy.json
 .pyre/
 
 # Images.
-*.png
-*.jpg
 
 # Sphinx documentation.
 docs/_build/
