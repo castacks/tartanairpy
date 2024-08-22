@@ -245,7 +245,7 @@ class TartanAirDownloader(TartanAirModule):
             os.system(cmd)
         print_highlight("Unzipping Completed! ")
             
-    def download(self, env = [], difficulty = [], modality = [], camera_name = [], config = None, unzip = False, **kwargs):
+    def download(self, env = [], difficulty = [], modality = [], camera_name = [], config = None, unzip = False, download = True, **kwargs):
         """
         Downloads a trajectory from the TartanAir dataset. A trajectory includes a set of images and a corresponding trajectory text file describing the motion.
 
@@ -283,27 +283,32 @@ class TartanAirDownloader(TartanAirModule):
             
         # Check that the environments are valid.
         if not self.check_env_valid(env):
-            return False
+            return False, None
         # Check that the modalities are valid
         if not self.check_modality_valid(modality):
-            return False
+            return False, None
         # Check that the difficulty are valid
         if not self.check_difficulty_valid(difficulty):
-            return False
+            return False, None
         # Check that the camera names are valid
         if not self.check_camera_valid(camera_name):
-            return False
+            return False, None
 
         zipfilelist = self.generate_filelist(env, difficulty, modality, camera_name)
-        # import ipdb;ipdb.set_trace()
         if not self.doublecheck_filelist(zipfilelist):
-            return False
+            return False, None
 
-        suc, targetfilelist = self.downloader.download(zipfilelist, self.tartanair_data_root)
-        if suc:
-            print_highlight("Download completed! Enjoy using TartanAir!")
+        if download:
+            suc, targetfilelist = self.downloader.download(zipfilelist, self.tartanair_data_root)
+            if suc:
+                print_highlight("Download completed! Enjoy using TartanAir!")
 
-        if unzip:
-            self.unzip_files(targetfilelist)
+            if unzip:
+                self.unzip_files(targetfilelist)
+        else:
+            targetfilelist = []
+            for source_file_name in zipfilelist:
+                target_file_name = source_file_name.replace('/', '_')
+                targetfilelist.append(target_file_name)
 
-        return True
+        return True, targetfilelist
