@@ -11,6 +11,7 @@ from colorama import Fore, Style
 
 # Local imports.
 from .tartanair_module import TartanAirModule
+from os.path import isdir, join
 
 class TartanAirLister(TartanAirModule):
     def __init__(self, tartanair_data_root):
@@ -22,6 +23,7 @@ class TartanAirLister(TartanAirModule):
         '''
         # Get the local environments.
         local_envs = os.listdir(self.tartanair_data_root)
+        local_envs = [pp for pp in local_envs if isdir(join(self.tartanair_data_root, pp))]
 
         # Get the remote environments.
         remote_envs = self.env_names

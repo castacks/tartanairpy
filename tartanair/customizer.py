@@ -21,13 +21,15 @@ import torch.multiprocessing as mp
 
 # Local imports.
 from .tartanair_module import TartanAirModule
+from .reader import TartanAirImageReader
 
 # Image resampling.
-from .image_resampling.image_sampler import SixPlanarNumba
+from .image_resampling.image_sampler import SixPlanarNumba, SixPlanarTorch
 
 from .image_resampling.mvs_utils.camera_models import Pinhole, DoubleSphere, LinearSphere, Equirectangular #, PinholeRadTanFast, EUCM
 from .image_resampling.mvs_utils.shape_struct import ShapeStruct
-from .image_resampling.image_sampler.blend_function import BlendBy2ndOrderGradTorch
+from .image_resampling.mvs_utils.ftensor import FTensor
+from .image_resampling.image_sampler.blend_function import BlendBy2ndOrderGradTorch, BlendBy2ndOrderGradOcv
 
 class TartanAirCustomizer(TartanAirModule):
     def __init__(self, tartanair_data_root):
@@ -136,9 +138,10 @@ class TartanAirCustomizer(TartanAirModule):
 
 
         # Some mappings between attributes and parameters.
-        modality_to_reader = {"image": self.read_rgb, "depth": self.read_dist, "seg": self.read_seg}
+        self.reader = TartanAirImageReader()
+        modality_to_reader = {"image": self.reader.read_bgr, "depth": self.reader.read_dist, "seg": self.reader.read_seg}
         modality_to_interpolation = {"image": "linear", "seg": "nearest", "depth": "blend"}
-        modality_to_writer = {"image": self.write_as_is, "seg": self.write_as_is, "depth": self.write_float_depth}
+        modality_to_writer = {"image": self.reader.write_as_is, "seg": self.reader.write_as_is, "depth": self.reader.write_float_depth}
         
         ###############################
         # Enumerate the trajectories.
@@ -293,10 +296,14 @@ class TartanAirCustomizer(TartanAirModule):
     def sample_image_worker(self, argslist): 
         frame_ix, new_cam_model_object, R_raw_new, modality, new_cam_model_name, cam_name, side_to_frame_gfps, new_data_dir_path, modality_to_reader, modality_to_interpolation, modality_to_writer = argslist
 
-        sampler = SixPlanarNumba(new_cam_model_object.fov_degree, new_cam_model_object, R_raw_new)
+        # sampler = SixPlanarNumba(new_cam_model_object.fov_degree, new_cam_model_object, R_raw_new)
+        R_raw_new = FTensor(R_raw_new, f0='raw', f1='fisheye', rotation=True) # TODO: double check
+        sampler = SixPlanarTorch(new_cam_model_object, R_raw_new)
+        # sampler = SixPlanarNumba(new_cam_model_object, R_raw_new)
+
         sampler.device = self.device
         create_figures = False
-
+        
         raw_images = {}
         for side in ['front', 'back', 'left', 'right', 'top', 'bottom']:
             # Revert to below:
@@ -318,13 +325,13 @@ class TartanAirCustomizer(TartanAirModule):
                     cv2.putText(img, side, (280, 320), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
                 
                 raw_images[side] = img
-
+        
         # Resample the six raw images to the new camera model.
         if modality_to_interpolation[modality] == "blend":
             blend_func = BlendBy2ndOrderGradTorch(0.01) # hard code
             new_image, new_image_valid_mask = sampler.blend_interpolation(raw_images, blend_func, invalid_pixel_value=0)  
         else:
-            new_image, new_image_valid_mask = sampler(raw_images, interpolation= modality_to_interpolation[modality])
+            new_image, new_image_valid_mask = sampler(raw_images, interpolation= modality_to_interpolation[modality], invalid_pixel_value=0)
 
         # Write the new image.
         out_fn = str(frame_ix).zfill(6) + "_{}_{}_{}.png".format(cam_name, modality, new_cam_model_name)
@@ -390,8 +397,8 @@ class TartanAirCustomizer(TartanAirModule):
                 # Iterate trajectory.
                 if not trajectory_id:
                     diff_path = os.path.join(self.data_root, env_folder, difficulty_folder)
-                    env_trajectory_id = os.listdir(diff_path)                
-                for traj_id_folder in env_trajectory_id:
+                    trajectory_id = os.listdir(diff_path)                
+                for traj_id_folder in trajectory_id:
 
                     # Iterate modality.
                     if not modality:
@@ -415,101 +422,3 @@ class TartanAirCustomizer(TartanAirModule):
                         print("Success: {env_folder}/{difficulty_folder}/{traj_id_folder} All files are available for {modality} on {raw_side} side.".format(env_folder = env_folder, difficulty_folder = difficulty_folder, traj_id_folder = traj_id_folder, modality = modality, raw_side = raw_side))
             
         return True
-
-    ###############################
-    # Data enumeration.
-    ###############################
-    def enumerate_trajs(self, data_folders = ['Data_easy','Data_hard']):
-        '''
-        Return a dict:
-            res['env0']: ['Data_easy/P000', 'Data_easy/P001', ...], 
-            res['env1']: ['Data_easy/P000', 'Data_easy/P001', ...], 
-        '''
-        env_folders = os.listdir(self.data_root)    
-        env_folders = [ee for ee in env_folders if os.path.isdir(os.path.join(self.data_root, ee))]
-        env_folders.sort()
-        trajlist = {}
-        for env_folder in env_folders:
-            env_dir = os.path.join(self.data_root, env_folder)
-            trajlist[env_folder] = []
-            for data_folder in data_folders:
-                datapath = os.path.join(env_dir, data_folder)
-                if not os.path.isdir(datapath):
-                    continue
-
-                trajfolders = os.listdir(datapath)
-                trajfolders = [ os.path.join(data_folder, tf) for tf in trajfolders if tf[0]=='P' ]
-                trajfolders.sort()
-                trajlist[env_folder].extend(trajfolders)
-        return trajlist
-
-    ###############################
-    # Data reading, writing, and processing.
-    ###############################
-    def depth_to_dist(self, depth):
-        '''
-        assume: fov = 90 on both x and y axes, and optical center is at image center.
-        '''
-        # import ipdb;ipdb.set_trace()
-        if self.depth_shape is None or \
-            depth.shape != self.depth_shape or \
-            self.conv_matrix is None: # only calculate once if the depth shape has not changed
-            hh, ww = depth.shape
-            f = ww/2
-            wIdx = np.linspace(0, ww - 1, ww, dtype=np.float32) + 0.5 - ww/2 # put the optical center at the middle of the image
-            hIdx = np.linspace(0, hh - 1, hh, dtype=np.float32) + 0.5 - hh/2 # put the optical center at the middle of the image
-            u, v = np.meshgrid(wIdx, hIdx)
-            dd = np.sqrt(u * u + v * v + f * f)/f
-            self.conv_matrix = dd
-        self.depth_shape = depth.shape
-        disp = self.conv_matrix * depth
-        return disp
-
-    def ocv_read(self, fn ):
-        image = cv2.imread(fn, cv2.IMREAD_UNCHANGED)
-        assert image is not None, \
-            f'{fn} read error. '
-        return image
-
-    def read_rgb(self, fn ):
-        return self.ocv_read(fn)
-
-    def read_dist(self, fn ): # read a depth image and convert it to distance
-        depth = self.read_dep(fn)
-        return self.depth_to_dist(depth)
-
-    def read_dep(self, fn ):
-        image = self.ocv_read(fn)
-        depth = np.squeeze( image.view('<f4'), axis=-1 )
-        return depth
-
-    def vis_dep(self, fn):
-        depth = self.read_dep(fn)
-        depthvis = np.clip(1/depth * 400, 0, 255).astype(np.uint8)
-        return cv2.applyColorMap(depthvis, cv2.COLORMAP_JET)
-
-    def read_seg(self, fn ):
-        image = self.ocv_read(fn)
-        return image.astype(np.uint8)
-
-    def ocv_write(self, fn, image ):
-        cv2.imwrite(fn, image)
-    
-    def write_as_is(self, fn, image ):
-        self.ocv_write( fn, image )
-    
-    def write_float_compressed(self, fn, image):
-        assert(image.ndim == 2), 'image.ndim = {}'.format(image.ndim)
-    
-        # Check if the input array is contiguous.
-        if ( not image.flags['C_CONTIGUOUS'] ):
-            image = np.ascontiguousarray(image)
-
-        dummy = np.expand_dims( image, 2 )
-        self.ocv_write( fn, dummy )
-        
-    def write_float_depth(self, fn, image):
-        if len(image.shape) == 2:
-            image = image[...,np.newaxis]
-        depth_rgba = image.view("<u1")
-        self.ocv_write(fn, depth_rgba)

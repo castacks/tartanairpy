@@ -12,18 +12,8 @@ from colorama import Fore, Style
 import yaml
 
 # Local imports.
-from .tartanair_module import TartanAirModule
+from .tartanair_module import TartanAirModule, print_error, print_highlight, print_warn
 from os.path import isdir, isfile, join
-from botocore.exceptions import NoCredentialsError
-
-def print_error(msg):
-    print(Fore.RED + msg + Style.RESET_ALL)
-
-def print_warn(msg):
-    print(Fore.YELLOW + msg + Style.RESET_ALL)
-
-def print_highlight(msg):
-    print(Fore.GREEN + msg + Style.RESET_ALL)
 
 class AirLabDownloader(object):
     def __init__(self, bucket_name = 'tartanair2') -> None:
@@ -77,6 +67,7 @@ class CloudFlareDownloader(object):
         - str: A message indicating success or failure.
         """
 
+        from botocore.exceptions import NoCredentialsError
         target_filelist = []
         for source_file_name in filelist:
             target_file_name = join(destination_path, source_file_name.replace('/', '_'))
@@ -115,63 +106,7 @@ class TartanAirDownloader(TartanAirModule):
     def __init__(self, tartanair_data_root):
         super().__init__(tartanair_data_root)
 
-        # The modalities that have a camera associated with them and that we'll download the pose file along with.
-        self.cam_modalities = ['image', 'depth', 'seg'] # the modalities that support all camera names
-        self.flow_camlist = ['lcam_front'] # valid camera name for the flow modality
-
         self.downloader = CloudFlareDownloader()
-
-    def check_env_valid(self, envlist):
-        invalid_list = []
-        for env in envlist:
-            if not env in self.env_names:
-                invalid_list.append(env)
-        
-        if len(invalid_list) == 0:
-            return True
-        
-        print_error(f"The following envs are invalid: {invalid_list}")
-        print_warn(f"The available envs are: {self.env_names}")
-        return False
-
-    def check_modality_valid(self, modlist):
-        invalid_list = []
-        for mod in modlist:
-            if not mod in self.modality_names:
-                invalid_list.append(mod)
-        
-        if len(invalid_list) == 0:
-            return True
-        
-        print_error(f"The following modalities are invalid: {invalid_list}")
-        print_warn(f"The available modalities are: {self.modality_names}")
-        return False
-
-    def check_camera_valid(self, camlist):
-        invalid_list = []
-        for cam in camlist:
-            if not cam in self.camera_names:
-                invalid_list.append(cam)
-        
-        if len(invalid_list) == 0:
-            return True
-        
-        print_error(f"The following camera names are invalid: {invalid_list}")
-        print_warn(f"The available camera names are: {self.camera_names}")
-        return False
-
-    def check_difficulty_valid(self, difflist):
-        invalid_list = []
-        for diff in difflist:
-            if not diff in self.difficulty_names:
-                invalid_list.append(diff)
-        
-        if len(invalid_list) == 0:
-            return True
-        
-        print_error(f"The following difficulties are invalid: {invalid_list}")
-        print_warn(f"The available difficulties are: {self.difficulty_names}")
-        return False
 
     def generate_filelist(self, envs, difficulties, modalities, camera_names): 
         '''
@@ -189,21 +124,10 @@ class TartanAirDownloader(TartanAirModule):
             envstr = env + '/'
             for difficulty in difficulties:
                 diffstr = envstr + 'Data_' + difficulty + '/'
-                for mod in modalities:
-                    if mod in self.cam_modalities:
-                        for camname in camera_names:
-                            zipfile = diffstr + mod + '_' + camname + '.zip'
-                            zipfilelist.append(zipfile)
-                    elif mod == 'flow':
-                        for camname in camera_names:
-                            if camname in self.flow_camlist:
-                                zipfile = diffstr + mod + '_' + camname + '.zip'
-                                zipfilelist.append(zipfile)
-                            else:
-                                print_warn("Warn: flow modality doesn't have {}! We only have flow for {}".format(camname, self.flow_camlist))
-                    else: # for lidar and imu
-                        zipfile = diffstr + mod + '.zip'
-                        zipfilelist.append(zipfile)
+                folderlist = self.compile_modality_and_cameraname(modalities, camera_names)
+                zipfiles = [diffstr + fl + '.zip' for fl in folderlist]
+                zipfilelist.extend(zipfiles)
+
         return zipfilelist
 
     def doublecheck_filelist(self, filelist, gtfile=''):

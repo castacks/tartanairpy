@@ -13,8 +13,8 @@ sys.path.append('..')
 import tartanair as ta
 
 # Create a TartanAir object.
-tartanair_data_root = '/media/yoraish/overflow/data/tartanair-v2'
- 
+tartanair_data_root = '/my/path/to/root/folder/for/tartanair-v2'
+
 ta.init(tartanair_data_root)
 
 # List available trajectories.

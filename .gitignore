@@ -145,3 +145,4 @@ docs/make.bat
 docs/Makefile
 examples/ta_data_spec.txt
 *.txt
+examples/*.png

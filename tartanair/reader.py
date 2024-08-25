@@ -88,7 +88,7 @@ class TartanAirImageReader():
         return flownp
 
     def read_dist(self, fn ): # read a depth image and convert it to distance
-        depth = self.read_dep(fn)
+        depth = self.read_depth(fn)
         return self.depth_to_dist(depth)
 
     def depth_to_dist(self, depth):
@@ -108,6 +108,78 @@ class TartanAirImageReader():
         self.depth_shape = depth.shape
         disp = self.conv_matrix * depth
         return disp
+
+
+    ###############################
+    # Data reading, writing, and processing.
+    ###############################
+    def depth_to_dist(self, depth):
+        '''
+        assume: fov = 90 on both x and y axes, and optical center is at image center.
+        '''
+        # import ipdb;ipdb.set_trace()
+        if self.depth_shape is None or \
+            depth.shape != self.depth_shape or \
+            self.conv_matrix is None: # only calculate once if the depth shape has not changed
+            hh, ww = depth.shape
+            f = ww/2
+            wIdx = np.linspace(0, ww - 1, ww, dtype=np.float32) + 0.5 - ww/2 # put the optical center at the middle of the image
+            hIdx = np.linspace(0, hh - 1, hh, dtype=np.float32) + 0.5 - hh/2 # put the optical center at the middle of the image
+            u, v = np.meshgrid(wIdx, hIdx)
+            dd = np.sqrt(u * u + v * v + f * f)/f
+            self.conv_matrix = dd
+        self.depth_shape = depth.shape
+        disp = self.conv_matrix * depth
+        return disp
+
+    # def ocv_read(self, fn ):
+    #     image = cv2.imread(fn, cv2.IMREAD_UNCHANGED)
+    #     assert image is not None, \
+    #         f'{fn} read error. '
+    #     return image
+
+    # def read_rgb(self, fn ):
+    #     return self.ocv_read(fn)
+
+    # def read_dist(self, fn ): # read a depth image and convert it to distance
+    #     depth = self.read_dep(fn)
+    #     return self.depth_to_dist(depth)
+
+    # def read_dep(self, fn ):
+    #     image = self.ocv_read(fn)
+    #     depth = np.squeeze( image.view('<f4'), axis=-1 )
+    #     return depth
+
+    # def vis_dep(self, fn):
+    #     depth = self.read_dep(fn)
+    #     depthvis = np.clip(1/depth * 400, 0, 255).astype(np.uint8)
+    #     return cv2.applyColorMap(depthvis, cv2.COLORMAP_JET)
+
+    # def read_seg(self, fn ):
+    #     image = self.ocv_read(fn)
+    #     return image.astype(np.uint8)
+
+    def ocv_write(self, fn, image ):
+        cv2.imwrite(fn, image)
+    
+    def write_as_is(self, fn, image ):
+        self.ocv_write( fn, image )
+    
+    def write_float_compressed(self, fn, image):
+        assert(image.ndim == 2), 'image.ndim = {}'.format(image.ndim)
+    
+        # Check if the input array is contiguous.
+        if ( not image.flags['C_CONTIGUOUS'] ):
+            image = np.ascontiguousarray(image)
+
+        dummy = np.expand_dims( image, 2 )
+        self.ocv_write( fn, dummy )
+        
+    def write_float_depth(self, fn, image):
+        if len(image.shape) == 2:
+            image = image[...,np.newaxis]
+        depth_rgba = image.view("<u1")
+        self.ocv_write(fn, depth_rgba)
 
 class TartanAirTrajectoryReader(TartanAirModule):
     '''

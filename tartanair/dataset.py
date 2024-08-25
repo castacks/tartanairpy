@@ -276,8 +276,8 @@ class TartanAirImageDatasetForSlowLoaderObject(Dataset):
                 camera_name_to_motions = {}
                 camera_name_to_poses = {}
                 for camera_name in self.camera_names:
-                    # If the camera_name is one of fish or equirct, then use the front camera motions.
-                    if 'fish' in camera_name or 'equirct' in camera_name:
+                    # If the camera_name is one of fish or equirect, then use the front camera motions.
+                    if 'fish' in camera_name or 'equirect' in camera_name:
                         cam_side = 'lcam' if 'lcam' in camera_name else 'rcam'
                         posefile = traj_dir_gp + '/pose_{}_front.txt'.format(cam_side)
 
@@ -706,14 +706,13 @@ class TartanAirImageDatasetObject(Dataset):
                 # Get the trajectory poses. This is a map from a camera_name to a list of poses.
                 camera_name_to_motions = {}
                 for camera_name in self.camera_names:
-                    # If the camera_name is one of fish or equirct, then use the front camera motions.
-                    if 'fish' in camera_name or 'equirct' in camera_name:
+                    # If the camera_name is one of fish or equirect, then use the front camera motions.
+                    if 'fish' in camera_name or 'equirect' in camera_name:
                         cam_side = 'lcam' if 'lcam' in camera_name else 'rcam'
                         posefile = traj_dir_gp + '/pose_{}_front.txt'.format(cam_side)
 
                     else:
                         posefile = traj_dir_gp + f'/pose_{camera_name}.txt'
-                        
                     poselist = np.loadtxt(posefile).astype(np.float32)
                     
                     traj_poses   = self.pos_quats2SEs(poselist) # From xyz, xyzw format, to SE(3) format (camera in world).

@@ -12,12 +12,12 @@ Output batches will be of the form:
 
 # General imports.
 import os
-from colorama import Fore, Back, Style
-
+from os.path import join, isfile
 
 # Local imports.
-from .tartanair_module import TartanAirModule
+from .tartanair_module import TartanAirModule, print_error, print_highlight, print_warn
 from .data_cacher.MultiDatasets import MultiDatasets
+from .data_cacher.datafile_editor import generate_datafile, enumerate_frames, breakdown_trajectories
 
 class TartanAirDataLoader(TartanAirModule):
     '''
@@ -27,50 +27,106 @@ class TartanAirDataLoader(TartanAirModule):
         # Call the parent class constructor.
         super(TartanAirDataLoader, self).__init__(tartanair_data_root)
 
-        # Remap some modality names to support naming inconsistencies.
-        self.modality_name_remaps = {
-            'rgb': 'rgb',
-            'image': 'rgb',
-            'imu': 'imu_acc',
-            'imu_acc': 'imu_acc',
-            'imu_gyro': 'imu_gyro',
-            'imu_time': 'imu_time',
-            'depth': 'depth',
-            'lidar': 'lidar',
-            'pose': 'pose',
-            'seg': 'seg',
-            'flow': 'flow',
-            'cam_time': 'cam_time',
-            'imu_pos': 'imu_pos'
-        }
-
-
         self.modality_default_seq_length = {
-            'rgb': 1,
+            'image': 1,
             'depth': 1,
             'seg': 1,
             'flow': 1,
             'pose': 1,
-            'imu_acc': 10,
-            'imu_gyro': 10,
-            'imu_time': 10,
+            'imu': 10,
             'lidar': 1,
-            'cam_time': 1,
-            'imu_pos': 10
         }
 
         self.modality_default_cacher_size = {
-            'rgb': [640, 640],
+            'image': [640, 640],
             'depth': [640, 640],
             'seg': [640, 640],
             'flow': [640, 640],
             'pose': [7],
-            'imu_acc': [3],
-            'imu_gyro': [3],
-            'imu_time': [1],
-            'imu_pos': [3],
+            'imu': [6],
             'lidar': [3],
         }
+
+    def generate_data_file(self, env, difficulty, trajectory_id, onemodfolder, breakdown = True):
+        print_highlight("Generating datafile...")
+
+        # find all the local trajectories with the given difficulty level
+        difficulty = ['Data_' + dd for dd in difficulty]
+        local_traj_dict = self.enumerate_trajs(difficulty)
+
+        # Iterate over all environments and trajectories, and fine all the trajectories the user is interested.
+        trajstrlist, framelist = [], []
+        for env_name in env:
+            print("Building data cacher for env {}...".format(env_name))
+            if not (env_name in local_traj_dict):
+                print_error("Could not find env {} in the local directory {}".format(env_name, local_traj_dict.keys))
+                return None
+
+            # find the trajectories that satisfy the user requirement
+            local_traj_env = local_traj_dict[env_name]
+            for traj_str in local_traj_env:
+                dif_str, trajid = traj_str.split('/')
+                if trajid in trajectory_id or len(trajectory_id) == 0:
+                    trajstr = join(env_name, traj_str)
+                    trajstrlist.append(trajstr)
+                    frames = enumerate_frames(join(self.tartanair_data_root, trajstr, onemodfolder))
+                    framelist.append(frames)
+
+            if len(trajstrlist) == 0:
+                print_error("Could not find any trajectory to load! ")
+                return None
+
+        # hard coded, we use the following datafile
+        datafile = 'ta_datafile.txt'
+        if isfile(datafile):
+            print_warn("Removing the existing datafile {}".format(datafile))
+            os.remove(datafile)
+
+        if breakdown: # break down the trajectory so that it is more random when the buffer size is limited
+            trajstrlist, framelist = breakdown_trajectories(trajstrlist, framelist)
+
+        generate_datafile(datafile, trajstrlist, framelist)
+        return datafile
+
+
+    def generate_config_file(self, datafile, foldernames, image_shape_hw, seq_length, 
+                                    subset_framenum, seq_stride, frame_skip, num_workers):
+        config = {}
+        config['task'] = 'tartanair'
+        config['global'] = {}
+
+        config['global']['modality'] = {}
+
+        config['global']['cacher'] = {}
+        config['global']['cacher']['load_traj'] = False
+        config['global']['cacher']['data_root_path_override'] = self.tartanair_data_root
+        config['global']['cacher']['subset_framenum'] = subset_framenum
+        config['global']['cacher']['worker_num'] = num_workers
+
+        config['global']['dataset'] = {}
+        config['global']['dataset']['frame_skip'] = frame_skip
+        config['global']['dataset']['seq_stride'] = seq_stride
+        config['global']['dataset']['frame_dir'] = True
+
+        config['global']['parameter'] = {}
+
+        # Build the data entry. It is shared for the entire dataset.
+        data_entry = {}
+        data_entry['file'] = datafile
+        data_entry['modality'] = {}
+        data_entry['cacher'] = {}
+        data_entry['dataset'] = {}
+        data_entry['parameter'] = {}
+
+        self.add_modality_entries(data_entry['modality'], foldernames, image_shape_hw, seq_length)
+
+        config['data'] = {}
+        config['data']['1'] = data_entry # the data_cacher support loading multiple datasets, we are only using one here
+
+        print(config)
+
+        return config
+
 
     def get_data_cacher(self, 
                         env, 
@@ -78,9 +134,9 @@ class TartanAirDataLoader(TartanAirModule):
                         trajectory_id = None, 
                         modality = None, 
                         camera_name = None, 
-                        new_image_shape_hw = [640, 640],
-                        subset_framenum = 56, # <--- Note in the docs that this is an upper bound on the batch size.
+                        new_image_shape_hw = [640, 640],  # This can also be a dictionary, mapping each modality name to a shape.
                         seq_length = 1, # This can also be a dictionary, mapping each modality name to a sequence length.
+                        subset_framenum = 56, # <--- Note in the docs that this is an upper bound on the batch size. In general, this should be as large as possible 
                         seq_stride = 1,
                         frame_skip = 0,
                         batch_size=1,
@@ -94,14 +150,14 @@ class TartanAirDataLoader(TartanAirModule):
 
         # Add default values to empty inputs.
         if not difficulty:
-            difficulty = []
+            difficulty = self.difficulty_names # default to all difficulties 
         if not trajectory_id:
             trajectory_id = [] # Empty list will default to all trajs down the line.
         if not modality:
-            print("WARNING: No modality was specified. Defaulting to _some_ modalities: ('image', 'depth', 'seg')")
+            print_warn("WARNING: No modality was specified. Defaulting to _some_ modalities: ('image', 'depth', 'seg')")
             modality = ['image', 'depth', 'seg']
         if not camera_name:
-            camera_name = ['lcam_front', 'lcam_back', 'lcam_left', 'lcam_right', 'lcam_top', 'lcam_bottom', 'lcam_fish', 'lcam_equirect', 'rcam_front', 'rcam_back', 'rcam_left', 'rcam_right', 'rcam_top', 'rcam_bottom', 'rcam_fish', 'rcam_equirect']
+            camera_name = self.camera_names #['lcam_front', 'lcam_back', 'lcam_left', 'lcam_right', 'lcam_top', 'lcam_bottom', 'lcam_fish', 'lcam_equirect', 'rcam_front', 'rcam_back', 'rcam_left', 'rcam_right', 'rcam_top', 'rcam_bottom', 'rcam_fish', 'rcam_equirect']
 
         # Convert all inputs to lists.
         if type(env) is not list:
@@ -115,194 +171,104 @@ class TartanAirDataLoader(TartanAirModule):
         if type(camera_name) is not list:
             camera_name = [camera_name]
 
-        # Allow to take in a dictionary for the modality sequence length.
-        # If an integer is given, then use it for all modalities.
-        if type(seq_length) is int:
-            seq_length = {mod: seq_length for mod in modality}
-        elif type(seq_length) is dict:
-            # Remap modality names.
-            seq_length = {self.modality_name_remaps[mod]: seq_length[mod] for mod in seq_length}
-            for mod in modality:
-                mod = self.modality_name_remaps[mod]
-                if mod not in seq_length:
-                    print("WARNING: No sequence length was given for modality {}. Defaulting to {}.".format(mod, self.modality_default_seq_length[mod]))
-                    seq_length[mod] = self.modality_default_seq_length[mod]
-        else:
-            raise ValueError("seq_length must be an integer or a dictionary.")
+        # Check that the environments are valid.
+        if not self.check_env_valid(env):
+            return False
+        # Check that the modalities are valid
+        if not self.check_modality_valid(modality):
+            return False
+        # Check that the difficulty are valid
+        if not self.check_difficulty_valid(difficulty):
+            return False
+        # Check that the camera names are valid
+        if not self.check_camera_valid(camera_name):
+            return False
 
-        config = {}
-        config['task'] = 'tartanair'
-        config['transform_data_augment'] = True # Unused.
-        config['transform_flow_norm_factor'] = 1.0 # Unused.
-        config['transform_uncertainty'] = True # Unused.
-        config['transform_input_size'] = new_image_shape_hw # Unused.
-        config['dataset_frame_skip'] = frame_skip
-        config['dataset_seq_stride'] = seq_stride
-        config['data'] = {}
+        # figuring out the combination of modality and camera_name
+        # folderlist consists all the folders that need to be load under each trajectory
+        folderlist = self.compile_modality_and_cameraname(modality, camera_name)
+        # find one folder that's not imu, because imu is not frame-based
+        onemodfolder = None
+        for fl in folderlist:
+            if not fl.endswith('imu'):
+                onemodfolder = fl
+                break
+        if not onemodfolder:
+            print_error("No frame-based modality is available")
 
-        # Create a composed data specification text file for this data cacher. This is saved with a common name, ta_data_spec.txt, and is stored in the root directory of the TartanAir dataset. The contents are a composition of all the data specifications for each environment, difficulty, and trajectory.
-        data_spec_fpath = 'ta_data_spec.txt'
-        if os.path.isfile(data_spec_fpath):
-            os.remove(data_spec_fpath)
+        datafile = self.generate_data_file(env, difficulty, trajectory_id, onemodfolder)
+        if not datafile:
+            return False
 
-        # Iterate over all environments and trajectories, and build an entry for each one.
-        for env_name in env:
-            print("Building data cacher for env {}...".format(env_name))
-            # If no difficulty was given, then use all difficulties.
-            if not difficulty:
-                available_diffs = [diff for diff in ['easy', 'hard'] if os.path.isdir(os.path.join(self.tartanair_data_root, env_name, 'Data_' + diff))]
-                print([os.path.join(self.tartanair_data_root, env_name, 'Data_' + diff) for diff in ['easy', 'hard']])
-                print(Fore.GREEN + "WARNING: No difficulty was specified for env {}. Defaulting to all available difficulties: {}".format(env_name, available_diffs),  Style.RESET_ALL)
+        # process pose modality seperately here because it is not frame-based 
+        if 'pose' in modality:
+            for camname in camera_name:
+                folderlist.append('pose_' + camname)
 
-            else:
-                available_diffs = difficulty
+        config = self.generate_config_file(datafile, folderlist, new_image_shape_hw, seq_length, 
+                                            subset_framenum, seq_stride, frame_skip, num_workers)
 
-            for diff in available_diffs:
-
-                # If no trajectory id was given, then use all trajectories.
-                available_traj_ids = self.get_available_trajectory_ids(env_name, diff)
-                if not trajectory_id:
-                    print(Fore.GREEN + "WARNING: No trajectory id was specified for env {} and difficulty {}. Defaulting to all available trajectories: {}".format(env_name, diff, available_traj_ids),  Style.RESET_ALL)
-                else:
-                    for traj_id in trajectory_id:
-                        if traj_id not in available_traj_ids:
-                            print(Fore.RED + "WARNING: Trajectory id {} was specified for env {} and difficulty {}, but it is not available. It is skipped.".format(traj_id, env_name, diff),  Style.RESET_ALL)
-                    available_traj_ids = [traj_id for traj_id in available_traj_ids if traj_id in trajectory_id]
-                
-                for traj_id in available_traj_ids:
-                    # Build the data entry.         
-
-                    # Read the data specification file and concatenate it to the data spec file.
-                    with open(data_spec_fpath, 'a') as f:
-                        env_diff_traj_data_spec_fpath = os.path.join(self.tartanair_data_root, env_name, "analyze", 'data_' + env_name + '_Data_' + diff + '_' + traj_id + '.txt')
-
-                        # Read the data spec file.
-                        # with open(env_diff_traj_data_spec_fpath, 'r') as f2:
-                        # Create a new data spec file for this trajectory, where it is broken down into smaller pseudo-trajectories.
-                        # This is done to allow for the data cacher to cache the data in small trajectory portions, such that the data is shuffled also when the RAM memory allocation is small.
-                        pseudo_traj_length = max(max(seq_length.values()) * seq_stride * (frame_skip + 1) * 2, 20)
-                        pseudo_traj_spec_list = self.traj_spec_file_to_pseudo_traj_spec_list(env_diff_traj_data_spec_fpath, pseudo_traj_length)
-                        # Write all but the last line.
-                        # for line in f2.readlines():
-                        for line in pseudo_traj_spec_list:
-                            f.write(line)
-
-        # Build the data entry. It is shared for the entire dataset.
-        data_entry = {}
-        data_entry['modality'] = {}
-
-        self.add_modality_entries(data_entry, modality, camera_name, new_image_shape_hw, seq_length, subset_framenum, num_workers)
-
-        # Build the cacher entry.
-        data_entry['cacher'] = {}
-        data_entry['cacher']['data_root_key'] = 'tartanairv2' # TODO(yoraish): this is disregarded currently and overriden by the data_root_path_override.
-        data_entry['cacher']['subset_framenum'] = subset_framenum
-        data_entry['cacher']['worker_num'] = num_workers
-        # Add the tartanair data root to the config.
-        data_entry['cacher']['data_root_path_override'] = self.tartanair_data_root
-        # Build the transform entry.
-        data_entry['transform'] = {}
-        data_entry['transform']['resize_factor'] = 1.0
-        # Build the dataset entry.
-        data_entry['dataset'] =  None
-
-        # Add the data entry to the config with the key being the path to the frame-enumeration file.
-        config['data'][data_spec_fpath] = data_entry
-
-        print(config)
         # Create the data loader from the config.
         trainDataloader = MultiDatasets(config, 
                         'local', 
                         batch= batch_size, 
-                        workernum= num_workers,
+                        workernum= 1,
                         shuffle= shuffle,
                         verbose= verbose)
 
         return trainDataloader
 
-    def traj_spec_file_to_pseudo_traj_spec_list(self, traj_spec_fpath, pseudo_traj_length):
-        '''
-        Read the trajectory specification file and break it down into smaller pseudo-trajectories. This is done to allow for the data cacher to cache the data in small trajectory portions, such that the data is shuffled also when the RAM memory allocation is small.
-        '''
-        pseudo_traj_spec_list = []
-        with open(traj_spec_fpath, 'r') as f:
-            lines = f.readlines()
-
-            # Get the current traj header.
-            traj_header = lines[0]
-            lines = lines[1:]
-
-            # The only thing that we'll change is the number of files, which is the last number in the string.
-            numless_header = traj_header[:traj_header.rfind(' ') + 1]
-
-            for i in range(0, len(lines)):
-                if i % pseudo_traj_length == 0:
-                    # Add a new line. If we have more than traj_len lines left, then add the full traj_len. Otherwise, add the remaining lines.
-                    if i + pseudo_traj_length < len(lines):
-                        pseudo_traj_spec_list.append(numless_header + str(pseudo_traj_length) + '\n')
-
-                    else:
-                        pseudo_traj_spec_list.append(numless_header + str(len(lines) - i) + '\n')
-                
-                # Append the line.
-                pseudo_traj_spec_list.append(lines[i])
-
-        return pseudo_traj_spec_list
-
-    def add_modality_entries(self, data_entry, modality, camera_name, new_image_shape_hw, seq_length, subset_framenum, num_workers):
+    def add_modality_entries(self, data_entry, foldernames, image_shape_hw, seq_length):
 
         '''
         Mutate the data_entry dictionary to add modality entries for all types in the combined modality and camera_name lists.
         Convert a modality list and camera name list to a list of modcamalities. Those are the modality names that remain after combining the modality and camera name lists. For example, if 'image' and 'lidar' is in modality, and 'lcam_front' is in camera_name, then 'rgb_lcam_front', 'lidar' will be in the returned list, as 'lidar' is not a modality that requires a camera name.
         '''
+        # Allow to take in a dictionary for the modality sequence length.
+        # If an integer is given, then use it for all modalities.
+        if type(seq_length) is int:
+            new_seq_length = {mod: seq_length for mod in foldernames}
+        elif type(seq_length) is dict:
+            new_seq_length = {}
+            for foldername in foldernames:
+                modname = foldername.split('_')[0]
+                if modname in seq_length:
+                    new_seq_length[foldername] = seq_length[modname]
+                else:
+                    print_warn("WARNING: No sequence length was given for modality {}. Defaulting to {}.".format(modname, self.modality_default_seq_length[modname]))
+                    new_seq_length[foldername] = self.modality_default_seq_length[modname]
+        else:
+            raise ValueError("seq_length must be an integer or a dictionary.")
 
-        # Create the list of types. Each type is a modality_camera name, if the modality requires a camera name, otherwise it is just the modality.
-        types = []
-        for mod in modality:
-            if mod in ['image', 'depth', 'seg', 'flow', 'pose']:
-                for cam in camera_name:
-                    mod = self.modality_name_remaps[mod]
-                    types.append(mod + '_' + cam)
-            else:
-                types.append(mod)
+        if type(image_shape_hw) is list:
+            new_image_shape_hw = {mod: image_shape_hw for mod in foldernames}
+        elif type(image_shape_hw) is dict:
+            new_image_shape_hw = {}
+            for foldername in foldernames:
+                modname = foldername.split('_')[0]
+                if modname in image_shape_hw:
+                    new_image_shape_hw[foldername] = image_shape_hw[modname]
+                else:
+                    print_warn("WARNING: No shape was given for modality {}. Defaulting to {}.".format(modname, self.modality_default_cacher_size[modname]))
+                    new_image_shape_hw[foldername] = self.modality_default_cacher_size[modname]
+        else:
+            raise ValueError("image_shape_hw must be an integer or a dictionary.")
 
-        for type in types:
-            # Build the modality entry.
-            modality_entry = {}
-            mod = type.split('_')[0]
+        for folder in foldernames:
+            data_entry[folder] = {} # modality name
+            data_entry[folder][folder] = {} # the key name returned by the dataloader
+            data_entry[folder][folder]['cacher_size'] = new_image_shape_hw[folder]
+            data_entry[folder][folder]['length'] = new_seq_length[folder]
 
-            # Account for modality names that have `_` in them.
-            if mod == 'imu':
-                mod = '_'.join(type.split('_')[:2])
+if __name__=="__main__":
+    loader = TartanAirDataLoader('/data/tartanair_v2')
+    datafile = loader.generate_data_file(env=['coalmine'], difficulty=['easy', 'hard'], trajectory_id=[], onemodfolder='seg_rcam_right', breakdown = True)
 
-            if mod in ['rgb', 'depth', 'seg', 'flow']:
-                modality_entry['cacher_size'] = new_image_shape_hw
-            else: # 'lidar', 'imu', 'pose', etc.
-                modality_entry['cacher_size'] = self.modality_default_cacher_size[mod]
-            
-            modality_entry['length'] = seq_length[mod]
-            modality_entry['subset_framenum'] = subset_framenum
-
-            # Add the modality entry to the data entry.
-            data_entry['modality'][type] = modality_entry
-            data_entry['modality'][type]['type'] = type    
-
-
-    def get_available_trajectory_ids(self, env_name, diff):
-            '''
-            Return a list of trajectory ids for the given environment and difficulty.
-            '''
-
-            # Get the path to the env directory.
-            env_dir_path = os.path.join(self.tartanair_data_root, env_name, "Data_" + diff)
-            # Check what's there of the form 'P0..'.
-            traj_ids = []
-            for f in os.listdir(env_dir_path):
-                if f.startswith('P'):
-                    traj_ids.append(f)
-
-            return traj_ids
-
-
-
-
+    loader.generate_config_file(datafile, 
+                                foldernames=['depth_lcam_back','image_lcam_back'], 
+                                image_shape_hw=[640, 640], 
+                                seq_length=1, 
+                                subset_framenum=100, 
+                                seq_stride=1, 
+                                frame_skip=0, 
+                                num_workers=4)
