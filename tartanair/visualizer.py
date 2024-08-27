@@ -14,12 +14,15 @@ import numpy as np
 from .tartanair_module import TartanAirModule
 from .iterator import TartanAirIterator
 
+_CURRENT_PATH = os.path.dirname(os.path.realpath(__file__))
+
 class TartanAirVisualizer(TartanAirModule):
     def __init__(self, tartanair_data_root, azure_token = None):
         super().__init__(tartanair_data_root)
 
         # Modality mapped to a reader.
         self.modality_to_vis_func = {'image': self.visimage, 'depth': self.visdepth, 'seg': self.visseg}
+        self.seg_colors = np.loadtxt(_CURRENT_PATH + '/seg_rgbs.txt', delimiter=',',dtype=np.uint8)
 
     def visualize(self, env, difficulty = ['easy'], trajectory_id = ['P000'], modality = [], camera_name = []):
         """
@@ -100,7 +103,7 @@ class TartanAirVisualizer(TartanAirModule):
             cv2.imshow(window_name, black_image)
 
             # Wait for the user to press a key.
-            cv2.waitKey(5)
+            cv2.waitKey(10)
 
 
     def visimage(self, image):
@@ -117,12 +120,17 @@ class TartanAirVisualizer(TartanAirModule):
 
 
     def visdepth(self, depth):
-        depthvis = np.clip(400/depth ,0 ,255)
+        depthvis = np.clip(200/depth ,0 ,255)
         depthvis = depthvis.astype(np.uint8)
         depthvis = cv2.applyColorMap(depthvis, cv2.COLORMAP_JET)
-
+        depthvis = cv2.cvtColor(depthvis, cv2.COLOR_RGB2BGR)
         return depthvis
 
 
     def visseg(self, seg):
-        return seg
+        segvis = np.zeros(seg.shape+(3,), dtype=np.uint8)
+
+        segvis = self.seg_colors[ seg, : ]
+        segvis = segvis.reshape( seg.shape+(3,) )
+
+        return segvis

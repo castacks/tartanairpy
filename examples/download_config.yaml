@@ -1,7 +1,7 @@
 # Config specifying which trajectories to download from the remote.
 
-env: ['AmericanDiner']
-difficulty: ['easy']
-modality: ['image', 'depth']
-camera_name: ['lcam_fish', 'lcam_front']
-unzip: True
+  env: ['ArchVizTinyHouseDay']
+  difficulty: ['easy']
+  modality: ['image', 'depth', 'seg', 'imu'] 
+  camera_name: ['lcam_fish', 'lcam_front', 'lcam_left', 'lcam_right', 'lcam_back', 'lcam_top', 'lcam_bottom']
+  unzip: True
