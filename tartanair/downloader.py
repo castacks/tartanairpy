@@ -23,7 +23,7 @@ class AirLabDownloader(object):
         access_key = "4e54CkGDFg2RmPjaQYmW"
         secret_key = "mKdGwketlYUcXQwcPxuzinSxJazoyMpAip47zYdl"
 
-        self.client = Minio(endpoint_url, access_key=access_key, secret_key=secret_key, secure=False)
+        self.client = Minio(endpoint_url, access_key=access_key, secret_key=secret_key, secure=True)
         self.bucket_name = bucket_name
 
     def download(self, filelist, destination_path):
@@ -37,7 +37,7 @@ class AirLabDownloader(object):
                 return False, None
 
             print(f"  Downloading {source_file_name} from {self.bucket_name}...")
-            self.client.fput_object(self.bucket_name, target_file_name, source_file_name)
+            self.client.fget_object(self.bucket_name, source_file_name, target_file_name)
             print(f"  Successfully downloaded {source_file_name} to {target_file_name}!")
 
         return True, target_filelist

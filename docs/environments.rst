@@ -1,7 +1,8 @@
 Environments
 =====================================
 
-We definitely have bugs. Please report them in `GitHub issues`_ or submit a pull request!
+.. image:: images/tartanair_ending.gif
+
 
 .. _`GitHub issues`: https://github.com/castacks/tartanairpy/issues
 
