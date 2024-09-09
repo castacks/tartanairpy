@@ -86,7 +86,7 @@ def init(tartanair_root):
     return True
     
 
-def download(env = [], difficulty = [], modality = [], camera_name = [], config = None, unzip = False):
+def download(env = [], difficulty = [], trajectory_id = [], modality = [], camera_name = [], config = None, unzip = False, download = True):
     """
     Download data from the TartanAir dataset. This method will download the data from the Azure server and store it in the `tartanair_root` directory.
 
@@ -107,7 +107,8 @@ def download(env = [], difficulty = [], modality = [], camera_name = [], config 
 
     global downloader
     check_init()
-    downloader.download(env, difficulty, modality, camera_name, config, unzip)
+    success, filelist = downloader.download(env, difficulty, modality, camera_name, config, unzip, download)
+    return success, filelist
 
 def customize(env, difficulty, trajectory_id, modality, new_camera_models_params = [{}], num_workers = 1, device = "cpu"):
     """
@@ -399,7 +400,6 @@ def evaluate_traj(est_traj,
 
     :return: A dictionary containing the evaluation metrics, which include ATE, RPE, the ground truth trajectory, and the estimated trajectory after alignment and scaling if those were requested
     :rtype: dict
-
     """
     global evaluator    
     check_init()
