@@ -129,8 +129,6 @@ dmypy.json
 .pyre/
 
 # Images.
-*.png
-*.jpg
 
 # Sphinx documentation.
 docs/_build/
@@ -147,3 +145,4 @@ docs/make.bat
 docs/Makefile
 examples/ta_data_spec.txt
 *.txt
+examples/*.png

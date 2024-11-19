@@ -44,7 +44,6 @@ class TartanAirEvaluator(TartanAirModule):
             if gt_traj is None:
                 raise ValueError("Please pass a ground truth trajectory or a trajectory specification (env, difficulty, trajectory_id, camera_name) to the evaluation method.")
 
-
         # Make sure that the input is a numpy array with a correct shape.
         if isinstance(est_traj, list):
             print(Fore.CYAN + "Warning: Converting the estimated trajectory (list) to a numpy array." + Style.RESET_ALL)

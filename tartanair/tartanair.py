@@ -8,6 +8,7 @@ from .iterator import TartanAirIterator
 from .evaluator import TartanAirEvaluator
 from .reader import TartanAirTrajectoryReader
 from .dataloader import TartanAirDataLoader
+# from .random_accessor import TartanAirRandomAccessor
 
 print("TartanAir toolbox initialized.")
 
@@ -25,7 +26,7 @@ slowloader = None
 # Flag for initialization.
 is_init = False
 
-def init(tartanair_root, azure_token = None):
+def init(tartanair_root):
     """
     Initialize the TartanAir toolbox. Call this method before using any other method in the toolbox.
 
@@ -38,8 +39,9 @@ def init(tartanair_root, azure_token = None):
 
     global downloader
     # If a token is provided, use it. Otherwise, let the downloader use self.azure_token from the parent class.
-    downloader = TartanAirDownloader(tartanair_data_root, azure_token = azure_token)
+    downloader = TartanAirDownloader(tartanair_data_root)
 
+    # TODO: 
     global dataset
     dataset = TartanAirDataset(tartanair_data_root)
 
@@ -49,34 +51,42 @@ def init(tartanair_root, azure_token = None):
     except:
         print("Could not initialize customizer.")
 
+    # TODO: 
     global lister
     lister = TartanAirLister(tartanair_data_root)
 
+    # TODO: 
     global visualizer
     visualizer = TartanAirVisualizer(tartanair_data_root)
 
     global iterator
     iterator = TartanAirIterator(tartanair_data_root)
 
+    # TODO: 
     global traj_reader
     traj_reader = TartanAirTrajectoryReader(tartanair_data_root)
 
+    # TODO: 
     global evaluator
     evaluator = TartanAirEvaluator(tartanair_data_root)
 
-    global dataloader
-    dataloader = TartanAirDataLoader(tartanair_data_root)
+    global data_loader
+    data_loader = TartanAirDataLoader(tartanair_data_root)
 
+    # TODO: 
     global slowloader
     slowloader = TartanAirSlowLoaderCreator(tartanair_data_root)
 
+    # global random_accessor
+    # random_accessor = TartanAirRandomAccessor(tartanair_data_root, trajectory_reader=traj_reader)
+
     global is_init 
     is_init = True
-    
+
     return True
     
 
-def download(env = [], difficulty = [], trajectory_id = [], modality = [], camera_name = [], config = None):
+def download(env = [], difficulty = [], modality = [], camera_name = [], config = None, unzip = False):
     """
     Download data from the TartanAir dataset. This method will download the data from the Azure server and store it in the `tartanair_root` directory.
 
@@ -97,7 +107,7 @@ def download(env = [], difficulty = [], trajectory_id = [], modality = [], camer
 
     global downloader
     check_init()
-    downloader.download(env, difficulty, trajectory_id, modality, camera_name, config)
+    downloader.download(env, difficulty, modality, camera_name, config, unzip)
 
 def customize(env, difficulty, trajectory_id, modality, new_camera_models_params = [{}], num_workers = 1, device = "cpu"):
     """
@@ -143,8 +153,8 @@ def dataloader(env,
             modality = [], 
             camera_name = [], 
             new_image_shape_hw = [640, 640], 
-            subset_framenum = 360, 
             seq_length = 1, 
+            subset_framenum = 360, 
             seq_stride = 1, 
             frame_skip = 0, 
             batch_size = 8, 
@@ -188,16 +198,16 @@ def dataloader(env,
     :param verbose: Whether to print information regarding memory usage and trajectory loading. If empty, no verbose information will be printed.
     :type verbose: bool
     """
-    global dataloader
+    global data_loader
     check_init()
-    return dataloader.get_data_cacher(env = env, 
+    return data_loader.get_data_cacher(env = env, 
             difficulty = difficulty, 
             trajectory_id = trajectory_id, 
             modality = modality, 
             camera_name = camera_name, 
             new_image_shape_hw = new_image_shape_hw, 
-            subset_framenum = subset_framenum, 
             seq_length = seq_length, 
+            subset_framenum = subset_framenum, 
             seq_stride = seq_stride, 
             frame_skip = frame_skip, 
             batch_size = batch_size, 
@@ -307,7 +317,7 @@ def visualize(env, difficulty, trajectory_id, modality, camera_name = None):
 def check_init():
     global is_init
     if not is_init:
-            raise Exception("TartanAir toolbox not initialized. Please call tartanair.init(tartanair_data_root) first.")
+        raise Exception("TartanAir toolbox not initialized. Please call tartanair.init(tartanair_data_root) first.")
 
 def iterator( env = None, difficulty = None, trajectory_id = None, modality = None, camera_name = None):
     """
@@ -405,4 +415,13 @@ def evaluate_traj(est_traj,
                                    do_scale, 
                                    do_align)
 
+# def get_random_accessor():
+#     """
+#     Returns the random accessor object for the TartanAir dataset. The random accessor allows for random access to the dataset, and is useful for sampling new correspondences.
 
+#     :return: The random accessor object.
+#     :rtype: TartanAirRandomAccessor
+#     """
+#     global random_accessor
+#     check_init()
+#     return random_accessor
