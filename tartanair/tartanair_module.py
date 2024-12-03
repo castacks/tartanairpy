@@ -228,6 +228,7 @@ class TartanAirModule():
                 folderstr = mod
                 folderlist.append(folderstr)
             else:
-                print_warn("Warn: note modality {} needs to be processed separately".format(mod))
+                if mod != "pose":
+                    print_warn("Warn: note modality {} needs to be processed separately".format(mod))
                 
         return folderlist

@@ -45,8 +45,8 @@ class AirLabDownloader(object):
 class CloudFlareDownloader(object):
     def __init__(self, bucket_name = "tartanair-v2") -> None:
         import boto3
-        access_key = "be0116e42ced3fd52c32398b5003ecda"
-        secret_key = "103fab752dab348fa665dc744be9b8fb6f9cf04f82f9409d79c54a88661a0d40"
+        access_key = "f1ae9efebbc6a9a7cebbd949ba3a12de"
+        secret_key = "0a21fe771089d82e048ed0a1dd6067cb29a5666bf4fe95f7be9ba6f72482ec8b"
         endpoint_url = "https://0a585e9484af268a716f8e6d3be53bbc.r2.cloudflarestorage.com"
 
         self.bucket_name = bucket_name
