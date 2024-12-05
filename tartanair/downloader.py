@@ -14,6 +14,8 @@ import yaml
 # Local imports.
 from .tartanair_module import TartanAirModule, print_error, print_highlight, print_warn
 from os.path import isdir, isfile, join
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import time
 
 class AirLabDownloader(object):
     def __init__(self, bucket_name = 'tartanair2') -> None:
@@ -23,30 +25,30 @@ class AirLabDownloader(object):
         access_key = "4e54CkGDFg2RmPjaQYmW"
         secret_key = "mKdGwketlYUcXQwcPxuzinSxJazoyMpAip47zYdl"
 
-        self.client = Minio(endpoint_url, access_key=access_key, secret_key=secret_key, secure=False)
+        self.client = Minio(endpoint_url, access_key=access_key, secret_key=secret_key, secure=True)
         self.bucket_name = bucket_name
 
-    def download(self, filelist, destination_path):
-        target_filelist = []
-        for source_file_name in filelist:
-            target_file_name = join(destination_path, source_file_name.replace('/', '_'))
-            target_filelist.append(target_file_name)
+    def download(self, filelist, targetfilelist):
+        success_source_files, success_target_files = [], []
+        for source_file_name, target_file_name in zip(filelist, targetfilelist):
             print('--')
             if isfile(target_file_name):
                 print_error('Error: Target file {} already exists..'.format(target_file_name))
-                return False, None
+                return False, success_source_files, success_target_files
 
             print(f"  Downloading {source_file_name} from {self.bucket_name}...")
-            self.client.fput_object(self.bucket_name, target_file_name, source_file_name)
+            self.client.fget_object(self.bucket_name, source_file_name, target_file_name)
             print(f"  Successfully downloaded {source_file_name} to {target_file_name}!")
+            success_source_files.append(source_file_name)
+            success_target_files.append(target_file_name)
 
-        return True, target_filelist
+        return True, success_source_files, success_target_files
 
 class CloudFlareDownloader(object):
     def __init__(self, bucket_name = "tartanair-v2") -> None:
         import boto3
-        access_key = "be0116e42ced3fd52c32398b5003ecda"
-        secret_key = "103fab752dab348fa665dc744be9b8fb6f9cf04f82f9409d79c54a88661a0d40"
+        access_key = "f1ae9efebbc6a9a7cebbd949ba3a12de"
+        secret_key = "0a21fe771089d82e048ed0a1dd6067cb29a5666bf4fe95f7be9ba6f72482ec8b"
         endpoint_url = "https://0a585e9484af268a716f8e6d3be53bbc.r2.cloudflarestorage.com"
 
         self.bucket_name = bucket_name
@@ -54,7 +56,7 @@ class CloudFlareDownloader(object):
                       aws_secret_access_key=secret_key,
                       endpoint_url=endpoint_url)
 
-    def download(self, filelist, destination_path):
+    def download(self, filelist, targetfilelist):
         """
         Downloads a file from Cloudflare R2 storage using S3 API.
 
@@ -67,26 +69,29 @@ class CloudFlareDownloader(object):
         - str: A message indicating success or failure.
         """
 
-        from botocore.exceptions import NoCredentialsError
-        target_filelist = []
-        for source_file_name in filelist:
-            target_file_name = join(destination_path, source_file_name.replace('/', '_'))
-            target_filelist.append(target_file_name)
+        from botocore.exceptions import NoCredentialsError, ClientError
+        success_source_files, success_target_files = [], []
+        for source_file_name, target_file_name in zip(filelist, targetfilelist):
             print('--')
             if isfile(target_file_name):
                 print_error('Error: Target file {} already exists..'.format(target_file_name))
-                return False, None
+                return False, success_source_files, success_target_files
             try:
                 print(f"  Downloading {source_file_name} from {self.bucket_name}...")
                 self.s3.download_file(self.bucket_name, source_file_name, target_file_name)
                 print(f"  Successfully downloaded {source_file_name} to {target_file_name}!")
-            except FileNotFoundError:
+                success_source_files.append(source_file_name)
+                success_target_files.append(target_file_name)
+            except ClientError:
                 print_error(f"Error: The file {source_file_name} was not found in the bucket {self.bucket_name}.")
-                return False, None
+                return False, success_source_files, success_target_files
             except NoCredentialsError:
                 print_error("Error: Credentials not available.")
-                return False, None
-        return True, target_filelist
+                return False, success_source_files, success_target_files
+            except Exception:
+                print_error("Error: Failed for some reason.")
+                return False, success_source_files, success_target_files
+        return True, success_source_files, success_target_files
 
     def get_all_s3_objects(self):
         continuation_token = None
@@ -169,7 +174,7 @@ class TartanAirDownloader(TartanAirModule):
             os.system(cmd)
         print_highlight("Unzipping Completed! ")
             
-    def download(self, env = [], difficulty = [], modality = [], camera_name = [], config = None, unzip = False, download = True, **kwargs):
+    def download(self, env = [], difficulty = [], modality = [], camera_name = [], config = None, unzip = False, max_failure_trial = 3, **kwargs):
         """
         Downloads a trajectory from the TartanAir dataset. A trajectory includes a set of images and a corresponding trajectory text file describing the motion.
 
@@ -207,32 +212,66 @@ class TartanAirDownloader(TartanAirModule):
             
         # Check that the environments are valid.
         if not self.check_env_valid(env):
-            return False, None
+            return False
         # Check that the modalities are valid
         if not self.check_modality_valid(modality):
-            return False, None
+            return False
         # Check that the difficulty are valid
         if not self.check_difficulty_valid(difficulty):
-            return False, None
+            return False
         # Check that the camera names are valid
         if not self.check_camera_valid(camera_name):
-            return False, None
+            return False
 
         zipfilelist = self.generate_filelist(env, difficulty, modality, camera_name)
+        # import ipdb;ipdb.set_trace()
         if not self.doublecheck_filelist(zipfilelist):
-            return False, None
+            return False
 
-        if download:
-            suc, targetfilelist = self.downloader.download(zipfilelist, self.tartanair_data_root)
-            if suc:
-                print_highlight("Download completed! Enjoy using TartanAir!")
+        # generate the target file list: 
+        targetfilelist = [join(self.tartanair_data_root, zipfile.replace('/', '_')) for zipfile in zipfilelist]
+        all_success_filelist = []
 
-            if unzip:
-                self.unzip_files(targetfilelist)
+        suc, success_source_files, success_target_files = self.downloader.download(zipfilelist, targetfilelist)
+        all_success_filelist.extend(success_target_files)
+
+        # download failed files untill success
+        trail_count = 0
+        while not suc: 
+            zipfilelist = [ff for ff in zipfilelist if ff not in success_source_files]
+            if len(zipfilelist) == 0:
+                print_warn("No failed files are found! ")
+                break
+
+            targetfilelist = [join(self.tartanair_data_root, zipfile.replace('/', '_')) for zipfile in zipfilelist]
+            suc, success_source_files, success_target_files = self.downloader.download(zipfilelist, targetfilelist)
+            all_success_filelist.extend(success_target_files)
+            trail_count += 1
+            if trail_count >= max_failure_trial:
+                break
+
+        if suc:
+            print_highlight("Download completed! Enjoy using TartanAir!")
         else:
-            targetfilelist = []
-            for source_file_name in zipfilelist:
-                target_file_name = source_file_name.replace('/', '_')
-                targetfilelist.append(target_file_name)
+            print_warn("Download with failure! The following files are not downloaded ..")
+            for ff in zipfilelist:
+                print_warn(ff)
 
-        return True, targetfilelist
+        if unzip:
+            self.unzip_files(all_success_filelist)
+
+        return True
+
+    def download_multi_thread(self, env = [], difficulty = [], modality = [], camera_name = [], config = None, unzip = False, max_failure_trial = 3, num_workers = 8, **kwargs):
+        with ThreadPoolExecutor(max_workers=num_workers) as executor:
+            futures = []
+            for ee in env:
+                for dd in difficulty:
+                    futures.append(executor.submit(self.download, env = [ee], difficulty = [dd], modality = modality, camera_name = camera_name, 
+                                    config = config, unzip = unzip, max_failure_trial = max_failure_trial,))
+                    # Wait for a few seconds to avoid overloading the data server
+                    time.sleep(2)
+            
+            # Wait for all futures to complete
+            for future in as_completed(futures):
+                future.result()  # This will re-raise any exceptions caught during the futures' execution
