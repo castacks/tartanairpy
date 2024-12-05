@@ -84,7 +84,14 @@ def init(tartanair_root):
     is_init = True
 
     return True
-    
+
+def get_all_data():
+    global downloader
+    return {"env": downloader.env_names, 
+            "difficulty": downloader.difficulty_names, 
+            "modality": downloader.modality_names, 
+            "camera_name": downloader.camera_names, 
+    } 
 
 def download(env = [], difficulty = [], modality = [], camera_name = [], config = None, unzip = False):
     """

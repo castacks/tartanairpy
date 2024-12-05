@@ -22,3 +22,9 @@ ta.download_multi_thread(env = env,
               camera_name = ['lcam_front', 'lcam_right', 'lcam_back', 'lcam_left', 'lcam_top', 'lcam_bottom'], 
               unzip = True,
               num_workers = 8)
+
+# To download the entire dataset
+alldata = ta.get_all_data() # this fill in all available data for env, difficulty, modality and camera_name
+ta.download_multi_thread(**alldata, 
+                            unzip = True,
+                            num_workers = 8)
