@@ -43,6 +43,42 @@ The config file if of the following format:
     camera_name: ['lcam_front', 'lcam_left', 'lcam_right', 'lcam_back', 'lcam_top', 'lcam_bottom']
     unzip: True
 
+
+Multi-Thread Download via Python API
+............................
+
+.. code-block:: python
+
+    # General imports.
+    import sys
+    
+    # Local imports.
+    sys.path.append('..')
+    import tartanair as ta
+    
+    # Create a TartanAir object.
+    tartanair_data_root = '/my/path/to/root/folder/for/tartanair-v2'
+    
+    ta.init(tartanair_data_root)
+    
+    # Download data from following environments.
+    env = [ "Prison",
+            "Ruins",
+            "UrbanConstruction"]
+    ta.download_multi_thread(env = env, 
+                             difficulty = ['easy', 'hard'], 
+                             modality = ['image', 'depth'],  
+                             camera_name = ['lcam_front', 'lcam_right', 'lcam_back', 'lcam_left', 'lcam_top', 'lcam_bottom'], 
+                             unzip = True,
+                             num_workers = 8)
+    
+    # To download the entire dataset
+    all_data = ta.get_all_data() # this will fill in all available TAv2 data for env, difficulty, modality and camera_name
+    ta.download_multi_thread(**all_data, 
+                             unzip = True,
+                             num_workers = 8)
+
+
 Customization Example
 -------------------------------------
 
@@ -272,8 +308,3 @@ Please refer to flow_sampling_example.py for a complete example.
    :width: 80%
 
 To learn more about how the resampling happens, see `Flow Sampling <flow_sampling_label>`_.
-
-.. toctree::
-   :maxdepth: 1
-
-   flow_sampling
