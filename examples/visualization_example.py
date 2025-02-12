@@ -22,4 +22,5 @@ ta.visualize('ArchVizTinyHouseDay',
               difficulty='easy', 
               trajectory_id = 'P000', 
               modality = ['image', 'depth', 'seg'], 
-              camera_name = ['lcam_front', 'lcam_right', 'lcam_back', 'lcam_left'])
+              camera_name = ['lcam_front', 'lcam_right', 'lcam_back', 'lcam_left'],
+              show_seg_palette = True)

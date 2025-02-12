@@ -324,7 +324,7 @@ def list_envs():
     check_init()
     return lister.list_envs()
 
-def visualize(env, difficulty, trajectory_id, modality, camera_name = None):
+def visualize(env, difficulty, trajectory_id, modality, camera_name = None, show_seg_palette = False):
     """
     Interactively visualizes a trajectory from the TartanAir dataset that is saved locally.
 
@@ -342,7 +342,7 @@ def visualize(env, difficulty, trajectory_id, modality, camera_name = None):
     """
     global visualizer    
     check_init()
-    visualizer.visualize(env, difficulty, trajectory_id, modality, camera_name)
+    visualizer.visualize(env, difficulty, trajectory_id, modality, camera_name, show_seg_palette = show_seg_palette)
 
 def check_init():
     global is_init

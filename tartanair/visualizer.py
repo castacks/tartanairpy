@@ -6,12 +6,12 @@ This file contains the visualizer class, which visualizes data from local tartan
 '''
 # General imports.
 import os
-from colorama import Fore, Style
 import cv2
 import numpy as np
+import json 
 
 # Local imports.
-from .tartanair_module import TartanAirModule
+from .tartanair_module import TartanAirModule, print_error
 from .iterator import TartanAirIterator
 
 _CURRENT_PATH = os.path.dirname(os.path.realpath(__file__))
@@ -23,8 +23,12 @@ class TartanAirVisualizer(TartanAirModule):
         # Modality mapped to a reader.
         self.modality_to_vis_func = {'image': self.visimage, 'depth': self.visdepth, 'seg': self.visseg}
         self.seg_colors = np.loadtxt(_CURRENT_PATH + '/seg_rgbs.txt', delimiter=',',dtype=np.uint8)
+        # for visualization purpose
+        self.data_to_colors = np.zeros((256, 3), dtype=np.uint8)
+        for color in self.seg_colors:
+            self.data_to_colors[color[2], :] = color
 
-    def visualize(self, env, difficulty = ['easy'], trajectory_id = ['P000'], modality = [], camera_name = []):
+    def visualize(self, env, difficulty = ['easy'], trajectory_id = ['P000'], modality = [], camera_name = [], show_seg_palette = False):
         """
         Visualizes a trajectory from the TartanAir dataset. A trajectory includes a set of images and a corresponding trajectory text file describing the motion.
 
@@ -52,6 +56,16 @@ class TartanAirVisualizer(TartanAirModule):
                     vis_img_name = str(ix) + " " + cam_name + " " + modality
                     sample_images.append( vis_img )
                     sample_image_names.append(vis_img_name)
+
+            # Visualize the semantic segmentation palette 
+            if show_seg_palette:
+                label_file = os.path.join(self.tartanair_data_root, env, 'seg_label_map.json')
+                if os.path.isfile(label_file):
+                    vispalette = self.vis_seg_palette(label_file)
+                    cv2.imshow("Semantic Segmentation Palette", vispalette)
+                else:
+                    print_error("Missing seg_label.json file {}".format(label_file))
+
 
             #############################
             # Visualize the images.
@@ -130,7 +144,27 @@ class TartanAirVisualizer(TartanAirModule):
     def visseg(self, seg):
         segvis = np.zeros(seg.shape+(3,), dtype=np.uint8)
 
-        segvis = self.seg_colors[ seg, : ]
+        segvis = self.data_to_colors[ seg, : ]
         segvis = segvis.reshape( seg.shape+(3,) )
 
         return segvis
+        
+    def vis_seg_palette(self, labelfile):
+
+        with open(labelfile,'r') as f:
+            seglabels = json.load(f)
+            seglabels = seglabels["name_map"] # {name: ind}
+            segvalues = [(seglabels[lab], lab) for lab in seglabels] # {ind: name}
+
+        num_classes = len(segvalues)
+        img_height = 20
+        img_width = 150
+        palette_img = np.zeros((num_classes * img_height, img_width, 3), dtype=np.uint8)
+
+        for i, (idx, label) in enumerate(segvalues):
+            color = self.data_to_colors[idx]
+            palette_img[i * img_height : (i + 1) * img_height, :] = color[::-1]  # Convert RGB to BGR for OpenCV
+
+            cv2.putText(palette_img, label, (10, i * img_height + img_height // 2), cv2.FONT_HERSHEY_COMPLEX, 0.5, (0, 0, 0), 1)
+
+        return palette_img
