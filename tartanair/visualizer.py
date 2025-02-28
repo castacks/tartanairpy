@@ -21,7 +21,7 @@ class TartanAirVisualizer(TartanAirModule):
         super().__init__(tartanair_data_root)
 
         # Modality mapped to a reader.
-        self.modality_to_vis_func = {'image': self.visimage, 'depth': self.visdepth, 'seg': self.visseg}
+        self.modality_to_vis_func = {'image': self.visimage, 'depth': self.visdepth, 'seg': self.visseg, 'flow': self.visflow}
         self.seg_colors = np.loadtxt(_CURRENT_PATH + '/seg_rgbs.txt', delimiter=',',dtype=np.uint8)
         # for visualization purpose
         self.data_to_colors = np.zeros((256, 3), dtype=np.uint8)
@@ -168,3 +168,52 @@ class TartanAirVisualizer(TartanAirModule):
             cv2.putText(palette_img, label, (10, i * img_height + img_height // 2), cv2.FONT_HERSHEY_COMPLEX, 0.5, (0, 0, 0), 1)
 
         return palette_img
+
+    def calculate_angle_distance_from_du_dv(self, du, dv, flagDegree=False):
+        a = np.arctan2( dv, du )
+
+        angleShift = np.pi
+
+        if ( True == flagDegree ):
+            a = a / np.pi * 180
+            angleShift = 180
+            # print("Convert angle from radian to degree as demanded by the input file.")
+
+        d = np.sqrt( du * du + dv * dv )
+
+        return a, d, angleShift
+
+    def visflow(self, flownp): 
+        """
+        Show a optical flow field as the KITTI dataset does.
+        Some parts of this function is the transform of the original MATLAB code flow_to_color.m.
+        """
+        maxF=500.0
+        n=8
+        mask=None
+        hueMax=179
+        angShift=0.0
+
+        ang, mag, _ = self.calculate_angle_distance_from_du_dv( flownp[:, :, 0], flownp[:, :, 1], flagDegree=False )
+
+        # Use Hue, Saturation, Value colour model 
+        hsv = np.zeros( ( ang.shape[0], ang.shape[1], 3 ) , dtype=np.float32)
+
+        am = ang < 0
+        ang[am] = ang[am] + np.pi * 2
+
+        hsv[ :, :, 0 ] = np.remainder( ( ang + angShift ) / (2*np.pi), 1 )
+        hsv[ :, :, 1 ] = mag / maxF * n
+        hsv[ :, :, 2 ] = (n - hsv[:, :, 1])/n
+
+        hsv[:, :, 0] = np.clip( hsv[:, :, 0], 0, 1 ) * hueMax
+        hsv[:, :, 1:3] = np.clip( hsv[:, :, 1:3], 0, 1 ) * 255
+        hsv = hsv.astype(np.uint8)
+
+        bgr = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+
+        if ( mask is not None ):
+            mask = mask > 0
+            bgr[mask] = np.array([0, 0 ,0], dtype=np.uint8)
+
+        return bgr

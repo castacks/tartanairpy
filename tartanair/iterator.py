@@ -34,7 +34,7 @@ class TartanAirIterator(TartanAirModule):
             trajectory_id = [] # Empty list will default to all trajs down the line.
             print(Fore.RED + 'Warning: Trajectory id is not specified. Defaulting to all available trajectories.' + Style.RESET_ALL)
         if modality is None:
-            modality = ['image', 'depth', 'seg']
+            modality = ['image', 'depth', 'seg', 'flow']
             print(Fore.RED + 'Warning: Modality is not specified. Defaulting to modality = ' +  ', '.join(modality) + Style.RESET_ALL)
         if camera_name is None:
             camera_name = ['lcam_front', 'lcam_back', 'lcam_left', 'lcam_right', 'lcam_top', 'lcam_bottom', 'lcam_fish', 'lcam_equirect', 'rcam_front', 'rcam_back', 'rcam_left', 'rcam_right', 'rcam_top', 'rcam_bottom', 'rcam_fish', 'rcam_equirect']
@@ -78,9 +78,15 @@ class TartanAirIterator(TartanAirModule):
         # Reading distance images. Those store the distance to the closest object in the scene in each pixel along its ray.
         self.read_dist = self.tair_reader.read_dist
 
+        # Reading segmentation.
+        self.read_flow = self.tair_reader.read_flow
+
         # If imu is in the modalities list, then note that we cannot load it in this dataset.
         if 'imu' in self.modalities or 'lidar' in self.modalities:
             raise ValueError('The imu and lidar modalities are not supported in this iterator yet.')
+
+        if 'flow' in self.modalities and (not 'lcam_front' in self.camera_names):
+            raise ValueError('Only lcam_front has flow by default.')
 
         ###############################
         # Create a mapping between images and motions.
@@ -278,6 +284,9 @@ class TartanAirIterator(TartanAirModule):
 
                     elif 'seg' in modality:
                         data0 = self.read_seg(data0_gp)
+
+                    elif 'flow' in modality:
+                        data0 = self.read_flow(data0_gp)
 
                     # Add the data0 and data1 to the camera sample.
                     camera_sample[modality] = data0
