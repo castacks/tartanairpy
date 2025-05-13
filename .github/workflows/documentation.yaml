@@ -14,8 +14,6 @@ jobs:
       - name: Sphinx build
         run: |
           sphinx-build docs _build
-          # Manually copy TartanGround project page
-          cp -r docs/tartanground docs/_build/html/tartanground
           echo "tartanair.org" > _build/CNAME
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3

@@ -21,11 +21,12 @@ jobs:
         run: |
           pip3 install sphinx sphinx_rtd_theme
 
-      - name: Sphinx build
+      - name: Sphinx build and TartanGround copy
         run: |
           sphinx-build docs docs/_build/html
-          cp -r docs/tartanground docs/_build/html/tartanground
-          echo "tartanair.org" > docs/_build/html/CNAME || true  # optional
+          mkdir -p docs/_build/html/tartanground
+          cp -r docs/tartanground/* docs/_build/html/tartanground/
+          echo "tartanair.org" > docs/_build/html/CNAME
 
       - name: Deploy preview
         uses: peaceiris/actions-gh-pages@v3
