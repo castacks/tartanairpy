@@ -1,27 +1,36 @@
-name: Docs
-on: [push, pull_request, workflow_dispatch]
+name: Docs Preview
+
+on:
+  push:
+    branches:
+      - test-pages
+  workflow_dispatch:
+
 permissions:
-    contents: write
+  contents: write
+
 jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - uses: actions/setup-python@v3
+
       - name: Install dependencies
         run: |
           pip3 install sphinx sphinx_rtd_theme
+
       - name: Sphinx build
         run: |
-          sphinx-build docs _build
-          # Manually copy TartanGround project page
+          sphinx-build docs docs/_build/html
           cp -r docs/tartanground docs/_build/html/tartanground
-          echo "tartanair.org" > _build/CNAME
-      - name: Deploy
+          echo "tartanair.org" > docs/_build/html/CNAME || true  # optional
+
+      - name: Deploy preview
         uses: peaceiris/actions-gh-pages@v3
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         with:
-          publish_branch: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: _build/
+          publish_dir: docs/_build/html
+          publish_branch: gh-pages-preview
           force_orphan: true
