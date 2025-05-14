@@ -21,6 +21,9 @@ Let's go on an adventure to beautiful mountains, to dark caves, to stylish homes
 
 All the environments have recorded trajectories that were designed to be challenging and realistic. Can we improve the state of the art in SLAM, navigation, and robotics? 
 
+🆕 `TartanGround: A Large-Scale Dataset for Ground Robot Perception and Navigation <tartanground/index.html>`_  
+
+We are still working on adding the TartanGround dataset to the documentation. The tartanair python package will support this new dataset as well.
 
 .. toctree::
    :maxdepth: 2
