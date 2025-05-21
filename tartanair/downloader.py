@@ -20,11 +20,21 @@ import time
 class AirLabDownloader(object):
     def __init__(self, bucket_name = 'tartanair2') -> None:
         from minio import Minio
-        endpoint_url = "airlab-share-01.andrew.cmu.edu:9000"
-        # public key (for donloading): 
-        access_key = "4e54CkGDFg2RmPjaQYmW"
-        secret_key = "mKdGwketlYUcXQwcPxuzinSxJazoyMpAip47zYdl"
 
+        if bucket_name == 'tartanair2':
+            endpoint_url = "airlab-share-01.andrew.cmu.edu:9000"
+            # public key (for donloading): 
+            access_key = "4e54CkGDFg2RmPjaQYmW"
+            secret_key = "mKdGwketlYUcXQwcPxuzinSxJazoyMpAip47zYdl"
+        elif bucket_name == 'tartanground':
+            endpoint_url = "airlab-share-02.andrew.cmu.edu:9000"
+            # public key (for donloading): 
+            access_key = "nu8ylTnuSBKmHtPgj6xB"
+            secret_key = "3njOB53mTzrvMRkBEm8MN8GvGrKuKvtwg1Bh4QLS"
+        else:
+            self.print_error("Error: Invalid bucket name. Please use 'tartanair2' or 'tartanground'.")
+            return
+        
         self.client = Minio(endpoint_url, access_key=access_key, secret_key=secret_key, secure=True)
         self.bucket_name = bucket_name
 
@@ -138,8 +148,6 @@ class TartanAirDownloader(TartanAirModule):
     def doublecheck_filelist(self, filelist, gtfile=''):
         '''
         '''
-        CURDIR = os.path.dirname(os.path.abspath(__file__))
-        gtfile = CURDIR + '/download_files.txt'
         with open(gtfile, 'r') as f:
             lines = f.readlines()
 
@@ -225,7 +233,9 @@ class TartanAirDownloader(TartanAirModule):
 
         zipfilelist = self.generate_filelist(env, difficulty, modality, camera_name)
         # import ipdb;ipdb.set_trace()
-        if not self.doublecheck_filelist(zipfilelist):
+        CURDIR = os.path.dirname(os.path.abspath(__file__))
+        gtfile = CURDIR + '/download_files.txt'
+        if not self.doublecheck_filelist(zipfilelist, gtfile = gtfile):
             return False
 
         # generate the target file list: 
@@ -274,4 +284,156 @@ class TartanAirDownloader(TartanAirModule):
             
             # Wait for all futures to complete
             for future in as_completed(futures):
-                future.result()  # This will re-raise any exceptions caught during the futures' execution
+                future.result()  # This will re-raise any exceptions caught during the futures' execution                
+
+class TartanGroundDownloader(TartanAirDownloader):
+    def __init__(self, tartanair_data_root):
+        super().__init__(tartanair_data_root)
+
+        self.downloader = AirLabDownloader(bucket_name = 'tartanground')
+
+    def generate_filelist(self, version_env_dict, modalities, camera_names): 
+        '''
+        Return a list of zipfiles to be downloaded
+        Example: 
+        [
+            "abandonedfactory/Data_ground/depth_lcam_back.zip",
+            "abandonedfactory/Data_ground/flow_lcam_front.zip",
+            ...
+        ]
+
+        '''
+        zipfilelist = []
+        for version, envlist  in version_env_dict.items(): 
+            for env in envlist:
+                envstr = 'TartanGround_' + version + '/' + env + '/Data_ground/'
+                folderlist = self.compile_modality_and_cameraname(modalities, camera_names)
+                zipfiles = [envstr + fl + '.zip' for fl in folderlist]
+                zipfilelist.extend(zipfiles)
+
+        return zipfilelist
+    
+    def compile_version_and_env(self, envlist, versionlist):
+        version_env_dict = {}
+        for ver in versionlist:
+            if ver == 'v1':
+                valid_envs = self.ground_v1_env_names
+            elif ver == 'v2':
+                valid_envs = self.ground_v2_env_names
+            elif ver == 'v3_anymal':
+                valid_envs = self.ground_v3_env_names
+            else:
+                print_error("Error: The version {} is not valid. Please choose from v1, v2 or v3_anymal.".format(ver))
+                return None
+
+            version_env_dict[ver] = []
+            for env in envlist:
+                if env not in valid_envs:
+                    print_warn("Warn: The environment {} is not valid for version {}. ".format(env, ver))
+                else:
+                    version_env_dict[ver].append(env)
+        return version_env_dict
+
+    def download(self, env = [], version = [], modality = [], camera_name = [], config = None, unzip = False, max_failure_trial = 3, **kwargs):
+        """
+        Downloads a trajectory from the TartanAir dataset. A trajectory includes a set of images and a corresponding trajectory text file describing the motion.
+
+        Args:
+            env (str or list): The environment to download the trajectory from. Valid envs are: AbandonedCable, AbandonedFactory, AbandonedFactory2, AbandonedSchool, AmericanDiner, AmusementPark, AncientTowns, Antiquity3D, Apocalyptic, ArchVizTinyHouseDay, ArchVizTinyHouseNight, BrushifyMoon, CarWelding, CastleFortress, CoalMine, ConstructionSite, CountryHouse, CyberPunkDowntown, Cyberpunk, DesertGasStation, Downtown, EndofTheWorld, FactoryWeather, Fantasy, ForestEnv, Gascola, GothicIsland, GreatMarsh, HQWesternSaloon, HongKong, Hospital, House, IndustrialHangar, JapaneseAlley, JapaneseCity, MiddleEast, ModUrbanCity, ModernCityDowntown, ModularNeighborhood, ModularNeighborhoodIntExt, NordicHarbor, Ocean, Office, OldBrickHouseDay, OldBrickHouseNight, OldIndustrialCity, OldScandinavia, OldTownFall, OldTownNight, OldTownSummer, OldTownWinter, PolarSciFi, Prison, Restaurant, RetroOffice, Rome, Ruins, SeasideTown, SeasonalForestAutumn, SeasonalForestSpring, SeasonalForestSummerNight, SeasonalForestWinter, SeasonalForestWinterNight, Sewerage, ShoreCaves, Slaughter, SoulCity, Supermarket, TerrainBlending, UrbanConstruction, VictorianStreet, WaterMillDay, WaterMillNight, WesternDesertTown. 
+            version (str or list): The version of the trajectory. Valid difficulties are: v1, v2 and v3_anymal.
+            modality (str or list): The modality to download. Valid modalities are: image, depth, seg, imu, lidar. Default is image.
+            camera_name (str or list): The name of the camera to download. Valid names are: lcam_back, lcam_bottom, lcam_front, lcam_left, lcam_right, lcam_top, rcam_back, rcam_bottom, rcam_front, rcam_left, rcam_right, rcam_top
+        
+        Note: 
+            for imu and lidar, no camera_name needs to be specified. 
+        """
+        if config is not None:
+            print("Using config file: {}".format(config))
+            with open(config, 'r') as f:
+                config = yaml.safe_load(f)
+
+            # Update the parameters.
+            env = config['env']
+            version = config['version']
+            modality = config['modality']
+            camera_name = config['camera_name']
+            unzip = config['unzip']
+        
+        # Check that the inputs are all lists. If not, convert them to lists.
+        if not isinstance(env, list):
+            env = [env]
+        if not isinstance(version, list):
+            version = [version]
+        if not isinstance(modality, list):
+            modality = [modality]
+        if not isinstance(camera_name, list):
+            camera_name = [camera_name]
+            
+        # Check that the environments are valid.
+        if not self.check_env_valid(env):
+            return False
+        # Check that the modalities are valid
+        if not self.check_modality_valid(modality, check_ground = True):
+            return False
+        # Check that the camera names are valid
+        if not self.check_camera_valid(camera_name, check_ground= True):
+            return False
+        
+        # Check that the version is valid for certan environments
+        version_env_dict = self.compile_version_and_env(env, version)
+
+        zipfilelist = self.generate_filelist(version_env_dict, modality, camera_name)
+        # import ipdb;ipdb.set_trace()
+        CURDIR = os.path.dirname(os.path.abspath(__file__))
+        gtfile = CURDIR + '/download_ground_files.txt'
+        if not self.doublecheck_filelist(zipfilelist, gtfile=gtfile):
+            return False
+
+        # generate the target file list: 
+        targetfilelist = [join(self.tartanair_data_root, zipfile.replace('/', '_')) for zipfile in zipfilelist]
+        all_success_filelist = []
+
+        suc, success_source_files, success_target_files = self.downloader.download(zipfilelist, targetfilelist)
+        all_success_filelist.extend(success_target_files)
+
+        # download failed files untill success
+        trail_count = 0
+        while not suc: 
+            zipfilelist = [ff for ff in zipfilelist if ff not in success_source_files]
+            if len(zipfilelist) == 0:
+                print_warn("No failed files are found! ")
+                break
+
+            targetfilelist = [join(self.tartanair_data_root, zipfile.replace('/', '_')) for zipfile in zipfilelist]
+            suc, success_source_files, success_target_files = self.downloader.download(zipfilelist, targetfilelist)
+            all_success_filelist.extend(success_target_files)
+            trail_count += 1
+            if trail_count >= max_failure_trial:
+                break
+
+        if suc:
+            print_highlight("Download completed! Enjoy using TartanAir!")
+        else:
+            print_warn("Download with failure! The following files are not downloaded ..")
+            for ff in zipfilelist:
+                print_warn(ff)
+
+        if unzip:
+            self.unzip_files(all_success_filelist)
+
+        return True
+
+    def download_multi_thread(self, env = [], version = [], modality = [], camera_name = [], config = None, unzip = False, max_failure_trial = 3, num_workers = 8, **kwargs):
+        with ThreadPoolExecutor(max_workers=num_workers) as executor:
+            futures = []
+            for ee in env:
+                for vv in version:
+                    futures.append(executor.submit(self.download, env = [ee], version = [vv], modality = modality, camera_name = camera_name, 
+                                    config = config, unzip = unzip, max_failure_trial = max_failure_trial,))
+                    # Wait for a few seconds to avoid overloading the data server
+                    time.sleep(2)
+            
+            # Wait for all futures to complete
+            for future in as_completed(futures):
+                future.result()  # This will re-raise any exceptions caught during the futures' execution                                
+    
