@@ -230,6 +230,16 @@ class TartanAirDownloader(TartanAirModule):
         # Check that the camera names are valid
         if not self.check_camera_valid(camera_name):
             return False
+        
+        # download all if not specified
+        if len(env) == 0:
+            env = self.env_names
+        if len(difficulty) == 0:
+            difficulty = self.difficulty_names
+        if len(modality) == 0:
+            modality = self.modality_names
+        if len(camera_name) == 0:
+            camera_name = self.camera_names
 
         zipfilelist = self.generate_filelist(env, difficulty, modality, camera_name)
         # import ipdb;ipdb.set_trace()
@@ -368,7 +378,17 @@ class TartanGroundDownloader(TartanAirDownloader):
             modality = [modality]
         if not isinstance(camera_name, list):
             camera_name = [camera_name]
-            
+
+        # download all if not specified
+        if len(env) == 0:
+            env = self.ground_v1_env_names
+        if len(version) == 0:
+            version = self.ground_version_names
+        if len(modality) == 0:
+            modality = self.ground_modality_names
+        if len(camera_name) == 0:
+            camera_name = self.ground_camera_names
+
         # Check that the environments are valid.
         if not self.check_env_valid(env):
             return False

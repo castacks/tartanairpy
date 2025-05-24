@@ -264,6 +264,8 @@ class TartanAirModule():
             'SeasonalForestAutumn',
             'SeasonalForestSpring',
             'SeasonalForestWinter']
+        
+        self.ground_version_names = ['v1', 'v2', 'v3_anymal']
     ###############################
     # Data enumeration.
     ###############################
