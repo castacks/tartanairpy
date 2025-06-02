@@ -181,21 +181,8 @@ class TartanAirDownloader(TartanAirModule):
             cmd = 'unzip -q -o ' + zipfile + ' -d ' + self.tartanair_data_root
             os.system(cmd)
         print_highlight("Unzipping Completed! ")
-            
-    def download(self, env = [], difficulty = [], modality = [], camera_name = [], config = None, unzip = False, max_failure_trial = 3, **kwargs):
-        """
-        Downloads a trajectory from the TartanAir dataset. A trajectory includes a set of images and a corresponding trajectory text file describing the motion.
 
-        Args:
-            env (str or list): The environment to download the trajectory from. Valid envs are: AbandonedCable, AbandonedFactory, AbandonedFactory2, AbandonedSchool, AmericanDiner, AmusementPark, AncientTowns, Antiquity3D, Apocalyptic, ArchVizTinyHouseDay, ArchVizTinyHouseNight, BrushifyMoon, CarWelding, CastleFortress, CoalMine, ConstructionSite, CountryHouse, CyberPunkDowntown, Cyberpunk, DesertGasStation, Downtown, EndofTheWorld, FactoryWeather, Fantasy, ForestEnv, Gascola, GothicIsland, GreatMarsh, HQWesternSaloon, HongKong, Hospital, House, IndustrialHangar, JapaneseAlley, JapaneseCity, MiddleEast, ModUrbanCity, ModernCityDowntown, ModularNeighborhood, ModularNeighborhoodIntExt, NordicHarbor, Ocean, Office, OldBrickHouseDay, OldBrickHouseNight, OldIndustrialCity, OldScandinavia, OldTownFall, OldTownNight, OldTownSummer, OldTownWinter, PolarSciFi, Prison, Restaurant, RetroOffice, Rome, Ruins, SeasideTown, SeasonalForestAutumn, SeasonalForestSpring, SeasonalForestSummerNight, SeasonalForestWinter, SeasonalForestWinterNight, Sewerage, ShoreCaves, Slaughter, SoulCity, Supermarket, TerrainBlending, UrbanConstruction, VictorianStreet, WaterMillDay, WaterMillNight, WesternDesertTown. 
-            difficulty (str or list): The difficulty of the trajectory. Valid difficulties are: easy, hard.
-            modality (str or list): The modality to download. Valid modalities are: image, depth, seg, imu, lidar, flow. Default is image.
-            camera_name (str or list): The name of the camera to download. Valid names are: lcam_back, lcam_bottom, lcam_equirect, lcam_fish, lcam_front, lcam_left, lcam_right, lcam_top, rcam_back, rcam_bottom, rcam_equirect, rcam_fish, rcam_front, rcam_left, rcam_right, rcam_top
-        
-        Note: 
-            for imu and lidar, no camera_name needs to be specified. 
-            for flow, only lcam_front is available. 
-        """
+    def refine_parameters(self, env, difficulty, modality, camera_name, unzip, config):
         if config is not None:
             print("Using config file: {}".format(config))
             with open(config, 'r') as f:
@@ -217,6 +204,35 @@ class TartanAirDownloader(TartanAirModule):
             modality = [modality]
         if not isinstance(camera_name, list):
             camera_name = [camera_name]
+
+        # download all if not specified
+        if len(env) == 0:
+            env = self.env_names
+        if len(difficulty) == 0:
+            difficulty = self.difficulty_names
+        if len(modality) == 0:
+            modality = self.modality_names
+        if len(camera_name) == 0:
+            camera_name = self.camera_names
+
+        return env, difficulty, modality, camera_name, unzip    
+            
+    def download(self, env = [], difficulty = [], modality = [], camera_name = [], config = None, unzip = False, max_failure_trial = 3, **kwargs):
+        """
+        Downloads a trajectory from the TartanAir dataset. A trajectory includes a set of images and a corresponding trajectory text file describing the motion.
+
+        Args:
+            env (str or list): The environment to download the trajectory from. Valid envs are: AbandonedCable, AbandonedFactory, AbandonedFactory2, AbandonedSchool, AmericanDiner, AmusementPark, AncientTowns, Antiquity3D, Apocalyptic, ArchVizTinyHouseDay, ArchVizTinyHouseNight, BrushifyMoon, CarWelding, CastleFortress, CoalMine, ConstructionSite, CountryHouse, CyberPunkDowntown, Cyberpunk, DesertGasStation, Downtown, EndofTheWorld, FactoryWeather, Fantasy, ForestEnv, Gascola, GothicIsland, GreatMarsh, HQWesternSaloon, HongKong, Hospital, House, IndustrialHangar, JapaneseAlley, JapaneseCity, MiddleEast, ModUrbanCity, ModernCityDowntown, ModularNeighborhood, ModularNeighborhoodIntExt, NordicHarbor, Ocean, Office, OldBrickHouseDay, OldBrickHouseNight, OldIndustrialCity, OldScandinavia, OldTownFall, OldTownNight, OldTownSummer, OldTownWinter, PolarSciFi, Prison, Restaurant, RetroOffice, Rome, Ruins, SeasideTown, SeasonalForestAutumn, SeasonalForestSpring, SeasonalForestSummerNight, SeasonalForestWinter, SeasonalForestWinterNight, Sewerage, ShoreCaves, Slaughter, SoulCity, Supermarket, TerrainBlending, UrbanConstruction, VictorianStreet, WaterMillDay, WaterMillNight, WesternDesertTown. 
+            difficulty (str or list): The difficulty of the trajectory. Valid difficulties are: easy, hard.
+            modality (str or list): The modality to download. Valid modalities are: image, depth, seg, imu, lidar, flow. Default is image.
+            camera_name (str or list): The name of the camera to download. Valid names are: lcam_back, lcam_bottom, lcam_equirect, lcam_fish, lcam_front, lcam_left, lcam_right, lcam_top, rcam_back, rcam_bottom, rcam_equirect, rcam_fish, rcam_front, rcam_left, rcam_right, rcam_top
+        
+        Note: 
+            for imu and lidar, no camera_name needs to be specified. 
+            for flow, only lcam_front is available. 
+        """
+
+        env, difficulty, modality, camera_name, unzip = self.refine_parameters(env, difficulty, modality, camera_name, unzip, config)
             
         # Check that the environments are valid.
         if not self.check_env_valid(env):
@@ -283,6 +299,9 @@ class TartanAirDownloader(TartanAirModule):
         return True
 
     def download_multi_thread(self, env = [], difficulty = [], modality = [], camera_name = [], config = None, unzip = False, max_failure_trial = 3, num_workers = 8, **kwargs):
+
+        env, difficulty, modality, camera_name, unzip = self.refine_parameters(env, difficulty, modality, camera_name, unzip, config)
+
         with ThreadPoolExecutor(max_workers=num_workers) as executor:
             futures = []
             for ee in env:
@@ -343,20 +362,8 @@ class TartanGroundDownloader(TartanAirDownloader):
                 else:
                     version_env_dict[ver].append(env)
         return version_env_dict
-
-    def download(self, env = [], version = [], modality = [], camera_name = [], config = None, unzip = False, max_failure_trial = 3, **kwargs):
-        """
-        Downloads a trajectory from the TartanAir dataset. A trajectory includes a set of images and a corresponding trajectory text file describing the motion.
-
-        Args:
-            env (str or list): The environment to download the trajectory from. Valid envs are: AbandonedCable, AbandonedFactory, AbandonedFactory2, AbandonedSchool, AmericanDiner, AmusementPark, AncientTowns, Antiquity3D, Apocalyptic, ArchVizTinyHouseDay, ArchVizTinyHouseNight, BrushifyMoon, CarWelding, CastleFortress, CoalMine, ConstructionSite, CountryHouse, CyberPunkDowntown, Cyberpunk, DesertGasStation, Downtown, EndofTheWorld, FactoryWeather, Fantasy, ForestEnv, Gascola, GothicIsland, GreatMarsh, HQWesternSaloon, HongKong, Hospital, House, IndustrialHangar, JapaneseAlley, JapaneseCity, MiddleEast, ModUrbanCity, ModernCityDowntown, ModularNeighborhood, ModularNeighborhoodIntExt, NordicHarbor, Ocean, Office, OldBrickHouseDay, OldBrickHouseNight, OldIndustrialCity, OldScandinavia, OldTownFall, OldTownNight, OldTownSummer, OldTownWinter, PolarSciFi, Prison, Restaurant, RetroOffice, Rome, Ruins, SeasideTown, SeasonalForestAutumn, SeasonalForestSpring, SeasonalForestSummerNight, SeasonalForestWinter, SeasonalForestWinterNight, Sewerage, ShoreCaves, Slaughter, SoulCity, Supermarket, TerrainBlending, UrbanConstruction, VictorianStreet, WaterMillDay, WaterMillNight, WesternDesertTown. 
-            version (str or list): The version of the trajectory. Valid difficulties are: v1, v2 and v3_anymal.
-            modality (str or list): The modality to download. Valid modalities are: image, depth, seg, imu, lidar. Default is image.
-            camera_name (str or list): The name of the camera to download. Valid names are: lcam_back, lcam_bottom, lcam_front, lcam_left, lcam_right, lcam_top, rcam_back, rcam_bottom, rcam_front, rcam_left, rcam_right, rcam_top
-        
-        Note: 
-            for imu and lidar, no camera_name needs to be specified. 
-        """
+    
+    def refine_parameters(self, env, version, modality, camera_name, unzip, config):
         if config is not None:
             print("Using config file: {}".format(config))
             with open(config, 'r') as f:
@@ -388,6 +395,25 @@ class TartanGroundDownloader(TartanAirDownloader):
             modality = self.ground_modality_names
         if len(camera_name) == 0:
             camera_name = self.ground_camera_names
+
+        return env, version, modality, camera_name, unzip
+
+
+    def download(self, env = [], version = [], modality = [], camera_name = [], config = None, unzip = False, max_failure_trial = 3, **kwargs):
+        """
+        Downloads a trajectory from the TartanAir dataset. A trajectory includes a set of images and a corresponding trajectory text file describing the motion.
+
+        Args:
+            env (str or list): The environment to download the trajectory from. Valid envs are: AbandonedCable, AbandonedFactory, AbandonedFactory2, AbandonedSchool, AmericanDiner, AmusementPark, AncientTowns, Antiquity3D, Apocalyptic, ArchVizTinyHouseDay, ArchVizTinyHouseNight, BrushifyMoon, CarWelding, CastleFortress, CoalMine, ConstructionSite, CountryHouse, CyberPunkDowntown, Cyberpunk, DesertGasStation, Downtown, EndofTheWorld, FactoryWeather, Fantasy, ForestEnv, Gascola, GothicIsland, GreatMarsh, HQWesternSaloon, HongKong, Hospital, House, IndustrialHangar, JapaneseAlley, JapaneseCity, MiddleEast, ModUrbanCity, ModernCityDowntown, ModularNeighborhood, ModularNeighborhoodIntExt, NordicHarbor, Ocean, Office, OldBrickHouseDay, OldBrickHouseNight, OldIndustrialCity, OldScandinavia, OldTownFall, OldTownNight, OldTownSummer, OldTownWinter, PolarSciFi, Prison, Restaurant, RetroOffice, Rome, Ruins, SeasideTown, SeasonalForestAutumn, SeasonalForestSpring, SeasonalForestSummerNight, SeasonalForestWinter, SeasonalForestWinterNight, Sewerage, ShoreCaves, Slaughter, SoulCity, Supermarket, TerrainBlending, UrbanConstruction, VictorianStreet, WaterMillDay, WaterMillNight, WesternDesertTown. 
+            version (str or list): The version of the trajectory. Valid difficulties are: v1, v2 and v3_anymal.
+            modality (str or list): The modality to download. Valid modalities are: image, depth, seg, imu, lidar. Default is image.
+            camera_name (str or list): The name of the camera to download. Valid names are: lcam_back, lcam_bottom, lcam_front, lcam_left, lcam_right, lcam_top, rcam_back, rcam_bottom, rcam_front, rcam_left, rcam_right, rcam_top
+        
+        Note: 
+            for imu and lidar, no camera_name needs to be specified. 
+        """
+
+        env, version, modality, camera_name, unzip = self.refine_parameters(env, version, modality, camera_name, unzip, config)
 
         # Check that the environments are valid.
         if not self.check_env_valid(env):
@@ -444,6 +470,8 @@ class TartanGroundDownloader(TartanAirDownloader):
         return True
 
     def download_multi_thread(self, env = [], version = [], modality = [], camera_name = [], config = None, unzip = False, max_failure_trial = 3, num_workers = 8, **kwargs):
+        env, version, modality, camera_name, unzip = self.refine_parameters(env, version, modality, camera_name, unzip, config)
+
         with ThreadPoolExecutor(max_workers=num_workers) as executor:
             futures = []
             for ee in env:

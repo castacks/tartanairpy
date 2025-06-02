@@ -22,11 +22,10 @@ ta.download_ground(env = env,
               camera_name = ['lcam_front', 'lcam_bottom'], 
               unzip = True)
 
-env = ['OldTownSummer', 'DesertGasStation']
-
-ta.download_ground_multi_thread(env = env, 
-              version = ['v1', 'v2', 'v3_anymal'], 
-              modality = ['image', 'depth', 'seg', 'lidar', 'imu'],  
-              camera_name = ['lcam_front', 'lcam_right', 'lcam_back', 'lcam_left', 'lcam_top', 'lcam_bottom'], 
+# Download all the data using multiple threads
+ta.download_ground_multi_thread(env = [], 
+              version = [], 
+              modality = [],  
+              camera_name = [], 
               unzip = True, 
               num_workers = 8)

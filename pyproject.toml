@@ -39,7 +39,9 @@ dependencies = [
     "tqdm", 
     "boto3", 
     "minio", 
-    "cupy-cuda12x"
+    "cupy-cuda12x",
+    "torchvision",
+    "torch"
     ]
 
 [project.urls]

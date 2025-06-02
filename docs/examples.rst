@@ -22,7 +22,7 @@ Download via Python API
     # Download a trajectory.
     ta.download(env = "ArchVizTinyHouseDay", 
                 difficulty = ['easy'], # this can be 'easy', and/or 'hard'
-                modality = ['image', 'depth', 'seg', 'imu'], # available modalities are: image', 'depth', 'seg', 'imu', 'lidar', 'flow', 'pose'
+                modality = ['image', 'depth', 'seg', 'imu'], # available modalities are: image', 'depth', 'seg', 'imu', 'lidar', 'flow'
                 camera_name = ['lcam_front', 'lcam_left', 'lcam_right', 'lcam_back', 'lcam_top', 'lcam_bottom'], 
                 unzip = True) # unzip files autonomously after download
 
@@ -45,15 +45,10 @@ The config file if of the following format:
 
 
 Multi-Thread Download via Python API
-............................
+............................................
 
 .. code-block:: python
 
-    # General imports.
-    import sys
-    
-    # Local imports.
-    sys.path.append('..')
     import tartanair as ta
     
     # Create a TartanAir object.
@@ -78,6 +73,23 @@ Multi-Thread Download via Python API
                              unzip = True,
                              num_workers = 8)
 
+Download TartanGround
+............................
+
+.. code-block:: python
+
+    import tartanair as ta
+
+    # Initialize TartanAir.
+    tartanground_data_root = '/my/path/to/root/folder/for/tartanair-v2'
+    ta.init(tartanground_data_root)
+
+    # Download a trajectory.
+    ta.download_ground(env = ['OldTownSummer', 'DesertGasStation'], 
+                version = ['v1', 'v2', 'v3_anymal'], # available versions are: 'v1', 'v2', 'v3_anymal'
+                modality = ['image', 'depth', 'seg', 'lidar', 'imu'], # available modalities are: image', 'depth', 'seg', 'imu', 'lidar'
+                camera_name = ['lcam_front', 'lcam_bottom'], # available cameras are: 'lcam_front', 'lcam_left', 'lcam_right', 'lcam_back', 'lcam_top', 'lcam_bottom'
+                unzip = True) # unzip files autonomously after download
 
 Customization Example
 -------------------------------------
@@ -307,4 +319,4 @@ Please refer to flow_sampling_example.py for a complete example.
    :align: center
    :width: 80%
 
-To learn more about how the resampling happens, see `Flow Sampling <flow_sampling_label>`_.
+To learn more about how the resampling happens, see `Flow Sampling <flow_sampling.html>`_.
