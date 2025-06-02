@@ -27,6 +27,14 @@ All the environments have recorded trajectories that were designed to be challen
 
 🆕 `TartanGround: A Large-Scale Dataset for Ground Robot Perception and Navigation <tartanground/index.html>`_  
 
+Useful Links
+==========================================================
+`TartanAir V1 <https://theairlab.org/tartanair-dataset/>`_
+
+`TartanAir V2 Git Repo <https://github.com/castacks/tartanairpy>`_
+
+
+
 .. toctree::
    :maxdepth: 2
    :caption: Getting Started:
@@ -41,4 +49,4 @@ All the environments have recorded trajectories that were designed to be challen
 License
 ==========================================================
 
-Similar to `TartanAir V1 <https://theairlab.org/tartanair-dataset/>`_, the TartanAir V2 dataset is licensed under a `Creative Commons Attribution 4.0 International License <https://creativecommons.org/licenses/by/4.0/>`_ and the toolkit is licensed under a `MIT License <https://opensource.org/license/mit>`_.
+he TartanAir V2 dataset is licensed under a `Creative Commons Attribution 4.0 International License <https://creativecommons.org/licenses/by/4.0/>`_ and the toolkit is licensed under a `MIT License <https://opensource.org/license/mit>`_.
