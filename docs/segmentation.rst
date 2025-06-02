@@ -1,7 +1,7 @@
 Semantic Segmentation Statistics
 =====================================
 
-This page provides a summary of the semantic segmentation statistics for all environments in the dataset. Each environment is represented by a snapshot image and its corresponding segmentation histogram. These environment-specific statistics, as well as the statistics for all the environments, can be found in the ''. 
+This page provides a summary of the semantic segmentation statistics for all environments in the dataset. Each environment is represented by a snapshot image and its corresponding segmentation histogram. These environment-specific statistics, as well as the statistics for all the environments, can be found in the `zip file <https://github.com/castacks/tartanairpy/tree/main/segfiles.zip>`_. 
 
 .. list-table::
    :header-rows: 0
