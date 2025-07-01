@@ -10,6 +10,7 @@ from scipy.spatial.transform import Rotation as R
 from .flow_utils import *
 
 import time
+from functools import lru_cache
 
 FRONT_CAMERA = "front"
 
@@ -48,237 +49,414 @@ def sample_random_rotation_matrix():
 
     return torch.from_numpy(rotation_matrix).to(torch.float32)
 
-def calculate_pairwise_flow(
-    pose0, cam0_R_camsample0, depth0, mask0, camera_model_0, 
-    pose1, cam1_R_camsample1, depth1, mask1, camera_model_1,
-    device = "cuda"):
-    
-    # filter out erroneous depth value
-    mask0 &= (depth0 != 0) # & (depth0 < 1e3)
-    mask1 &= (depth1 != 0) # & (depth1 < 1e3)
-
-    # calculate transform between cameras: from camera 0 to camera 1
-    world_T_0 = np.eye(4)
-    world_T_1 = np.eye(4)
-
-    NED_R_cam = np.array([
-        [0, 0, 1],
-        [1, 0, 0],
-        [0, 1, 0]
-    ], dtype=np.float32)
-
-    world_T_0[0:3, 0:3] = R.from_quat(pose0[3:]).as_matrix() @ NED_R_cam @ cam0_R_camsample0.numpy() # this accepts xyzw
-    world_T_0[0:3, 3] = pose0[:3]
-
-    world_T_1[0:3, 0:3] = R.from_quat(pose1[3:]).as_matrix() @ NED_R_cam @ cam1_R_camsample1.numpy() # this accepts xyzw
-    world_T_1[0:3, 3] = pose1[:3]
-
-    T_1_0 = torch.from_numpy(np.linalg.inv(world_T_1) @ world_T_0).to(dtype=torch.float32, device=device)
-
-    # project the points to camera0's frame
-    G0 = camera_model_0.pixel_coordinates(shift = 0.5, flatten = True)
-    G0 = G0.to(device)
-
-    valid_pixels_img0 = G0[:, mask0.reshape((-1,))]
-
-    rays, rays_valid_mask = camera_model_0.pixel_2_ray(valid_pixels_img0) # rays is a 3xH*W tensor. 
-    rays_valid_mask = rays_valid_mask.view((1, -1))
-
-    rays = rays.to(device)
-    rays_valid_mask = rays_valid_mask.to(device)
-
-    assert rays_valid_mask.all() # mask0 should take care of this
-
-    dist0 = depth0[mask0].view((1, -1))
-    points0 = rays * dist0
-
-    # project transform points0 into camera1's frame points1
-    points1 = T_1_0[0:3,0:3] @ points0 + T_1_0[0:3,3:4]
-
-    # project points1 into camera's pixel space according to camera model
-    pixels1, projmask = camera_model_1.point_3d_2_pixel(points1)
-
-    G1 = camera_model_1.pixel_coordinates(shift = 0.5, flatten = False)
-    G1 = G1.to(device)
-
-    valid_pixels_1 = pixels1[:, projmask]
-
-    
-    depth_value, mask = interpolate_depth_pytorch(valid_pixels_1, G1, depth1)
-
-    # assert mask.all()
-
-    depth_value_gt = torch.linalg.norm(points1[:, projmask], dim=0)
 
 
-    # calculate depth reprojection error and final mask
-    depth_error = torch.zeros(depth0.shape, dtype=torch.float32, device=device)
-    mask_small = torch.zeros_like(depth_error[mask0], dtype=torch.float32)
-    mask_small[projmask] = (depth_value_gt - depth_value)
-    depth_error[mask0] = mask_small
+@lru_cache(maxsize=10)
+def get_meshgrid_torch(W, H, device):
+    u, v = torch.meshgrid(torch.arange(W, device=device).float(), torch.arange(H, device=device).float(), indexing="xy")
 
-    depth_error_mask = torch.zeros(mask0.shape, dtype=torch.bool, device=device)
-    depth_error_mask[mask0] = projmask
-    depth_error_mask &= mask0.to(device)
+    uv = torch.stack((u, v), dim=-1)
 
-    # calculate valid flow
-    valid_pixels_0 = G0[:, depth_error_mask.reshape((-1,))]
+    return uv
 
-    # calculate flow image
-    flow_image = torch.zeros(mask0.shape + (2,), dtype=torch.float32, device=device)
-    flow_image[depth_error_mask, :] = (valid_pixels_1 - valid_pixels_0).T
-
-    return depth_value_gt, depth_error, depth_error_mask, valid_pixels_0, valid_pixels_1, flow_image, world_T_0, world_T_1
-
-import torch
-import time
-import numpy as np
-import matplotlib.pyplot as plt
-
-import torch.nn.functional as F
-from scipy.ndimage import affine_transform, sobel
-from scipy.interpolate import RectBivariateSpline
-from scipy.ndimage.morphology import grey_erosion, grey_opening
-
-import kornia
-from kornia.filters import spatial_gradient
-from kornia.morphology import opening
-
-from einops import rearrange, reduce, repeat
-
-def gaussian_kernel(size, sigma):
-    x = torch.arange(-size // 2 + 1, size // 2 + 1)
-    y = torch.arange(-size // 2 + 1, size // 2 + 1)
-    xx, yy = torch.meshgrid(x, y, indexing='ij')
-    kernel = torch.exp(-(xx ** 2 + yy ** 2) / (2 * sigma ** 2))
-    return kernel / torch.sum(kernel)
-
-
-def calculate_occlusion(
-    depth0: torch.Tensor,
-    depth1: torch.Tensor,
-    px0: torch.Tensor,
-    px1: torch.Tensor,
-    gt_depth: torch.Tensor,
-    device = None,
-    # 0.5 pixel offset
-    pixel_05_offset: bool = True,
-    # kernel size for morphological opening
-    apply_morphological_opening: bool = True,
-    kernel_size: int = 5,
-    sigma: float = 1.0,
-    # residual clipping
-    max_residual: float = 0.5,
-    # depth threshold for occlusion
-    depth_start_threshold: float = 0.04,
-    depth_temperature: float = 0.02,
-
-    # relative error threshold
-    apply_relative_error: bool = True,
-    relative_error_tol: float = 0.001,
+def flow_occlusion_post_processing(
+    views, depth_error_threshold=0.1, depth_error_temperature=0.1, relative_depth_error_threshold=0.005, opt_iters=5
 ):
-    
-    if device is None:
-        device = depth0.device
+    """
+    Generate flow supervision from pointmap, depthmap, intrinsics, and extrinsics.
 
-    # construct from torch
-    depth0 = torch.from_numpy(depth0) if not isinstance(depth0, torch.Tensor) else depth0
-    depth1 = torch.from_numpy(depth1) if not isinstance(depth1, torch.Tensor) else depth1
-    px0 = torch.from_numpy(px0) if not isinstance(px0, torch.Tensor) else px0
-    px1 = torch.from_numpy(px1) if not isinstance(px1, torch.Tensor) else px1
-    gt_depth = torch.from_numpy(gt_depth) if not isinstance(gt_depth, torch.Tensor) else gt_depth
+    Args:
+    - views (list[dict]): list of views, already batched by the dataloader
+    """
 
-    # move everything to GPU
-    depth0      =   depth0  .to(device, non_blocking=True)
-    depth1      =   depth1  .to(device, non_blocking=True)
-    px0         =   px0     .to(device, non_blocking=True)
-    px1         =   px1     .to(device, non_blocking=True)
-    gt_depth    =   gt_depth.to(device, non_blocking=True)
+    assert len(views) == 2, f"Expected 2 views, to compute flow to other view, got {len(views)} views"
 
-    if apply_morphological_opening:
-        structuring_element = gaussian_kernel(kernel_size, sigma).to(device, non_blocking=True)
+    for view, other_view in zip(views, reversed(views)):
 
-    # correct the 0.5 pixel offset
-    if pixel_05_offset:
-        px1_unoffset = px1 - 0.5
-   
-    # rearrange data into [B, C, H, W] format
-    # depth0 = rearrange(depth0, 'h w -> () () h w')
-    # depth1 = rearrange(depth1, 'h w -> () () h w')
+        if "flow" in view:
+            assert "fov_mask" in view
+            assert "depth_validity" in view
+            assert "expected_normdepth" in view
+            assert "norm_depthmap" in other_view
 
-    depth0 = depth0.unsqueeze(0).unsqueeze(0)
-    depth1 = depth1.unsqueeze(0).unsqueeze(0)
+            B, H, W = view["fov_mask"].shape
 
-    
-    # 1. compute image gradient of depth1
-    grad_img1 = spatial_gradient(depth1, normalized=False)
-    grad_img1 = rearrange(grad_img1, 'b c d h w-> b (c d) h w')
+            # print("Warning: flow already present in post processing, doing occlusion only")
 
-    # 2. compute morphological opening of gradients
-    if apply_morphological_opening: 
-        grad_img1 = torch.sign(grad_img1) * opening(
-            torch.abs(grad_img1),
-            kernel=torch.ones_like(structuring_element), 
-            structuring_element=structuring_element
+            uv = get_meshgrid_torch(W, H, device=view["fov_mask"].device) + view["flow"].permute(0, 2, 3, 1)
+            expected_norm_depth = view["expected_normdepth"][view["fov_mask"]]
+
+            valid_mask = view["fov_mask"]
+            norm_depth_in_other_view = other_view["norm_depthmap"]  # Cautious: this need to be normalized depth
+
+        else:
+            # project points from current view to other view
+            # points are in a row-major format, so we need to transpose the last 2 dimensions
+            B, H, W, C = view["pts3d"].shape
+
+            world_to_other_camera = torch.linalg.inv(other_view["camera_pose"])
+
+            current_points_in_other = (
+                view["pts3d"].view(B, -1, C) @ world_to_other_camera[:, :3, :3].permute(0, 2, 1)
+                + world_to_other_camera[:, :3, 3][:, None, :]
+            )
+            current_points_in_other = current_points_in_other.view(B, H, W, C)
+
+            # project points to pixels
+            uv, valid_mask = project_points_to_pixels_batched(current_points_in_other, other_view["camera_intrinsics"])
+
+            # compute flow
+            flow = uv - get_meshgrid_torch(W, H, device=uv.device)
+            flow[~valid_mask, :] = 0.0
+
+            # compute occlusion based on depth reprojection error thresholding
+            expected_norm_depth = torch.linalg.norm(current_points_in_other[valid_mask], dim=-1)
+            norm_depth_in_other_view = z_depthmap_to_norm_depthmap_batched(
+                other_view["depthmap"], other_view["camera_intrinsics"]
+            )
+
+            view["flow"] = flow.permute(0, 3, 1, 2)
+
+            # compute correspondence validity
+            view["fov_mask"] = valid_mask
+            view["depth_validity"] = view["depthmap"] > 0
+
+        error_threshold = (
+            depth_error_threshold
+            + relative_depth_error_threshold * expected_norm_depth
+            - np.log(0.5) * depth_error_temperature
         )
 
-    
-    # 3. interpolate depth at image 1
-    _, _, H, W = depth1.shape
+        # to determine occlusion, we will threshold the error between the distance of projected point to the other camera center
+        # v.s. the norm-depth value recorded in the otherview's depthmap at the projected pixel location. If they met, then the point
+        # is the rendered point in the other view, and is not occluded. Otherwise, it is occluded.
 
-    # FIXME: do not know why, but this 0.5 is extremely important. without it the algorithm will not work as well. 
-    sample_px1_normalized = (((px1_unoffset.T.reshape(1, 1, -1, 2) + 0.5) / torch.tensor([W, H], dtype=depth1.dtype, device=depth1.device)) * 2 - 1)
+        valid_uv = uv[valid_mask]
+        view["valid_uv"] = valid_uv
+        if (
+            opt_iters > 0
+        ):  # if opt_iters is 0, we will not optimize the uv_residual, and there are no need to create the optimizer and the residual tensor
+            uv_residual = torch.zeros_like(
+                valid_uv, requires_grad=True
+            )  # we optimize uv_residual to estimate the lower bound of the depth error
+            opt = torch.optim.Adam([uv_residual], lr=1e-1, weight_decay=1e-1)
+            valid_uv = valid_uv + uv_residual
+            opt.zero_grad()
 
-    depth_interp_1 = F.grid_sample(depth1, sample_px1_normalized, mode = 'bilinear', align_corners = False)
-    depth_interp_1 = rearrange(depth_interp_1, 'b c x w -> b c x w')
+        # select the possibly occluded pixels to check for non-occlusion
+        possibly_occluded_mask = valid_mask.clone()
+        possible_occlusion_in_valid_pixels = torch.ones(
+            size=(valid_mask.sum(),), dtype=torch.bool, device=valid_mask.device
+        )
+        checked_uv = valid_uv  # [possible_occlusion_in_valid_pixels]
+        checked_expected_norm_depth = expected_norm_depth  # [possible_occlusion_in_valid_pixels]
+        checked_threshold = error_threshold  # [possible_occlusion_in_valid_pixels]
 
-    gaussian_blur = kornia.filters.GaussianBlur2d(kernel_size=(5, 5), sigma=(1, 1))
-    grad_img1 = gaussian_blur(grad_img1)
+        opt_iteration = 0
+        while True:
+            # compute the reprojection error of the selected pixels and check if they are non-occluded
+            reprojection_error = compute_reprojection_error(
+                checked_uv, checked_expected_norm_depth, norm_depth_in_other_view, possibly_occluded_mask
+            )
 
-    # 4. interpolate gradients at px1 locations
-    J = F.grid_sample(grad_img1, sample_px1_normalized, mode = 'bilinear', align_corners = False)
-    J /= 8.0
+            occluded_selected_uv = reprojection_error >= checked_threshold
 
-    # 5. solve least squares problem
-    r = 0.2 / (torch.sum(J ** 2, axis=0)) * J * (gt_depth - depth_interp_1)
-    r = rearrange(r, 'b c x w -> b (c x) w')
+            # update the occlusion mask, uv_combined, and expected_norm_depth with the non_occluded_selected_uv
+            possibly_occluded_mask_new = possibly_occluded_mask.clone()
+            possibly_occluded_mask_new[possibly_occluded_mask] = occluded_selected_uv
 
-    r_norm = torch.linalg.norm(r, axis=0)
-    r[:, r_norm > max_residual] = r[:, r_norm > max_residual] / r_norm[r_norm > max_residual][None,:] * max_residual
+            possible_occlusion_in_valid_pixels_new = possible_occlusion_in_valid_pixels.clone()
+            possible_occlusion_in_valid_pixels_new[possible_occlusion_in_valid_pixels] = occluded_selected_uv
 
-    r = rearrange(r, 'b c w -> b () w c')
+            possibly_occluded_mask = possibly_occluded_mask_new
+            possible_occlusion_in_valid_pixels = possible_occlusion_in_valid_pixels_new
 
-    # 6. obtain interpolation of the refined depth
-    depth_interp_1 = F.grid_sample(depth1, sample_px1_normalized, mode = 'bilinear', align_corners = False)
+            if opt_iters == 0 or opt_iteration >= opt_iters:
+                break
 
-    coeff = torch.tensor([[W / 2, H / 2]], dtype=depth1.dtype, device=depth1.device)
-    depth_interp_1_refined = F.grid_sample(depth1, sample_px1_normalized + r / coeff, mode = 'bilinear', align_corners = False)
-    
-    # 7. compute occlusion
-    depth_absolute_error = torch.abs(gt_depth - depth_interp_1)
-    depth_absolute_error_refined = torch.abs(gt_depth - depth_interp_1_refined)
+            # optimize the uv_residual
+            loss = torch.sum(reprojection_error)
+            loss.backward()
+            opt.step()
+            with torch.no_grad():
+                uv_residual.clamp_(-0.707, 0.707)
+            opt.zero_grad()
 
-    depth_err = torch.minimum(depth_absolute_error, depth_absolute_error_refined)
+            opt_iteration += 1
 
-    if apply_relative_error:
-        occlusion = torch.exp(- torch.clip(
-            depth_err - depth_start_threshold - relative_error_tol * gt_depth, 
-            0, max=None
-        ) / depth_temperature)
+            checked_uv = valid_uv[possible_occlusion_in_valid_pixels]
+            checked_expected_norm_depth = expected_norm_depth[possible_occlusion_in_valid_pixels]
+            checked_threshold = error_threshold[possible_occlusion_in_valid_pixels]
+
+        # the non-occlsion mask is the invert of the possibly occluded mask
+        non_occluded_mask = ~possibly_occluded_mask
+
+        view["non_occluded_mask"] = non_occluded_mask & valid_mask
+
+    # finally, account for depth invalidity in the other view
+    for view, other_view in zip(views, reversed(views)):
+        other_view_depth_validity = query_projected_mask(
+            view["valid_uv"].detach(), other_view["depth_validity"], view["fov_mask"]
+        )
+        view["other_view_depth_validity"] = other_view_depth_validity
+
+        # occlusion should be supervised at
+        # 1. self depth is valid, once projected will land out of bound in the other view
+        # OR
+        # 2. self depth is valid, once projected will land in the bound of other view, landing position shows valid depth
+
+        view["occlusion_supervision_mask"] = (view["depth_validity"] & (~view["fov_mask"])) | (
+            view["fov_mask"] & other_view_depth_validity
+        )
+
+def query_projected_mask(uv, other_mask, uv_source_mask):
+    """
+    Compute reprojection error between the expected depth and the actual depthmap at the projected pixel location.
+
+    Args:
+    - uv (torch.Tensor): projected pixel locations
+    - other_mask (torch.Tensor): boolean mask to query (B, H, W)
+    - uv_source_mask (torch.Tensor): mask of pixels that corresponds to the uv pixels
+
+    Returns:
+    - torch.Tensor: reprojection error
+    """
+
+    B, H, W = other_mask.shape
+    valid_pixels1_opt = uv.permute(1, 0) + 0.5  # since the pixel center is represented as 0.0
+
+    # convert to normalized coordinates to apply grid sample
+    shape_normalizer = torch.tensor([W, H], device=valid_pixels1_opt.device, dtype=valid_pixels1_opt.dtype).view(2, 1)
+    valid_pixels1_opt_normalized = valid_pixels1_opt / shape_normalizer * 2 - 1
+
+    valid_pixels1_opt_normalized = torch.clip(valid_pixels1_opt_normalized, -1, 1)
+
+    # pad the queries to get uniform length for all images in batch
+    pixels_in_each_example = torch.sum(uv_source_mask, dim=[1, 2])
+    max_pixels = torch.max(pixels_in_each_example)
+    sum_pixels = torch.cumsum(pixels_in_each_example, dim=0)
+
+    padded_queries = torch.zeros(B, max_pixels, 2, device=valid_pixels1_opt.device, dtype=valid_pixels1_opt.dtype)
+    valid_padded_mask = torch.arange(max_pixels, device=valid_pixels1_opt.device) < pixels_in_each_example[:, None]
+
+    # fill the queries with the valid pixels
+    padded_queries[valid_padded_mask] = valid_pixels1_opt_normalized.permute(1, 0)
+
+    # apply grid sample
+    sampled_mask = torch.nn.functional.grid_sample(
+        other_mask.view(B, 1, H, W).float(),  # expand to BCHW
+        grid=padded_queries.unsqueeze(1),
+        # now grid have shape 1, 1, V, 2, in which V is the unrolled pixels
+        # at which valid_mask is True. In other words, the results corresponds
+        # to pixels True in valid_mask, unrolled row by row.
+        mode="nearest",
+        padding_mode="zeros",
+        align_corners=False,
+    )[
+        :, 0, 0, :
+    ]  # output is BCHW, we only have the unrolled pixels in W dimension
+
+    # select the non-padded values
+    sampled_mask = sampled_mask[valid_padded_mask]
+
+    output_mask = torch.zeros_like(uv_source_mask)
+    output_mask[uv_source_mask] = sampled_mask.to(torch.bool)
+
+    return output_mask
+
+def compute_reprojection_error(uv, expected_depth, actual_depthmap, possibly_occluded_mask):
+    """
+    Compute reprojection error between the expected depth and the actual depthmap at the projected pixel location.
+
+    Args:
+    - uv (torch.Tensor): projected pixel locations
+    - expected_depth (torch.Tensor): expected depth values for each uv
+    - actual_depthmap (torch.Tensor): actual depthmap (B, H, W)
+    - possibly_occluded_mask (torch.Tensor): mask of pixels that are possibly occluded
+
+    Returns:
+    - torch.Tensor: reprojection error
+    """
+
+    B, H, W = actual_depthmap.shape
+    valid_pixels1_opt = uv.permute(1, 0) + 0.5  # since the pixel center is represented as 0.0
+
+    # convert to normalized coordinates to apply grid sample
+    shape_normalizer = torch.tensor([W, H], device=valid_pixels1_opt.device, dtype=valid_pixels1_opt.dtype).view(2, 1)
+    valid_pixels1_opt_normalized = valid_pixels1_opt / shape_normalizer * 2 - 1
+
+    valid_pixels1_opt_normalized = torch.clip(valid_pixels1_opt_normalized, -1, 1)
+
+    # pad the queries to get uniform length for all images in batch
+    pixels_in_each_example = torch.sum(possibly_occluded_mask, dim=[1, 2])
+    max_pixels = torch.max(pixels_in_each_example)
+    sum_pixels = torch.cumsum(pixels_in_each_example, dim=0)
+
+    padded_queries = torch.zeros(B, max_pixels, 2, device=valid_pixels1_opt.device, dtype=valid_pixels1_opt.dtype)
+    valid_padded_mask = torch.arange(max_pixels, device=valid_pixels1_opt.device) < pixels_in_each_example[:, None]
+
+    # fill the queries with the valid pixels
+    padded_queries[valid_padded_mask] = valid_pixels1_opt_normalized.permute(1, 0)
+
+    # apply grid sample
+    sampled_depth = torch.nn.functional.grid_sample(
+        actual_depthmap.view(B, 1, H, W),  # expand to BCHW
+        grid=padded_queries.unsqueeze(1),
+        # now grid have shape 1, 1, V, 2, in which V is the unrolled pixels
+        # at which valid_mask is True. In other words, the results corresponds
+        # to pixels True in valid_mask, unrolled row by row.
+        mode="bilinear",  # This is a very important design choice. Normally
+        # we would not use bilinear interpolation for depth map, because it will
+        # create non-existent points when interpolating between motion boundaries.
+        # but here we are only using it to validate, which means its effect will not
+        # propagate to the regression values. Using bilinear solves aliasing
+        # at highly inclined angles.
+        padding_mode="zeros",
+        align_corners=False,
+    )[
+        :, 0, 0, :
+    ]  # output is BCHW, we only have the unrolled pixels in W dimension
+
+    # select the non-padded values
+    sampled_depth = sampled_depth[valid_padded_mask]
+
+    return torch.abs(sampled_depth - expected_depth)
+
+def project_points_to_pixels_batched(pts_camera, camera_intrinsics, pseudo_focal=None):
+    """
+    Args:
+        - pts_camera (BxHxWx3 torch.Tensor): points in camera coordinates
+        - camera_intrinsics: a Bx3x3 torch.Tensor
+    Returns:
+        pixel coordinates (BxHxWx2 torch.Tensor), and a mask (BxHxW) specifying valid pixels.
+    """
+    camera_intrinsics = camera_intrinsics
+    B, H, W, C = pts_camera.shape
+
+    # Compute 3D ray associated with each pixel
+    # Strong assumption: there are no skew terms
+    assert (camera_intrinsics[..., 0, 1] == 0.0).all()
+    assert (camera_intrinsics[..., 1, 0] == 0.0).all()
+    if pseudo_focal is None:
+        fu = camera_intrinsics[..., 0, 0]
+        fv = camera_intrinsics[..., 1, 1]
     else:
-        occlusion = torch.exp(- torch.clip(depth_err - depth_start_threshold, 0, max=None) / depth_temperature)
+        assert pseudo_focal.shape == (B, H, W)
+        fu = fv = pseudo_focal
+    cu = camera_intrinsics[..., 0, 2]
+    cv = camera_intrinsics[..., 1, 2]
 
-    return occlusion
+    x, y, z = pts_camera[..., 0], pts_camera[..., 1], pts_camera[..., 2]
 
+    uv = torch.zeros((B, H, W, 2), dtype=pts_camera.dtype, device=pts_camera.device)
 
-def sample_random_rotation_matrix():
-    # Sample a random quaternion
-    random_quaternion = R.random().as_quat()
-    
-    # Normalize the quaternion
-    random_quaternion /= np.linalg.norm(random_quaternion)
+    uv[..., 0] = fu.view(B, 1, 1) * x / z + cu.view(B, 1, 1)
+    uv[..., 1] = fv.view(B, 1, 1) * y / z + cv.view(B, 1, 1)
 
-    # Convert quaternion to rotation matrix
-    rotation_matrix = R.from_quat(random_quaternion).as_matrix()
+    # Mask for valid coordinates
+    valid_mask = (
+        (z > 0.0) & (uv[..., 0] >= -0.5) & (uv[..., 0] < W - 0.5) & (uv[..., 1] >= -0.5) & (uv[..., 1] < H - 0.5)
+    )
+    # valid_mask = (z > 0.0) & (uv[..., 0] >= 0) & (uv[..., 0] < W) & (uv[..., 1] >= 0) & (uv[..., 1] < H)
 
-    return torch.from_numpy(rotation_matrix).to(torch.float32)
+    return uv, valid_mask
+
+def z_depthmap_to_norm_depthmap_batched(z_depthmap, camera_intrinsics, pseudo_focal=None):
+    """
+    Args:
+        - z_depthmap (BxHxW array)
+        - camera_intrinsics: a Bx3x3 matrix
+    Returns:
+        pointmap of absolute coordinates (HxWx3 array), and a mask specifying valid pixels.
+    """
+
+    B, H, W = z_depthmap.shape
+
+    # Compute 3D ray associated with each pixel
+    # Strong assumption: there are no skew terms
+    assert (camera_intrinsics[..., 0, 1] == 0.0).all()
+    assert (camera_intrinsics[..., 1, 0] == 0.0).all()
+    if pseudo_focal is None:
+        fu = camera_intrinsics[..., 0, 0]
+        fv = camera_intrinsics[..., 1, 1]
+    else:
+        assert pseudo_focal.shape == (B, H, W)
+        fu = fv = pseudo_focal
+    cu = camera_intrinsics[..., 0, 2]
+    cv = camera_intrinsics[..., 1, 2]
+
+    rays = torch.ones((B, H, W, 3), dtype=z_depthmap.dtype, device=z_depthmap.device)
+
+    uv = get_meshgrid_torch(W, H, device=z_depthmap.device)
+
+    rays[..., 0] = (uv[..., 0].view(1, H, W) - cu.view(B, 1, 1)) / fu.view(B, 1, 1)
+    rays[..., 1] = (uv[..., 1].view(1, H, W) - cv.view(B, 1, 1)) / fv.view(B, 1, 1)
+
+    ray_norm = torch.linalg.norm(rays, axis=-1)
+
+    return z_depthmap * ray_norm
+
+def depthmap_to_absolute_camera_coordinates(depthmap, camera_intrinsics, camera_pose, **kw):
+    """
+    Args:
+        - depthmap (HxW array):
+        - camera_intrinsics: a 3x3 matrix
+        - camera_pose: a 4x3 or 4x4 cam2world matrix
+    Returns:
+        pointmap of absolute coordinates (HxWx3 array), and a mask specifying valid pixels."""
+    X_cam, valid_mask = depthmap_to_camera_coordinates(depthmap, camera_intrinsics)
+
+    X_world = X_cam  # default
+    if camera_pose is not None:
+        # R_cam2world = np.float32(camera_params["R_cam2world"])
+        # t_cam2world = np.float32(camera_params["t_cam2world"]).squeeze()
+        R_cam2world = camera_pose[:3, :3]
+        t_cam2world = camera_pose[:3, 3]
+
+        # Express in absolute coordinates (invalid depth values)
+        # X_world = np.einsum("ik, vuk -> vui", R_cam2world, X_cam) + t_cam2world[None, None, :]
+        X_world = X_cam @ (R_cam2world.T) + t_cam2world[None, None, :]
+
+    return X_world, valid_mask
+
+def depthmap_to_camera_coordinates(depthmap, camera_intrinsics, pseudo_focal=None):
+    """
+    Args:
+        - depthmap (HxW array):
+        - camera_intrinsics: a 3x3 matrix
+    Returns:
+        pointmap of absolute coordinates (HxWx3 array), and a mask specifying valid pixels.
+    """
+    camera_intrinsics = np.float32(camera_intrinsics)
+    H, W = depthmap.shape
+
+    # Compute 3D ray associated with each pixel
+    # Strong assumption: there are no skew terms
+    assert camera_intrinsics[0, 1] == 0.0
+    assert camera_intrinsics[1, 0] == 0.0
+    if pseudo_focal is None:
+        fu = camera_intrinsics[0, 0]
+        fv = camera_intrinsics[1, 1]
+    else:
+        assert pseudo_focal.shape == (H, W)
+        fu = fv = pseudo_focal
+    cu = camera_intrinsics[0, 2]
+    cv = camera_intrinsics[1, 2]
+
+    u, v = get_meshgrid(W, H)
+
+    X_cam = np.zeros((H, W, 3), dtype=np.float32)
+
+    X_cam[..., 0] = (u - cu) * depthmap / fu
+    X_cam[..., 1] = (v - cv) * depthmap / fv
+    X_cam[..., 2] = depthmap
+
+    # Mask for valid coordinates
+    valid_mask = depthmap > 0.0
+
+    return X_cam, valid_mask
+
+@lru_cache(maxsize=10)
+def get_meshgrid(W, H):
+    u, v = np.meshgrid(np.arange(W), np.arange(H))
+    return u, v
