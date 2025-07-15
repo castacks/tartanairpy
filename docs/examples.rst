@@ -312,14 +312,66 @@ The tool supports sampling dense correspondence between any combination of pinho
 
 Given a pair of RGB and depth image cubes and two direction, the tool will compute dense correspondense represented as optical flow and a occlusion mask signaling is the pixel directly observable.
 
-Please refer to flow_sampling_example.py for a complete example.
+.. code-block:: python
+
+    import tartanair as ta
+
+    # For help with rotations.
+    from scipy.spatial.transform import Rotation
+
+    # Initialize TartanAir.
+    tartanair_data_root = 'your/path/to_tav2'
+    ta.init(tartanair_data_root)
+
+    # Create your camera model(s).
+    # the rotation matrix represents the rotation from the actual camera to the front camera
+    R_raw_new0 = Rotation.from_euler('y', 90, degrees=True).as_matrix().tolist()
+
+    cam_model_0 =  {'name': 'pinhole',
+                    'raw_side': 'left', # TartanAir has two cameras, one on the left and one on the right. This parameter specifies which camera to use.
+                    'params':
+                            {'fx': 320,
+                            'fy': 320,
+                            'cx': 320,
+                            'cy': 320,
+                            'width': 640,
+                            'height': 640},
+                    'R_raw_new': R_raw_new0}
+
+    R_raw_new1 = Rotation.from_euler('xyz', [45, 0, 0], degrees=True).as_matrix().tolist()
+
+    cam_model_1 = {'name': 'doublesphere',
+                'raw_side': 'left',
+                'params':
+                            {'fx': 300,
+                            'fy': 300,
+                            'cx': 500,
+                            'cy': 500,
+                            'width': 1000,
+                            'height': 1000,
+                            'alpha': 0.6,
+                            'xi': -0.2,
+                            'fov_degree': 195},
+                'R_raw_new': R_raw_new1}
+
+    # Customize the dataset.
+    ta.customize_flow(env = 'ArchVizTinyHouseDay',
+                difficulty = 'easy',
+                trajectory_id = ['P000'],
+                cam_sides=["left", "right"],
+                num_workers = 4,
+                frame_sep = 1,
+                device = "cuda") # or cpu
+
+
+Please refer to flow_resampling_example.py for a complete example.
 
 .. image:: images/flow_sampling/flow_sampling_example.png
    :alt: Algorithm
    :align: center
    :width: 80%
 
-To learn more about how the resampling happens, see `Flow Sampling <flow_sampling_label>`_.
+To learn more about how the resampling happens, see flow_sampling. 
 
 .. toctree::
    :maxdepth: 1
