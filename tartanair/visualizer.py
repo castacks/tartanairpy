@@ -6,12 +6,12 @@ This file contains the visualizer class, which visualizes data from local tartan
 '''
 # General imports.
 import os
-from colorama import Fore, Style
 import cv2
 import numpy as np
+import json 
 
 # Local imports.
-from .tartanair_module import TartanAirModule
+from .tartanair_module import TartanAirModule, print_error
 from .iterator import TartanAirIterator
 
 _CURRENT_PATH = os.path.dirname(os.path.realpath(__file__))
@@ -21,10 +21,14 @@ class TartanAirVisualizer(TartanAirModule):
         super().__init__(tartanair_data_root)
 
         # Modality mapped to a reader.
-        self.modality_to_vis_func = {'image': self.visimage, 'depth': self.visdepth, 'seg': self.visseg}
+        self.modality_to_vis_func = {'image': self.visimage, 'depth': self.visdepth, 'seg': self.visseg, 'flow': self.visflow}
         self.seg_colors = np.loadtxt(_CURRENT_PATH + '/seg_rgbs.txt', delimiter=',',dtype=np.uint8)
+        # for visualization purpose
+        self.data_to_colors = np.zeros((256, 3), dtype=np.uint8)
+        for color in self.seg_colors:
+            self.data_to_colors[color[2], :] = color
 
-    def visualize(self, env, difficulty = ['easy'], trajectory_id = ['P000'], modality = [], camera_name = []):
+    def visualize(self, env, difficulty = ['easy'], trajectory_id = ['P000'], modality = [], camera_name = [], show_seg_palette = False):
         """
         Visualizes a trajectory from the TartanAir dataset. A trajectory includes a set of images and a corresponding trajectory text file describing the motion.
 
@@ -52,6 +56,16 @@ class TartanAirVisualizer(TartanAirModule):
                     vis_img_name = str(ix) + " " + cam_name + " " + modality
                     sample_images.append( vis_img )
                     sample_image_names.append(vis_img_name)
+
+            # Visualize the semantic segmentation palette 
+            if show_seg_palette:
+                label_file = os.path.join(self.tartanair_data_root, env, 'seg_label_map.json')
+                if os.path.isfile(label_file):
+                    vispalette = self.vis_seg_palette(label_file)
+                    cv2.imshow("Semantic Segmentation Palette", vispalette)
+                else:
+                    print_error("Missing seg_label.json file {}".format(label_file))
+
 
             #############################
             # Visualize the images.
@@ -130,7 +144,76 @@ class TartanAirVisualizer(TartanAirModule):
     def visseg(self, seg):
         segvis = np.zeros(seg.shape+(3,), dtype=np.uint8)
 
-        segvis = self.seg_colors[ seg, : ]
+        segvis = self.data_to_colors[ seg, : ]
         segvis = segvis.reshape( seg.shape+(3,) )
 
         return segvis
+        
+    def vis_seg_palette(self, labelfile):
+
+        with open(labelfile,'r') as f:
+            seglabels = json.load(f)
+            seglabels = seglabels["name_map"] # {name: ind}
+            segvalues = [(seglabels[lab], lab) for lab in seglabels] # {ind: name}
+
+        num_classes = len(segvalues)
+        img_height = 20
+        img_width = 150
+        palette_img = np.zeros((num_classes * img_height, img_width, 3), dtype=np.uint8)
+
+        for i, (idx, label) in enumerate(segvalues):
+            color = self.data_to_colors[idx]
+            palette_img[i * img_height : (i + 1) * img_height, :] = color[::-1]  # Convert RGB to BGR for OpenCV
+
+            cv2.putText(palette_img, label, (10, i * img_height + img_height // 2), cv2.FONT_HERSHEY_COMPLEX, 0.5, (0, 0, 0), 1)
+
+        return palette_img
+
+    def calculate_angle_distance_from_du_dv(self, du, dv, flagDegree=False):
+        a = np.arctan2( dv, du )
+
+        angleShift = np.pi
+
+        if ( True == flagDegree ):
+            a = a / np.pi * 180
+            angleShift = 180
+            # print("Convert angle from radian to degree as demanded by the input file.")
+
+        d = np.sqrt( du * du + dv * dv )
+
+        return a, d, angleShift
+
+    def visflow(self, flownp): 
+        """
+        Show a optical flow field as the KITTI dataset does.
+        Some parts of this function is the transform of the original MATLAB code flow_to_color.m.
+        """
+        maxF=500.0
+        n=8
+        mask=None
+        hueMax=179
+        angShift=0.0
+
+        ang, mag, _ = self.calculate_angle_distance_from_du_dv( flownp[:, :, 0], flownp[:, :, 1], flagDegree=False )
+
+        # Use Hue, Saturation, Value colour model 
+        hsv = np.zeros( ( ang.shape[0], ang.shape[1], 3 ) , dtype=np.float32)
+
+        am = ang < 0
+        ang[am] = ang[am] + np.pi * 2
+
+        hsv[ :, :, 0 ] = np.remainder( ( ang + angShift ) / (2*np.pi), 1 )
+        hsv[ :, :, 1 ] = mag / maxF * n
+        hsv[ :, :, 2 ] = (n - hsv[:, :, 1])/n
+
+        hsv[:, :, 0] = np.clip( hsv[:, :, 0], 0, 1 ) * hueMax
+        hsv[:, :, 1:3] = np.clip( hsv[:, :, 1:3], 0, 1 ) * 255
+        hsv = hsv.astype(np.uint8)
+
+        bgr = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+
+        if ( mask is not None ):
+            mask = mask > 0
+            bgr[mask] = np.array([0, 0 ,0], dtype=np.uint8)
+
+        return bgr

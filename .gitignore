@@ -1,3 +1,6 @@
+# Local
+local/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -144,5 +147,4 @@ docs/make.bat
 .gitignore
 docs/Makefile
 examples/ta_data_spec.txt
-*.txt
 examples/*.png

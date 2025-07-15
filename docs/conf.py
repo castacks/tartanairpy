@@ -13,7 +13,7 @@ sys.path.append(os.path.abspath('..'))
 
 project = 'TartanAir'
 copyright = 'Carnegie Mellon University, 2023, Wenshan Wang, Yaoyu Hu, Yuheng Qiu, Shihao Shen, Yorai Shaoul.'
-author =  'Wenshan Wang, Yaoyu Hu, Yuheng Qiu, Shihao Shen, Yorai Shaoul.'
+author =  'Wenshan Wang, Yaoyu Hu, Yuheng Qiu, Shihao Shen, Yorai Shaoul, Yuchen Zhang, Srivatsa Grama Satyanarayana.'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -22,6 +22,8 @@ extensions = [
     'sphinx.ext.duration',
     'sphinx.ext.doctest',
     'sphinx.ext.autodoc',
+    'sphinx.ext.intersphinx',
+    'sphinxcontrib.youtube'
 ]
 
 templates_path = ['_templates']

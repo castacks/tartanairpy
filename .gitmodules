@@ -1,17 +1,9 @@
-[submodule "src/tartanair/image_resampling/mvs_utils"]
-	path = src/tartanair/image_resampling/mvs_utils
-	url = git@github.com:castacks/mvs_utils.git
-	branch = main
-[submodule "src/tartanair/image_resampling/image_sampler"]
-	path = src/tartanair/image_resampling/image_sampler
-	url = git@github.com:castacks/image_sampler.git
-	branch = main
 [submodule "tartanair/image_resampling/image_sampler"]
 	path = tartanair/image_resampling/image_sampler
-	url = git@github.com:castacks/image_sampler.git
+	url = https://github.com/castacks/image_sampler.git
 [submodule "tartanair/image_resampling/mvs_utils"]
 	path = tartanair/image_resampling/mvs_utils
-	url = git@github.com:castacks/mvs_utils.git
+	url = https://github.com/castacks/mvs_utils.git
 [submodule "tartanair/data_cacher"]
 	path = tartanair/data_cacher
-	url = git@github.com:Amigoshan/data_cacher.git
+	url = https://github.com/Amigoshan/data_cacher.git

@@ -51,6 +51,11 @@ class TartanAirModule():
         self.cam_modalities = ['image', 'depth', 'seg'] # the modalities that support all camera names
 
         self.flow_camlist = ['lcam_front'] # valid camera name for the flow modality
+        self.modality_names = ['image', 'depth', 'seg', 'imu', 'lidar', 'flow', 'pose']
+
+        self.cam_modalities = ['image', 'depth', 'seg'] # the modalities that support all camera names
+
+        self.flow_camlist = ['lcam_front'] # valid camera name for the flow modality
 
         self.env_names = [
             'AbandonedCable', 
@@ -131,6 +136,141 @@ class TartanAirModule():
 
         self.difficulty_names = ['easy', 'hard']
 
+        # for ground dataset
+        self.ground_camera_names = ['lcam_front',
+            'lcam_left',
+            'lcam_right',
+            'lcam_back',
+            'lcam_top',
+            'lcam_bottom',
+            'rcam_front',
+            'rcam_left',
+            'rcam_right',
+            'rcam_back',
+            'rcam_top',
+            'rcam_bottom']
+        self.ground_modality_names = ['image', 'depth', 'seg', 'imu', 'lidar']
+        self.ground_v1_env_names = ['AbandonedCable',
+            'AbandonedFactory',
+            'AbandonedFactory2',
+            'AbandonedSchool',
+            'AmusementPark',
+            'AncientTowns',
+            'Antiquity3D',
+            'BrushifyMoon',
+            'CarWelding',
+            'CastleFortress',
+            'CoalMine',
+            'ConstructionSite',
+            'CyberPunkDowntown',
+            'DesertGasStation',
+            'Downtown',
+            'EndofTheWorld',
+            'FactoryWeather',
+            'Fantasy',
+            'ForestEnv',
+            'Gascola',
+            'GothicIsland',
+            'GreatMarsh',
+            'HQWesternSaloon',
+            'HongKong',
+            'Hospital',
+            'House',
+            'IndustrialHangar',
+            'JapaneseAlley',
+            'JapaneseCity',
+            'MiddleEast',
+            'ModUrbanCity',
+            'ModernCityDowntown',
+            'ModularNeighborhood',
+            'ModularNeighborhoodIntExt',
+            'NordicHarbor',
+            'Office',
+            'OldBrickHouseDay',
+            'OldBrickHouseNight',
+            'OldIndustrialCity',
+            'OldScandinavia',
+            'OldTownFall',
+            'OldTownNight',
+            'OldTownSummer',
+            'OldTownWinter',
+            'Prison',
+            'Restaurant',
+            'Rome',
+            'Ruins',
+            'SeasideTown',
+            'SeasonalForestAutumn',
+            'SeasonalForestSpring',
+            'SeasonalForestSummerNight',
+            'SeasonalForestWinter',
+            'SeasonalForestWinterNight',
+            'Sewerage',
+            'Slaughter',
+            'SoulCity',
+            'Supermarket',
+            'UrbanConstruction',
+            'VictorianStreet',
+            'WaterMillDay',
+            'WaterMillNight',
+            'WesternDesertTown']
+
+        self.ground_v2_env_names = ['AbandonedCable',
+            'AbandonedFactory2',
+            'AbandonedSchool',
+            'Antiquity3D',
+            'CarWelding',
+            'CastleFortress',
+            'CoalMine',
+            'ConstructionSite',
+            'CyberPunkDowntown',
+            'Downtown',
+            'Fantasy',
+            'ForestEnv',
+            'Gascola',
+            'GothicIsland',
+            'GreatMarsh',
+            'Hospital',
+            'IndustrialHangar',
+            'JapaneseAlley',
+            'MiddleEast',
+            'ModernCityDowntown',
+            'ModularNeighborhood',
+            'ModularNeighborhoodIntExt',
+            'NordicHarbor',
+            'OldIndustrialCity',
+            'OldScandinavia',
+            'OldTownFall',
+            'OldTownNight',
+            'OldTownSummer',
+            'OldTownWinter',
+            'Prison',
+            'Rome',
+            'SeasideTown',
+            'SeasonalForestAutumn',
+            'SeasonalForestSpring',
+            'SeasonalForestSummerNight',
+            'SeasonalForestWinter',
+            'SeasonalForestWinterNight',
+            'Sewerage',
+            'Supermarket',
+            'UrbanConstruction',
+            'WaterMillDay',
+            'WaterMillNight']
+
+        self.ground_v3_env_names = ['Downtown',
+            'ForestEnv',
+            'Gascola',
+            'GreatMarsh',
+            'ModernCityDowntown',
+            'ModularNeighborhood',
+            'NordicHarbor',
+            'OldTownFall',
+            'OldTownSummer',
+            'SeasonalForestAutumn',
+            'SeasonalForestSpring',
+            'SeasonalForestWinter']
+        
+        self.ground_version_names = ['v1', 'v2', 'v3_anymal']
     ###############################
     # Data enumeration.
     ###############################
@@ -171,30 +311,38 @@ class TartanAirModule():
         print_warn(f"The available envs are: {self.env_names}")
         return False
 
-    def check_modality_valid(self, modlist):
+    def check_modality_valid(self, modlist, check_ground = False):
         invalid_list = []
+        valid_modality = self.modality_names
+        if check_ground:
+            valid_modality = self.ground_modality_names
+
         for mod in modlist:
-            if not mod in self.modality_names:
+            if not mod in valid_modality:
                 invalid_list.append(mod)
         
         if len(invalid_list) == 0:
             return True
         
         print_error(f"The following modalities are invalid: {invalid_list}")
-        print_warn(f"The available modalities are: {self.modality_names}")
+        print_warn(f"The available modalities are: {valid_modality}")
         return False
 
-    def check_camera_valid(self, camlist):
+    def check_camera_valid(self, camlist, check_ground = False):
         invalid_list = []
+        valid_camera = self.camera_names
+        if check_ground:
+            valid_camera = self.ground_camera_names
+
         for cam in camlist:
-            if not cam in self.camera_names:
+            if not cam in valid_camera:
                 invalid_list.append(cam)
         
         if len(invalid_list) == 0:
             return True
         
         print_error(f"The following camera names are invalid: {invalid_list}")
-        print_warn(f"The available camera names are: {self.camera_names}")
+        print_warn(f"The available camera names are: {valid_camera}")
         return False
 
     def check_difficulty_valid(self, difflist):
@@ -228,6 +376,7 @@ class TartanAirModule():
                 folderstr = mod
                 folderlist.append(folderstr)
             else:
-                print_warn("Warn: note modality {} needs to be processed separately".format(mod))
+                if mod != "pose":
+                    print_warn("Warn: note modality {} needs to be processed separately".format(mod))
                 
         return folderlist
