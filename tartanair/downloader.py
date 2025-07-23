@@ -23,12 +23,12 @@ class AirLabDownloader(object):
 
         if bucket_name == 'tartanair2':
             endpoint_url = "airlab-share-01.andrew.cmu.edu:9000"
-            # public key (for donloading): 
+            # public key (for downloading): 
             access_key = "4e54CkGDFg2RmPjaQYmW"
             secret_key = "mKdGwketlYUcXQwcPxuzinSxJazoyMpAip47zYdl"
         elif bucket_name == 'tartanground':
             endpoint_url = "airlab-share-02.andrew.cmu.edu:9000"
-            # public key (for donloading): 
+            # public key (for downloading): 
             access_key = "nu8ylTnuSBKmHtPgj6xB"
             secret_key = "3njOB53mTzrvMRkBEm8MN8GvGrKuKvtwg1Bh4QLS"
         else:
@@ -121,7 +121,8 @@ class TartanAirDownloader(TartanAirModule):
     def __init__(self, tartanair_data_root):
         super().__init__(tartanair_data_root)
 
-        self.downloader = CloudFlareDownloader()
+        # self.downloader = CloudFlareDownloader()
+        self.downloader = AirLabDownloader(bucket_name = 'tartanair2')
 
     def generate_filelist(self, envs, difficulties, modalities, camera_names): 
         '''
