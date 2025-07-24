@@ -46,7 +46,12 @@ class TartanAirModule():
 
         self.camera_directions = ["front", "right", "back", "left", "top", "bottom"]
 
-        self.modality_names = ['image', 'depth', 'seg', 'imu', 'lidar', 'flow']
+        self.modality_names = ['image', 'depth', 'seg', 'imu', 'lidar', 'flow', 'pose']
+
+        self.cam_modalities = ['image', 'depth', 'seg'] # the modalities that support all camera names
+
+        self.flow_camlist = ['lcam_front'] # valid camera name for the flow modality
+        self.modality_names = ['image', 'depth', 'seg', 'imu', 'lidar', 'flow', 'pose']
 
         self.cam_modalities = ['image', 'depth', 'seg'] # the modalities that support all camera names
 

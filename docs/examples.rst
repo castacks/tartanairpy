@@ -312,11 +312,36 @@ The tool supports sampling dense correspondence between any combination of pinho
 
 Given a pair of RGB and depth image cubes and two direction, the tool will compute dense correspondense represented as optical flow and a occlusion mask signaling is the pixel directly observable.
 
-Please refer to flow_sampling_example.py for a complete example.
+.. code-block:: python
+
+    import tartanair as ta
+
+    # For help with rotations.
+    from scipy.spatial.transform import Rotation
+
+    # Initialize TartanAir.
+    tartanair_data_root = 'your/path/to_tav2'
+    ta.init(tartanair_data_root)
+
+    # Customize the dataset.
+    ta.customize_flow(env = 'ArchVizTinyHouseDay',
+                difficulty = 'easy',
+                trajectory_id = ['P000'],
+                cam_sides=["left", "right"],
+                num_workers = 4,
+                frame_sep = 1,
+                device = "cuda") # or cpu
+
+Please refer to flow_resampling_example.py for a complete example.
 
 .. image:: images/flow_sampling/flow_sampling_example.png
    :alt: Algorithm
    :align: center
    :width: 80%
 
-To learn more about how the resampling happens, see `Flow Sampling <flow_sampling.html>`_.
+To learn more about how the resampling happens, see flow_sampling. 
+
+.. toctree::
+   :maxdepth: 1
+
+   flow_sampling

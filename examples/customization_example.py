@@ -10,7 +10,7 @@ import sys
 from scipy.spatial.transform import Rotation
 
 # Local imports.
-sys.path.append('..')
+sys.path.append('.')
 import tartanair as ta
 
 # Create a TartanAir object.
@@ -28,16 +28,16 @@ cam_model_0 = {'name': 'pinhole',
 
 R_raw_new1 = Rotation.from_euler('xyz', [45, 0, 0], degrees=True).as_matrix().tolist()
 
-cam_model_1 = {'name': 'doublesphere',
+cam_model_1 = {'name': 'doublesphereyuchen',
                 'raw_side': 'left',
                 'params':
                         {'fx': 250, 
                         'fy':  250, 
-                        'cx': 500, 
-                        'cy': 500, 
-                        'width': 1000, 
-                        'height': 1000, 
-                        'alpha': 0.6, 
+                        'cx': 250, 
+                        'cy': 250, 
+                        'width': 500, 
+                        'height': 500, 
+                        'alpha': 0.4, 
                         'xi': -0.2, 
                         'fov_degree': 195},
                 'R_raw_new': R_raw_new1}

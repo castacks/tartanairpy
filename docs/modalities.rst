@@ -69,6 +69,18 @@ The fisheye and Panorama data are sampled from the raw pinhole data, thus contai
 Optical flow
 --------------
 
+Due to the high serving demand of the dataset, we are moving away from pre-computing the flow labels for download, as they can simply be generated from pose, intrinsics, and depth locally. Please refer to examples/flow_resampling_example.py for the code to generate optical flow from the raw data.
+
+Also, we are changing the storage format due to increased precision of flow models. For a pair of images, the generated flow information is stored as a npz file containing the following fields:
+
+    - flow_fwd/bwd: x,y coordinate of the flow in float32 format
+    - fov_mask_fwd/bwd: boolean mask indicating if the pixel have a valid projection in the forward/backward image, i.e., is it out of the image space
+    - covisible_mask_fwd/bwd: boolean mask indicating if the pixel is covisible in the forward/backward image, i.e., is it occluded by other objects in the scene
+
+
+Old Optical flow format
+-----------------------
+
 Same as TartanAir V1, the optical flow is calculated for the static environments by image warping, using the camera pose and depth images. The biggest upgrades are that we accelerate the code by a Cuda implementation and provide tools for generating optical flow across any type of camera model (e.g. between pinhole and fisheye). For the convenience of the downloading, we compress the optical flow to use 8-bit representation. The decoding code is as follows.
 
 .. code-block:: python
