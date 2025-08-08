@@ -1,7 +1,7 @@
 # Local imports.
 from .downloader import TartanAirDownloader, TartanGroundDownloader
 from .dataset import TartanAirDataset, TartanAirSlowLoaderCreator
-from .customizer import TartanAirCustomizer
+# from .customizer import TartanAirCustomizer
 from .lister import TartanAirLister
 from .visualizer import TartanAirVisualizer
 from .iterator import TartanAirIterator
@@ -146,19 +146,19 @@ def download_multi_thread(env = [], difficulty = [], modality = [], camera_name 
     check_init()
     downloader.download_multi_thread(env = env, difficulty = difficulty, modality = modality, camera_name = camera_name, config = config, unzip = unzip, num_workers = num_workers)
 
-def download_ground(env = [], version = [], modality = [], camera_name = [], config = None, unzip = False):
+def download_ground(env = [], version = [], traj=[], modality = [], camera_name = [], config = None, unzip = False):
     """
     Download data from the TartanAir dataset. This method will download the data from the CloudFlare server and store it in the `tartanair_root` directory.
 
     :param env: The environment to download. Can be a list of environments.
     :type env: str or list
-    :param version: The version of the trajectory. Valid difficulties are: v1, v2, v3_anymal.
+    :param version: The version of the trajectory. Valid versions are omni, diff and anymal.
     :type version: str or list
-    :param trajectory_id: The id of the trajectory to download. Can be a list of trajectory ids of form P000, P001, etc.
-    :type trajectory_id: str or list
-    :param modality: The modality to download. Can be a list of modalities. Valid modalities are: image, depth, seg, imu{_acc, _gyro, _time, ...}, lidar. Default will include all.
+    :param traj: The id of the trajectory to download. Can be a list of trajectory ids of form P0000, P0001, P2000 etc.
+    :type traj: str or list
+    :param modality: The modality to download. Can be a list of modalities. Valid modalities are: 'image', 'meta', 'depth', 'seg', 'imu', 'lidar', 'rosbag' (only anymal version), 'sem_pcd', 'rgb_pcd', 'seg_labels'. Default will include all.
     :type modality: str or list
-    :param camera_name: The camera name to download. Can be a list of camera names. Default will include all. Choices are `lcam_front`, `lcam_right`, `lcam_back`, `lcam_left`, `lcam_top`, `lcam_bottom`, `rcam_front`, `rcam_right`, `rcam_back`, `rcam_left`, `rcam_top`, `rcam_bottom`, `lcam_fish`, `rcam_fish`, `lcam_equirect`, `rcam_equirect`.
+    :param camera_name: The camera name to download. Can be a list of camera names. Default will include all. Choices are `lcam_front`, `lcam_right`, `lcam_back`, `lcam_left`, `lcam_top`, `lcam_bottom`, `rcam_front`, `rcam_right`, `rcam_back`, `rcam_left`, `rcam_top`, `rcam_bottom`.
      Modalities IMU and LIDAR do not need camera names specified.
     :type camera_name: str or list
     :param config: Optional. Path to a yaml file containing the download configuration. If a config file is provided, the other arguments will be ignored.
@@ -169,21 +169,21 @@ def download_ground(env = [], version = [], modality = [], camera_name = [], con
 
     global downloader_ground
     check_init()
-    downloader_ground.download(env, version, modality, camera_name, config, unzip)
+    downloader_ground.download(env, version, traj, modality, camera_name, config, unzip)
 
-def download_ground_multi_thread(env = [], version = [], modality = [], camera_name = [], config = None, unzip = False, num_workers = 8):
+def download_ground_multi_thread(env = [], version = [], traj=[], modality = [], camera_name = [], config = None, unzip = False, num_workers = 8):
     """
     Download data from the TartanAir dataset. This method will download the data from the CloudFlare server and store it in the `tartanair_root` directory.
 
-    :param env: The environment to download. Can be a list of environments.
+       :param env: The environment to download. Can be a list of environments.
     :type env: str or list
-    :param version: The version of the trajectory. Valid difficulties are: v1, v2, v3_anymal.
+    :param version: The version of the trajectory. Valid versions are omni, diff and anymal.
     :type version: str or list
-    :param trajectory_id: The id of the trajectory to download. Can be a list of trajectory ids of form P000, P001, etc.
-    :type trajectory_id: str or list
-    :param modality: The modality to download. Can be a list of modalities. Valid modalities are: image, depth, seg, imu{_acc, _gyro, _time, ...}, lidar. Default will include all.
+    :param traj: The id of the trajectory to download. Can be a list of trajectory ids of form P0000, P0001, P2000 etc.
+    :type traj: str or list
+    :param modality: The modality to download. Can be a list of modalities. Valid modalities are: 'image', 'meta', 'depth', 'seg', 'imu', 'lidar', 'rosbag' (only anymal version), 'sem_pcd', 'rgb_pcd', 'seg_labels'. Default will include all.
     :type modality: str or list
-    :param camera_name: The camera name to download. Can be a list of camera names. Default will include all. Choices are `lcam_front`, `lcam_right`, `lcam_back`, `lcam_left`, `lcam_top`, `lcam_bottom`, `rcam_front`, `rcam_right`, `rcam_back`, `rcam_left`, `rcam_top`, `rcam_bottom`, `lcam_fish`, `rcam_fish`, `lcam_equirect`, `rcam_equirect`.
+    :param camera_name: The camera name to download. Can be a list of camera names. Default will include all. Choices are `lcam_front`, `lcam_right`, `lcam_back`, `lcam_left`, `lcam_top`, `lcam_bottom`, `rcam_front`, `rcam_right`, `rcam_back`, `rcam_left`, `rcam_top`, `rcam_bottom`.
      Modalities IMU and LIDAR do not need camera names specified.
     :type camera_name: str or list
     :param config: Optional. Path to a yaml file containing the download configuration. If a config file is provided, the other arguments will be ignored.
@@ -196,7 +196,7 @@ def download_ground_multi_thread(env = [], version = [], modality = [], camera_n
 
     global downloader_ground
     check_init()
-    downloader_ground.download_multi_thread(env = env, version = version, modality = modality, camera_name = camera_name, config = config, unzip = unzip, num_workers = num_workers)
+    downloader_ground.download_multi_thread(env = env, version = version, traj=traj, modality = modality, camera_name = camera_name, config = config, unzip = unzip, num_workers = num_workers)
 
 def customize(env, difficulty, trajectory_id, modality, new_camera_models_params = [{}], num_workers = 1, device = "cpu"):
     """

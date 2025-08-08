@@ -144,8 +144,8 @@ class TartanAirModule():
             'rcam_back',
             'rcam_top',
             'rcam_bottom']
-        self.ground_modality_names = ['image', 'depth', 'seg', 'imu', 'lidar']
-        self.ground_v1_env_names = ['AbandonedCable',
+        self.ground_modality_names = ['image', 'meta', 'depth', 'seg', 'imu', 'lidar', 'rosbag', 'sem_pcd', 'rgb_pcd', 'seg_labels']
+        self.ground_omni_env_names = ['AbandonedCable',
             'AbandonedFactory',
             'AbandonedFactory2',
             'AbandonedSchool',
@@ -209,7 +209,7 @@ class TartanAirModule():
             'WaterMillNight',
             'WesternDesertTown']
 
-        self.ground_v2_env_names = ['AbandonedCable',
+        self.ground_diff_env_names = ['AbandonedCable',
             'AbandonedFactory2',
             'AbandonedSchool',
             'Antiquity3D',
@@ -252,7 +252,7 @@ class TartanAirModule():
             'WaterMillDay',
             'WaterMillNight']
 
-        self.ground_v3_env_names = ['Downtown',
+        self.ground_anymal_env_names = ['Downtown',
             'ForestEnv',
             'Gascola',
             'GreatMarsh',
@@ -265,7 +265,7 @@ class TartanAirModule():
             'SeasonalForestSpring',
             'SeasonalForestWinter']
         
-        self.ground_version_names = ['v1', 'v2', 'v3_anymal']
+        self.ground_version_names = ['omni', 'diff', 'anymal']
     ###############################
     # Data enumeration.
     ###############################
@@ -373,5 +373,30 @@ class TartanAirModule():
             else:
                 if mod != "pose":
                     print_warn("Warn: note modality {} needs to be processed separately".format(mod))
+                
+        return folderlist
+
+    def compile_ground_modality_and_cameraname(self, modalities, camera_names):
+        '''
+        Compile the trajectory, modality and camera name into a list of folder names.
+        '''
+
+        folderlist = []
+        for mod in modalities:
+            if mod in self.cam_modalities:
+                for camname in camera_names:
+                    folderstr =  mod + '_' + camname 
+                    folderlist.append(folderstr)
+            elif mod == 'flow':
+                print_warn("Warn: flow modality doesn't exist for TartanGround dataset. You need to compute the flow using provided scripts")
+            elif mod == 'meta':
+                folderlist.append('metadata') # always add metadata folder
+            elif mod == 'lidar' or mod == 'imu': # for lidar and imu
+                folderstr = mod
+                folderlist.append(folderstr)
+            elif mod == 'pose':
+                print_warn("Warn: All Pose files are provided in the metadata folder so use 'meta' as the modality")
+            elif mod == 'rosbag':
+                folderlist.append('rosbags')
                 
         return folderlist
