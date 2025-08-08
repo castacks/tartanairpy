@@ -7,7 +7,8 @@ This file contains the download class, which downloads the data from Azure to th
 # General imports.
 import os
 # import sys
-
+from copy import copy
+import re
 from colorama import Fore, Style
 import yaml
 
@@ -16,6 +17,7 @@ from .tartanair_module import TartanAirModule, print_error, print_highlight, pri
 from os.path import isdir, isfile, join
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import time
+from collections import defaultdict
 
 class AirLabDownloader(object):
     def __init__(self, bucket_name = 'tartanair2') -> None:
@@ -32,7 +34,7 @@ class AirLabDownloader(object):
             access_key = "nu8ylTnuSBKmHtPgj6xB"
             secret_key = "3njOB53mTzrvMRkBEm8MN8GvGrKuKvtwg1Bh4QLS"
         else:
-            self.print_error("Error: Invalid bucket name. Please use 'tartanair2' or 'tartanground'.")
+            print_error("Error: Invalid bucket name. Please use 'tartanair2' or 'tartanground'.")
             return
         
         self.client = Minio(endpoint_url, access_key=access_key, secret_key=secret_key, secure=True)
@@ -44,15 +46,20 @@ class AirLabDownloader(object):
             print('--')
             if isfile(target_file_name):
                 print_error('Error: Target file {} already exists..'.format(target_file_name))
-                return False, success_source_files, success_target_files
+                continue
+                # return False, success_source_files, success_target_files
 
             print(f"  Downloading {source_file_name} from {self.bucket_name}...")
             self.client.fget_object(self.bucket_name, source_file_name, target_file_name)
             print(f"  Successfully downloaded {source_file_name} to {target_file_name}!")
             success_source_files.append(source_file_name)
             success_target_files.append(target_file_name)
-
-        return True, success_source_files, success_target_files
+        
+        print(len(targetfilelist), len(success_target_files))
+        if len(success_target_files) == len(targetfilelist):
+            return True, success_source_files, success_target_files
+        else:
+            return False, success_source_files, success_target_files
 
 class CloudFlareDownloader(object):
     def __init__(self, bucket_name = "tartanair-v2") -> None:
@@ -322,49 +329,144 @@ class TartanGroundDownloader(TartanAirDownloader):
 
         self.downloader = AirLabDownloader(bucket_name = 'tartanground')
 
-    def generate_filelist(self, version_env_dict, modalities, camera_names): 
+    def extract_existing_trajectories(self):
+        """
+        Parses the zip file list and extracts all unique trajectory names (e.g., P0001) per environment.
+        Returns:
+            {
+                'AbandonedCable': {
+                    'Data_diff': ['P0000', 'P0001', ...],
+                    ...
+                },
+                ...
+            }
+        """
+        CURDIR = os.path.dirname(os.path.abspath(__file__))
+        gtfile = CURDIR + '/download_ground_files.txt'
+
+        env_to_traj = defaultdict(lambda: defaultdict(set))
+
+        with open(gtfile, 'r') as f:
+            for line in f:
+                parts = line.strip().split()
+                if len(parts) < 1:
+                    continue
+                rel_path = parts[0]  # e.g., AbandonedCable/Data_easy/P0000/depth_lcam_back.zip
+                tokens = rel_path.split('/')
+                if len(tokens) < 3:
+                    continue
+                env = tokens[0]
+                subfolder = tokens[1]
+                traj = tokens[2]
+                if traj.startswith("P"):
+                    env_to_traj[env][subfolder].add(traj)
+
+        # Convert sets to sorted lists
+        for env in env_to_traj:
+            for subfolder in env_to_traj[env]:
+                env_to_traj[env][subfolder] = sorted(env_to_traj[env][subfolder])
+
+        return env_to_traj
+
+    def generate_filelist(self, envs, versions, trajectories, modalities, camera_names): 
         '''
         Return a list of zipfiles to be downloaded
         Example: 
         [
-            "abandonedfactory/Data_ground/depth_lcam_back.zip",
-            "abandonedfactory/Data_ground/flow_lcam_front.zip",
+            "AbandonedCable/Data_diff/P0000/depth_lcam_back.zip",
+            "AbandonedCable/Data_omni/P0001/depth_lcam_front.zip",
             ...
         ]
 
         '''
         zipfilelist = []
-        for version, envlist  in version_env_dict.items(): 
-            for env in envlist:
-                envstr = 'TartanGround_' + version + '/' + env + '/Data_ground/'
-                folderlist = self.compile_modality_and_cameraname(modalities, camera_names)
-                zipfiles = [envstr + fl + '.zip' for fl in folderlist]
-                zipfilelist.extend(zipfiles)
+        env_to_traj = self.extract_existing_trajectories()
+
+        for env in envs: 
+            envstr = env + '/'
+            # # Add the seg_label.zip file
+            # zipfilelist.append(envstr + 'seg_labels.zip')
+            if "seg_labels" in modalities:
+                zipfilelist.append(envstr + 'seg_labels.zip')
+            if "sem_pcd" in modalities:
+                zipfilelist.append(envstr + f'{env}_sem_pcd.zip')
+            if "rgb_pcd" in modalities:
+                zipfilelist.append(envstr + f'{env}_rgb_pcd.zip')
+            for version in versions:
+                diffstr = envstr + 'Data_' + version + '/'
+                # Remove rosbag modility from modalities if version is not anymal
+                current_modalities = modalities.copy()
+
+                if version != 'anymal':
+                    if 'rosbag' in current_modalities:
+                        print_warn(f"Rosbag modality is not available for {env} with version {version}. Removing from modalities for {version}")
+                        current_modalities = [mod for mod in current_modalities if mod != 'rosbag']
+                
+                # Find the available trajectories for the current version
+                available_trajs = env_to_traj[env][f'Data_{version}']
+
+                if len(trajectories) == 0: # If User did not specify trajectory and single threaded version
+                    env_ver_trajs = env_to_traj[env][f'Data_{version}']
+                else:
+                    env_ver_trajs = trajectories
+                    
+
+                if not available_trajs:
+                    print_warn(f"No trajectories found for {env} with version {version}. Skipping...")
+                    continue
+
+                # Find intersection with available trajs and trajectories
+                current_trajs = list(set(available_trajs) & set(env_ver_trajs))
+
+                if not current_trajs:
+                    print_warn(f"No trajectories match for {env} with version {version} for provided Traj List. Skipping...")
+                    continue
+
+                # Loop over for the trajectories
+                for traj in current_trajs:
+                    trajstr = traj + '/'
+                    folderlist = self.compile_ground_modality_and_cameraname(current_modalities, camera_names)
+                    zipfiles = [diffstr + trajstr + fl + '.zip' for fl in folderlist]
+                    zipfilelist.extend(zipfiles)
 
         return zipfilelist
     
-    def compile_version_and_env(self, envlist, versionlist):
-        version_env_dict = {}
-        for ver in versionlist:
-            if ver == 'v1':
-                valid_envs = self.ground_v1_env_names
-            elif ver == 'v2':
-                valid_envs = self.ground_v2_env_names
-            elif ver == 'v3_anymal':
-                valid_envs = self.ground_v3_env_names
-            else:
-                print_error("Error: The version {} is not valid. Please choose from v1, v2 or v3_anymal.".format(ver))
-                return None
+    def prepare_download_list(self, env=[], version=[], traj=[], modality=[], camera_name=[], config=None):
+        """
+        Generate and validate the complete file list for download.
+        Returns validated zipfilelist and targetfilelist.
+        """
+        # Refine parameters
+        env, version, traj, modality, camera_name, _ = self.refine_parameters(env, version, traj, modality, camera_name, False, config)
 
-            version_env_dict[ver] = []
-            for env in envlist:
-                if env not in valid_envs:
-                    print_warn("Warn: The environment {} is not valid for version {}. ".format(env, ver))
-                else:
-                    version_env_dict[ver].append(env)
-        return version_env_dict
+        # Check that the environments are valid.
+        if not self.check_env_valid(env):
+            return None, None
+        # Check that the modalities are valid
+        if not self.check_modality_valid(modality, check_ground = True):
+            return None, None
+        # Check that the camera names are valid
+        if not self.check_camera_valid(camera_name, check_ground= True):
+            return None, None
+        
+        # Generate the file list
+        zipfilelist = self.generate_filelist(env, version, traj, modality, camera_name)
+
+        if len(zipfilelist) == 0:
+            return [], []  # Nothing to download
+        
+        # Validate against ground truth
+        CURDIR = os.path.dirname(os.path.abspath(__file__))
+        gtfile = CURDIR + '/download_ground_files.txt'
+        if not self.doublecheck_filelist(zipfilelist, gtfile=gtfile):
+            return None, None
+
+        # Generate target file list
+        targetfilelist = [join(self.tartanair_data_root, zipfile.replace('/', '_')) for zipfile in zipfilelist]
+        
+        return zipfilelist, targetfilelist
     
-    def refine_parameters(self, env, version, modality, camera_name, unzip, config):
+    def refine_parameters(self, env, version, traj, modality, camera_name, unzip, config):
         if config is not None:
             print("Using config file: {}".format(config))
             with open(config, 'r') as f:
@@ -373,6 +475,7 @@ class TartanGroundDownloader(TartanAirDownloader):
             # Update the parameters.
             env = config['env']
             version = config['version']
+            traj = config['traj']
             modality = config['modality']
             camera_name = config['camera_name']
             unzip = config['unzip']
@@ -382,6 +485,8 @@ class TartanGroundDownloader(TartanAirDownloader):
             env = [env]
         if not isinstance(version, list):
             version = [version]
+        if not isinstance(traj, list):
+            traj = [traj]
         if not isinstance(modality, list):
             modality = [modality]
         if not isinstance(camera_name, list):
@@ -389,100 +494,199 @@ class TartanGroundDownloader(TartanAirDownloader):
 
         # download all if not specified
         if len(env) == 0:
-            env = self.ground_v1_env_names
+            env = copy(self.ground_omni_env_names)
         if len(version) == 0:
-            version = self.ground_version_names
+            version = copy(self.ground_version_names)
         if len(modality) == 0:
-            modality = self.ground_modality_names
+            modality = copy(self.ground_modality_names)
         if len(camera_name) == 0:
-            camera_name = self.ground_camera_names
+            camera_name = copy(self.ground_camera_names)
 
-        return env, version, modality, camera_name, unzip
+        return env, version, traj, modality, camera_name, unzip
 
+    def unzip_files(self, zipfilelist):
+        print_warn('⚠️  Note: Unzipping will overwrite existing files...')
 
-    def download(self, env = [], version = [], modality = [], camera_name = [], config = None, unzip = False, max_failure_trial = 3, **kwargs):
+        for zipfile_path in zipfilelist:
+            if not isfile(zipfile_path) or not zipfile_path.endswith('.zip'):
+                print_error(f"❌ Invalid zip: {zipfile_path}")
+                continue
+
+            filename = os.path.basename(zipfile_path)
+
+            # Case 1: Trajectory-level zips
+            match_traj = re.match(r"(.+?)_Data_(\w+)_((?:P\d+))_.+\.zip", filename)
+
+            # Case 2: Metadata/label zips like: Env_seg_labels.zip or Env_seg_label_map.zip
+            match_label = re.match(r"(.+?)_(seg_labels)\.zip", filename)
+
+            # Case 3: Zipped PCDs like: ModernCityDowntown_ModernCityDowntown_rgb_pcd.zip
+            match_pcd = re.match(r"(.+?)_\1_(rgb|sem)_pcd\.zip", filename)
+
+            if match_traj:
+                env_name, data_type, traj_name = match_traj.groups()
+                dest_dir = join(self.tartanair_data_root, env_name, f"Data_{data_type}", traj_name)
+
+            elif match_label:
+                env_name, _ = match_label.groups()
+                dest_dir = join(self.tartanair_data_root, env_name)
+
+            elif match_pcd:
+                env_name, pcd_type = match_pcd.groups()
+                dest_dir = join(self.tartanair_data_root, env_name)
+
+            else:
+                print_error(f"❌ Could not parse zip file name: {filename}")
+                continue
+
+            os.makedirs(dest_dir, exist_ok=True)
+            print(f"📦 Unzipping {filename} -> {dest_dir}")
+            cmd = f'unzip -q -o "{zipfile_path}" -d "{dest_dir}"'
+            os.system(cmd)
+
+            print_highlight("✅ Unzipping Completed!")
+
+    def download(self, env = [], version = [], traj = [], modality = [], camera_name = [], config = None, unzip = False, max_failure_trial = 3, **kwargs):
         """
         Downloads a trajectory from the TartanAir dataset. A trajectory includes a set of images and a corresponding trajectory text file describing the motion.
 
         Args:
-            env (str or list): The environment to download the trajectory from. Valid envs are: AbandonedCable, AbandonedFactory, AbandonedFactory2, AbandonedSchool, AmericanDiner, AmusementPark, AncientTowns, Antiquity3D, Apocalyptic, ArchVizTinyHouseDay, ArchVizTinyHouseNight, BrushifyMoon, CarWelding, CastleFortress, CoalMine, ConstructionSite, CountryHouse, CyberPunkDowntown, Cyberpunk, DesertGasStation, Downtown, EndofTheWorld, FactoryWeather, Fantasy, ForestEnv, Gascola, GothicIsland, GreatMarsh, HQWesternSaloon, HongKong, Hospital, House, IndustrialHangar, JapaneseAlley, JapaneseCity, MiddleEast, ModUrbanCity, ModernCityDowntown, ModularNeighborhood, ModularNeighborhoodIntExt, NordicHarbor, Ocean, Office, OldBrickHouseDay, OldBrickHouseNight, OldIndustrialCity, OldScandinavia, OldTownFall, OldTownNight, OldTownSummer, OldTownWinter, PolarSciFi, Prison, Restaurant, RetroOffice, Rome, Ruins, SeasideTown, SeasonalForestAutumn, SeasonalForestSpring, SeasonalForestSummerNight, SeasonalForestWinter, SeasonalForestWinterNight, Sewerage, ShoreCaves, Slaughter, SoulCity, Supermarket, TerrainBlending, UrbanConstruction, VictorianStreet, WaterMillDay, WaterMillNight, WesternDesertTown. 
-            version (str or list): The version of the trajectory. Valid difficulties are: v1, v2 and v3_anymal.
-            modality (str or list): The modality to download. Valid modalities are: image, depth, seg, imu, lidar. Default is image.
+            env (str or list): The environment to download the trajectory from. Valid envs are: AbandonedCable, AbandonedFactory, AbandonedFactory2, AbandonedSchool, AmusementPark, AncientTowns, Antiquity3D, BrushifyMoon, CarWelding, CastleFortress, CoalMine, ConstructionSite, CyberPunkDowntown, DesertGasStation, Downtown, EndofTheWorld, FactoryWeather, Fantasy, ForestEnv, Gascola, GothicIsland, GreatMarsh, HQWesternSaloon, HongKong, Hospital, House, IndustrialHangar, JapaneseAlley, JapaneseCity, MiddleEast, ModUrbanCity, ModernCityDowntown, ModularNeighborhood, ModularNeighborhoodIntExt, NordicHarbor, Office, OldBrickHouseDay, OldBrickHouseNight, OldIndustrialCity, OldScandinavia, OldTownFall, OldTownNight, OldTownSummer, OldTownWinter, Prison, Restaurant, Rome, Ruins, SeasideTown, SeasonalForestAutumn, SeasonalForestSpring, SeasonalForestSummerNight, SeasonalForestWinter, SeasonalForestWinterNight, Sewerage, Slaughter, SoulCity, Supermarket, UrbanConstruction, VictorianStreet, WaterMillDay, WaterMillNight, WesternDesertTown
+            version (str or list): The version of the trajectory. Valid versions are: omni, diff and anymal.
+            traj (str or list): The trajectory to download. Valid trajectories are: P0000, P0001, P0002, etc. If not specified, all trajectories will be downloaded.
+            modality (str or list): The modality to download. Valid modalities are: image, depth, seg, imu, lidar, sem_pcd, rgb_pcd, rosbag. Default is image.
             camera_name (str or list): The name of the camera to download. Valid names are: lcam_back, lcam_bottom, lcam_front, lcam_left, lcam_right, lcam_top, rcam_back, rcam_bottom, rcam_front, rcam_left, rcam_right, rcam_top
         
         Note: 
             for imu and lidar, no camera_name needs to be specified. 
         """
-
-        env, version, modality, camera_name, unzip = self.refine_parameters(env, version, modality, camera_name, unzip, config)
-
-        # Check that the environments are valid.
-        if not self.check_env_valid(env):
-            return False
-        # Check that the modalities are valid
-        if not self.check_modality_valid(modality, check_ground = True):
-            return False
-        # Check that the camera names are valid
-        if not self.check_camera_valid(camera_name, check_ground= True):
-            return False
+        # Prepare the complete download list
+        zipfilelist, targetfilelist = self.prepare_download_list(env, version, traj, modality, camera_name, config)
         
-        # Check that the version is valid for certan environments
-        version_env_dict = self.compile_version_and_env(env, version)
-
-        zipfilelist = self.generate_filelist(version_env_dict, modality, camera_name)
-        # import ipdb;ipdb.set_trace()
-        CURDIR = os.path.dirname(os.path.abspath(__file__))
-        gtfile = CURDIR + '/download_ground_files.txt'
-        if not self.doublecheck_filelist(zipfilelist, gtfile=gtfile):
+        if zipfilelist is None:
             return False
+            
+        if len(zipfilelist) == 0:
+            return True  # Nothing to download
+        
+        print(f"Total files to download: {len(zipfilelist)}")
+        
+        # # Add "TartanGround_v2/" prefix to the zipfilelist 
+        # prefixed_zipfilelist = [f"TartanGround_v2/{ff}" for ff in zipfilelist]
+        
+        # # Use chunked download (single chunk for single-threaded)
+        success, all_success_filelist = self._download_chunk(zipfilelist, targetfilelist, max_failure_trial, 1)
 
-        # generate the target file list: 
-        targetfilelist = [join(self.tartanair_data_root, zipfile.replace('/', '_')) for zipfile in zipfilelist]
-        all_success_filelist = []
-
-        suc, success_source_files, success_target_files = self.downloader.download(zipfilelist, targetfilelist)
-        all_success_filelist.extend(success_target_files)
-
-        # download failed files untill success
-        trail_count = 0
-        while not suc: 
-            zipfilelist = [ff for ff in zipfilelist if ff not in success_source_files]
-            if len(zipfilelist) == 0:
-                print_warn("No failed files are found! ")
-                break
-
-            targetfilelist = [join(self.tartanair_data_root, zipfile.replace('/', '_')) for zipfile in zipfilelist]
-            suc, success_source_files, success_target_files = self.downloader.download(zipfilelist, targetfilelist)
-            all_success_filelist.extend(success_target_files)
-            trail_count += 1
-            if trail_count >= max_failure_trial:
-                break
-
-        if suc:
+        if success:
             print_highlight("Download completed! Enjoy using TartanAir!")
         else:
-            print_warn("Download with failure! The following files are not downloaded ..")
-            for ff in zipfilelist:
-                print_warn(ff)
+            print_warn("Download completed with some failures. Check the logs above for details.")
 
-        if unzip:
+        _, _, _, _, _, unzip = self.refine_parameters(env, version, traj, modality, camera_name, unzip, config)
+
+        if unzip and all_success_filelist:
             self.unzip_files(all_success_filelist)
 
-        return True
+        return success
 
-    def download_multi_thread(self, env = [], version = [], modality = [], camera_name = [], config = None, unzip = False, max_failure_trial = 3, num_workers = 8, **kwargs):
-        env, version, modality, camera_name, unzip = self.refine_parameters(env, version, modality, camera_name, unzip, config)
+    def download_multi_thread(self, env = [], version = [], traj = [], modality = [], camera_name = [], config = None, unzip = False, max_failure_trial = 3, num_workers = 8, **kwargs):
+        """
+        Multithreaded download that first generates the complete file list, then downloads in chunks.
+        """
+        # First, prepare the complete download list
+        print("Preparing complete download list...")
+        zipfilelist, targetfilelist = self.prepare_download_list(env, version, traj, modality, camera_name, config)
+        
+        if zipfilelist is None:
+            return False
+            
+        if len(zipfilelist) == 0:
+            print("No files to download.")
+            return True
+        
+        print(f"Total files to download: {len(zipfilelist)}")
+        
+        # # Add "TartanGround_v2/" prefix to the zipfilelist 
+        # prefixed_zipfilelist = [f"TartanGround_v2/{ff}" for ff in zipfilelist]
+        
+        # Split files into chunks for multithreaded download
+        chunk_size = max(1, len(zipfilelist) // num_workers)
+        file_chunks = [zipfilelist[i:i + chunk_size] for i in range(0, len(zipfilelist), chunk_size)]
+        target_chunks = [targetfilelist[i:i + chunk_size] for i in range(0, len(targetfilelist), chunk_size)]
+        
+        all_success_filelist = []
+        overall_success = True
 
         with ThreadPoolExecutor(max_workers=num_workers) as executor:
             futures = []
-            for ee in env:
-                for vv in version:
-                    futures.append(executor.submit(self.download, env = [ee], version = [vv], modality = modality, camera_name = camera_name, 
-                                    config = config, unzip = unzip, max_failure_trial = max_failure_trial,))
-                    # Wait for a few seconds to avoid overloading the data server
-                    time.sleep(2)
+            
+            # Submit download jobs for each chunk
+            for i, (zip_chunk, target_chunk) in enumerate(zip(file_chunks, target_chunks)):
+                print(f"Submitting chunk {i+1}/{len(file_chunks)} with {len(zip_chunk)} files")
+                future = executor.submit(self._download_chunk, zip_chunk, target_chunk, max_failure_trial, i+1)
+                futures.append(future)
+                # Wait for a few seconds to avoid overloading the data server
+                time.sleep(2)
             
             # Wait for all futures to complete
-            for future in as_completed(futures):
-                future.result()  # This will re-raise any exceptions caught during the futures' execution                                
-    
+            for i, future in enumerate(as_completed(futures)):
+                try:
+                    success, success_files = future.result()
+                    if success:
+                        print(f"✅ Chunk {i+1} completed successfully")
+                        all_success_filelist.extend(success_files)
+                    else:
+                        print(f"❌ Chunk {i+1} had failures")
+                        overall_success = False
+                except Exception as exc:
+                    print(f"❌ Chunk {i+1} generated an exception: {exc}")
+                    overall_success = False
+
+        if overall_success:
+            print_highlight("All downloads completed successfully! Enjoy using TartanAir!")
+        else:
+            print_warn("Some downloads failed. Check the logs above for details.")
+
+        _, _, _, _, _, unzip = self.refine_parameters(env, version, traj, modality, camera_name, unzip, config)
+
+        if unzip and all_success_filelist:
+            self.unzip_files(all_success_filelist)
+
+        return overall_success
+
+    def _download_chunk(self, zipfilelist, targetfilelist, max_failure_trial, chunk_id):
+        """
+        Download a chunk of files with retry logic.
+        """
+        print(f"Starting download for chunk {chunk_id} with {len(zipfilelist)} files")
+        
+        all_success_filelist = []
+        suc, success_source_files, success_target_files = self.downloader.download(zipfilelist, targetfilelist)
+        all_success_filelist.extend(success_target_files)
+
+        # download failed files until success
+        trail_count = 0
+        remaining_files = zipfilelist.copy()
+
+        while not suc and trail_count < max_failure_trial:
+            remaining_files = [ff for ff in remaining_files if ff not in success_source_files]
+            if len(remaining_files) == 0:
+                print_warn(f"Chunk {chunk_id}: No failed files are found!")
+                break
+
+            print(f"Chunk {chunk_id}: Retrying {len(remaining_files)} failed files (attempt {trail_count + 1})")
+
+            # Remove the prefix before processing
+            # stripped_zipfilelist = [zipfile.replace("TartanGround_v2/", "") for zipfile in remaining_files]
+            targetfilelist = [join(self.tartanair_data_root, zipfile.replace('/', '_')) for zipfile in remaining_files]
+
+            suc, success_source_files, success_target_files = self.downloader.download(remaining_files, targetfilelist)
+            all_success_filelist.extend(success_target_files)
+            trail_count += 1
+
+        if not suc:
+            print_warn(f"Chunk {chunk_id}: Download with failure! The following files are not downloaded:")
+            for ff in remaining_files:
+                print_warn(ff)
+
+        return suc, all_success_filelist
