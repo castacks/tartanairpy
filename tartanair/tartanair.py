@@ -1,7 +1,7 @@
 # Local imports.
 from .downloader import TartanAirDownloader, TartanGroundDownloader
 from .dataset import TartanAirDataset, TartanAirSlowLoaderCreator
-from .customizer import TartanAirCustomizer
+# from .customizer import TartanAirCustomizer
 from .lister import TartanAirLister
 from .visualizer import TartanAirVisualizer
 from .iterator import TartanAirIterator

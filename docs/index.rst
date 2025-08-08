@@ -41,6 +41,7 @@ Useful Links
 
    installation
    examples
+   tartanground
    usage
    modalities
    environments
