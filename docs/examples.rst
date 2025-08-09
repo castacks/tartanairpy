@@ -73,23 +73,6 @@ Multi-Thread Download via Python API
                              unzip = True,
                              num_workers = 8)
 
-Download TartanGround
-............................
-
-.. code-block:: python
-
-    import tartanair as ta
-
-    # Initialize TartanAir.
-    tartanground_data_root = '/my/path/to/root/folder/for/tartanair-v2'
-    ta.init(tartanground_data_root)
-
-    # Download a trajectory.
-    ta.download_ground(env = ['OldTownSummer', 'DesertGasStation'], 
-                version = ['v1', 'v2', 'v3_anymal'], # available versions are: 'v1', 'v2', 'v3_anymal'
-                modality = ['image', 'depth', 'seg', 'lidar', 'imu'], # available modalities are: image', 'depth', 'seg', 'imu', 'lidar'
-                camera_name = ['lcam_front', 'lcam_bottom'], # available cameras are: 'lcam_front', 'lcam_left', 'lcam_right', 'lcam_back', 'lcam_top', 'lcam_bottom'
-                unzip = True) # unzip files autonomously after download
 
 Customization Example
 -------------------------------------

@@ -21,7 +21,7 @@ Quick Links
    :class: borderless
 
    * - 🌐 **Dataset Webpage**
-     - `TartanAir <https://tartanair.org/tartanground/>`_
+     - `TartanGround <https://tartanair.org/tartanground/>`_
    * - 📄 **Paper**
      - `arXiv:2505.10696 <https://arxiv.org/pdf/2505.10696>`_
    * - 💻 **GitHub Repository**
@@ -46,6 +46,9 @@ Installation
 
    # 3. Ensure submodules are up to date
    git submodule update --init --recursive
+
+   # 4. Install the package
+    pip install -e .
 
 .. note::
    Make sure you have ``git`` and ``conda`` installed on your system before proceeding.
