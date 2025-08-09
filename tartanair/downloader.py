@@ -150,7 +150,6 @@ class TartanAirDownloader(TartanAirModule):
                 folderlist = self.compile_modality_and_cameraname(modalities, camera_names)
                 zipfiles = [diffstr + fl + '.zip' for fl in folderlist]
                 zipfilelist.extend(zipfiles)
-            import ipdb;ipdb.set_trace()
             if 'event' in modalities:
                 zipfile = envstr + 'Data_easy/events.zip' # hard code here, only easy events are available
                 zipfilelist.append(zipfile)
