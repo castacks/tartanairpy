@@ -242,7 +242,7 @@ def customize(env, difficulty, trajectory_id, modality, new_camera_models_params
     check_init()
     customizer.customize(env, difficulty, trajectory_id, modality, new_camera_models_params, num_workers=num_workers, device=device)
 
-def customize_flow(env, difficulty, trajectory_id, cam_sides, num_workers = 1, frame_sep = 1, device = "cpu"):
+def customize_flow(env, difficulty, trajectory_id, camera_name, num_workers = 1, frame_sep = 1, device = "cpu"):
     """
     Synthesizes raw data into new camera-models. A few camera models are provided, although you can also provide your own camera models. The currently available camera models are:
 
@@ -266,7 +266,7 @@ def customize_flow(env, difficulty, trajectory_id, cam_sides, num_workers = 1, f
     """
     global flow_customizer
     check_init()
-    flow_customizer.customize_flow(env, difficulty, trajectory_id, cam_sides=cam_sides, num_workers=num_workers, frame_sep=frame_sep, device=device)
+    flow_customizer.customize_flow(env, difficulty, trajectory_id, camera_name=camera_name, num_workers=num_workers, frame_sep=frame_sep, device=device)
 
 def dataloader(env, 
             difficulty = [], 

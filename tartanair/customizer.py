@@ -430,7 +430,7 @@ class TartanAirFlowCustomizer(TartanAirCustomizer):
     def __init__(self, tartanair_data_root):
         super().__init__(tartanair_data_root)
 
-    def customize_flow(self, env, difficulty = [], trajectory_id = [], cam_sides = [], frame_sep=1, num_workers = 1, device = 'cpu'):
+    def customize_flow(self, env, difficulty = [], trajectory_id = [], camera_name = [], frame_sep=1, num_workers = 1, device = 'cpu'):
         ###############################
         # Check the input arguments.
         ###############################
@@ -449,6 +449,9 @@ class TartanAirFlowCustomizer(TartanAirCustomizer):
         if not isinstance(trajectory_id, list):
             trajectory_id = [trajectory_id]
 
+        if not self.check_camera_valid(camera_name):
+            return False
+
         # Keep track of requested device.
         self.device = device
 
@@ -464,9 +467,9 @@ class TartanAirFlowCustomizer(TartanAirCustomizer):
         else:
             self.data_folders = difficulty
 
-        # check that all images exists
-        for cam_side in cam_sides:
-            self.check_six_images_exist(env, difficulty, trajectory_id, ['depth'], raw_side=cam_side)
+        # # check that all images exists
+        # for cam_side in cam_sides:
+        #     self.check_six_images_exist(env, difficulty, trajectory_id, ['depth'], raw_side=cam_side)
 
         # Number of processes to used.
         self.num_workers = num_workers
@@ -475,7 +478,7 @@ class TartanAirFlowCustomizer(TartanAirCustomizer):
         # Prepare argument list for the flow resampling workers.
         ###############################
 
-        required_cam_sides = set(cam_sides)
+        # required_cam_sides = set(cam_sides)
 
         # The path to the directory that has been populated with TartanAir data. Immediately in this directory are environment-named directories.
         tartanair_path = self.data_root
@@ -491,10 +494,10 @@ class TartanAirFlowCustomizer(TartanAirCustomizer):
 
                 traj_path = os.path.join(tartanair_path, env_name, rel_traj_path)
 
-                for cam_side in cam_sides:
+                for camname in camera_name:
                                                 
                     # Create directory.
-                    new_data_dir_path = os.path.join(tartanair_path, env_name, rel_traj_path, f"flow_{cam_side[0]}cam_front")
+                    new_data_dir_path = os.path.join(tartanair_path, env_name, rel_traj_path, f"flow_{camname}")
                     print("Creating directory", new_data_dir_path) # Of form Data_easy/env/P001/image_lcam_custom0
                     
                     # Does not overwrite older directories if those exist.
@@ -506,7 +509,7 @@ class TartanAirFlowCustomizer(TartanAirCustomizer):
 
                     # Enumerate the frames.
                     # For each frame, get number of resampled images. The number of frames is the same for all modalities so just check it for one.
-                    files = os.listdir(os.path.join(tartanair_path, env_name, rel_traj_path, f"depth_{cam_side[0]}cam_front"))
+                    files = os.listdir(os.path.join(tartanair_path, env_name, rel_traj_path, f"depth_{camname}"))
                     num_frames = len([f for f in files if f.endswith(".png") and not f.startswith(".")])
 
                     # Now, we will prepare argument lists for the flow resampling workers. 
@@ -514,14 +517,14 @@ class TartanAirFlowCustomizer(TartanAirCustomizer):
                     frame_pairs = [(frame_ix, frame_ix + frame_sep) for frame_ix in range(0, num_frames - frame_sep)]
 
                     # read the poses
-                    pose_fp = os.path.join(tartanair_path, env_name, rel_traj_path, f"pose_{cam_side[0]}cam_front.txt")
+                    pose_fp = os.path.join(tartanair_path, env_name, rel_traj_path, f"pose_{camname}.txt")
                     poses = np.loadtxt(pose_fp)
                     
                     job_args = [
                         {
                             "source_path": os.path.join(tartanair_path, env_name, rel_traj_path),
                             "output_path": new_data_dir_path,
-                            "cam_side": cam_side,
+                            "cam_name": camname,
                             "cam0": {
                                 "frame_index": first_frame_index,
                                 "pose_raw_ta": poses[first_frame_index]
@@ -559,7 +562,7 @@ class TartanAirFlowCustomizer(TartanAirCustomizer):
         
         source_path = argslist["source_path"]
         output_path = argslist["output_path"]
-        cam_side = argslist["cam_side"]
+        cam_name = argslist["cam_name"]
         cam0 = argslist["cam0"]
         cam1 = argslist["cam1"]
 
@@ -568,7 +571,7 @@ class TartanAirFlowCustomizer(TartanAirCustomizer):
         for cam_info in [cam0, cam1]:
             frame_index = cam_info["frame_index"]
 
-            cam_name = f"{cam_side[0]}cam_front"
+            # cam_name = f"{cam_side[0]}cam_front"
 
             depth_filepath = os.path.join(source_path, f"depth_{cam_name}", f"{frame_index:06d}_{cam_name}_depth.png")
             
@@ -620,7 +623,7 @@ class TartanAirFlowCustomizer(TartanAirCustomizer):
         )
 
         # write flow and occlusion to the output path (npz)
-        flow_filepath = os.path.join(output_path, f"{cam0['frame_index']:06d}_{cam1['frame_index']:06d}_{cam_side}_flow.npz")
+        flow_filepath = os.path.join(output_path, f"{cam0['frame_index']:06d}_{cam1['frame_index']:06d}_{cam_name}_flow.npz")
 
         content = {
             "flow_fwd": views[0]["flow"].cpu().numpy(),
