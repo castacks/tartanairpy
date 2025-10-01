@@ -76,15 +76,50 @@ class TartanAirImageReader():
             seg = cv2.imread(segpath, cv2.IMREAD_UNCHANGED)
         return seg
 
-    def read_flow(self, flowpath, scale = 1):
-        if flowpath.endswith('npy'):
+    # def read_flow(self, flowpath, scale = 1):
+    #     if flowpath.endswith('npy'):
+    #         flownp = np.load(flowpath)
+    #     else:
+    #         flow16 = cv2.imread(flowpath, cv2.IMREAD_UNCHANGED)
+    #         if flow16 is None:
+    #             return None
+    #         flownp, _ = self.flow16to32(flow16)
+
+    #     return flownp
+
+    def read_flow(self, flowpath, scale=1, direction="fwd"):
+        if flowpath.endswith(".npz"):
+            # only npz supports backward direction
+            assert direction in ("fwd", "bwd"), \
+                f"Invalid direction '{direction}', must be 'fwd' or 'bwd' for npz"
+
+            dir_key = "flow_fwd" if direction == "fwd" else "flow_bwd"
+            with np.load(flowpath) as data:
+                if dir_key not in data:
+                    raise KeyError(
+                        f"'{dir_key}' not found in {flowpath}. "
+                        f"Available keys: {list(data.keys())}"
+                    )
+                flownp = data[dir_key]
+                flownp = flownp[0].transpose(1, 2, 0)  # CHW to HWC
+
+        elif flowpath.endswith(".npy"):
+            # npy is always forward
+            assert direction == "fwd", \
+                f"direction='{direction}' is not supported for npy (only 'fwd')"
             flownp = np.load(flowpath)
-        else:
+
+        else: # png
+            # image encoding, also only forward
+            assert direction == "fwd", \
+                f"direction='{direction}' is not supported for image inputs (only 'fwd')"
             flow16 = cv2.imread(flowpath, cv2.IMREAD_UNCHANGED)
             if flow16 is None:
                 return None
             flownp, _ = self.flow16to32(flow16)
 
+        if scale != 1:
+            flownp = flownp * scale
         return flownp
 
     def read_dist(self, fn ): # read a depth image and convert it to distance

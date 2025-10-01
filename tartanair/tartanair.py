@@ -1,7 +1,7 @@
 # Local imports.
 from .downloader import TartanAirDownloader, TartanGroundDownloader
 from .dataset import TartanAirDataset, TartanAirSlowLoaderCreator
-from .customizer import TartanAirCustomizer
+from .customizer import TartanAirCustomizer, TartanAirFlowCustomizer
 from .lister import TartanAirLister
 from .visualizer import TartanAirVisualizer
 from .iterator import TartanAirIterator
@@ -51,6 +51,12 @@ def init(tartanair_root):
         customizer = TartanAirCustomizer(tartanair_data_root)
     except:
         print("Could not initialize customizer.")
+
+    global flow_customizer
+    try:
+        flow_customizer = TartanAirFlowCustomizer(tartanair_data_root)
+    except:
+        print("Could not initialize flow customizer.")
 
     # TODO: 
     global lister
@@ -235,6 +241,32 @@ def customize(env, difficulty, trajectory_id, modality, new_camera_models_params
     global customizer
     check_init()
     customizer.customize(env, difficulty, trajectory_id, modality, new_camera_models_params, num_workers=num_workers, device=device)
+
+def customize_flow(env, difficulty, trajectory_id, camera_name, num_workers = 1, frame_sep = 1, device = "cpu"):
+    """
+    Synthesizes raw data into new camera-models. A few camera models are provided, although you can also provide your own camera models. The currently available camera models are:
+
+    * 'pinhole': A pinhole camera model.
+    * 'doublesphere': A wide-angle camera model with a double sphere distortion model. Source: https://arxiv.org/abs/1807.08957
+    * 'linearsphere': A wide-angle camera model with a custom "linear sphere" distortion model. There is a constant azimuth/elevation delta between vertical/horizontal lines.
+    * 'equirect': An equirectangular camera model.
+    * 'eucm': Enhanced Unified Camera Model. Source: https://ieeexplore.ieee.org/document/7342909
+    
+    :param env: The environment to customize. Can be a list of environments.
+    :type env: str or list
+    :param difficulty: The difficulty of the trajectory. Can be a list of difficulties. Valid difficulties are: `easy`, `hard`.
+    :type difficulty: str or list
+    :param trajectory_id: The id of the trajectory to customize. Can be a list of trajectory ids of form `P000`, `P001`, etc.
+    :type trajectory_id: str or list
+    :param cam_sides: The sides of the cameras to customize. Can be a list of sides. Valid sides are: `left`, `right`.
+    :type cam_sides: str or list
+    :type new_camera_models_params: list
+    :param num_workers: The number of workers to use for the customizer. Default is 1.
+    :type num_workers: int
+    """
+    global flow_customizer
+    check_init()
+    flow_customizer.customize_flow(env, difficulty, trajectory_id, camera_name=camera_name, num_workers=num_workers, frame_sep=frame_sep, device=device)
 
 def dataloader(env, 
             difficulty = [], 

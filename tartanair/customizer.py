@@ -22,6 +22,7 @@ import torch.multiprocessing as mp
 # Local imports.
 from .tartanair_module import TartanAirModule
 from .reader import TartanAirImageReader
+from .flow_calculation import depthmap_to_absolute_camera_coordinates, flow_occlusion_post_processing
 
 # Image resampling.
 from .image_resampling.image_sampler import SixPlanarNumba, SixPlanarTorch
@@ -38,6 +39,7 @@ class TartanAirCustomizer(TartanAirModule):
         # Member variables.
         # The root directory for the dataset.
         self.data_root = tartanair_data_root
+        assert os.path.exists(self.data_root), "The data root does not exist."
 
         # Available camera models.
         self.camera_model_name_to_class = {'pinhole': Pinhole, 
@@ -422,3 +424,216 @@ class TartanAirCustomizer(TartanAirModule):
                         print("Success: {env_folder}/{difficulty_folder}/{traj_id_folder} All files are available for {modality} on {raw_side} side.".format(env_folder = env_folder, difficulty_folder = difficulty_folder, traj_id_folder = traj_id_folder, modality = modality, raw_side = raw_side))
             
         return True
+
+class TartanAirFlowCustomizer(TartanAirCustomizer):
+
+    def __init__(self, tartanair_data_root):
+        super().__init__(tartanair_data_root)
+
+    def customize_flow(self, env, difficulty = [], trajectory_id = [], camera_name = [], frame_sep=1, num_workers = 1, device = 'cpu'):
+        ###############################
+        # Check the input arguments.
+        ###############################
+
+        # read the depthmap at front and compute the flow/occlusion between them
+        print("Computing Flow and Occlusion... With {} workers.".format(num_workers))
+
+        # Check that all arguments are lists. If not, convert them to lists.
+        if not isinstance(env, list):
+            env = [env]
+        if not isinstance(difficulty, list):
+            difficulty = [difficulty]
+        # "easy" and "hard" to "Data_easy" and "Data_hard".
+        difficulty = ["Data_"+d for d in difficulty]
+
+        if not isinstance(trajectory_id, list):
+            trajectory_id = [trajectory_id]
+
+        if not self.check_camera_valid(camera_name):
+            return False
+
+        # Keep track of requested device.
+        self.device = device
+
+        # Individual environment directories within the root directory to be post-processed. If empty, all the available directories will be processed.
+        if not env:
+            self.env_folders = []
+        else:
+            self.env_folders = env
+            
+        # The data-folders (easy/hard) to be processed within the environments.
+        if not difficulty:
+            self.data_folders = ['Data_easy', 'Data_hard']
+        else:
+            self.data_folders = difficulty
+
+        # # check that all images exists
+        # for cam_side in cam_sides:
+        #     self.check_six_images_exist(env, difficulty, trajectory_id, ['depth'], raw_side=cam_side)
+
+        # Number of processes to used.
+        self.num_workers = num_workers
+
+        ###############################
+        # Prepare argument list for the flow resampling workers.
+        ###############################
+
+        # required_cam_sides = set(cam_sides)
+
+        # The path to the directory that has been populated with TartanAir data. Immediately in this directory are environment-named directories.
+        tartanair_path = self.data_root
+        envs_to_trajs = self.enumerate_trajs(self.data_folders)
+
+        for env_name, env_trajs  in envs_to_trajs.items():
+            if self.env_folders and env_name not in self.env_folders:
+                continue
+            for rel_traj_path in env_trajs: 
+                # Proceed only if the trajectory is in the list of trajectories to be processed.
+                if trajectory_id and rel_traj_path.split("/")[-1] not in trajectory_id:
+                    continue
+
+                traj_path = os.path.join(tartanair_path, env_name, rel_traj_path)
+
+                for camname in camera_name:
+                                                
+                    # Create directory.
+                    new_data_dir_path = os.path.join(tartanair_path, env_name, rel_traj_path, f"flow_{camname}")
+                    print("Creating directory", new_data_dir_path) # Of form Data_easy/env/P001/image_lcam_custom0
+                    
+                    # Does not overwrite older directories if those exist.
+                    if os.path.exists(new_data_dir_path):
+                        pass
+                        # print("    !! New data directory already exists. {}".format(new_data_dir_path))
+                    else:
+                        os.makedirs(new_data_dir_path)
+
+                    # Enumerate the frames.
+                    # For each frame, get number of resampled images. The number of frames is the same for all modalities so just check it for one.
+                    files = os.listdir(os.path.join(tartanair_path, env_name, rel_traj_path, f"depth_{camname}"))
+                    num_frames = len([f for f in files if f.endswith(".png") and not f.startswith(".")])
+
+                    # Now, we will prepare argument lists for the flow resampling workers. 
+                    # We enumerate all the pairs with "frame_sep" separation.
+                    frame_pairs = [(frame_ix, frame_ix + frame_sep) for frame_ix in range(0, num_frames - frame_sep)]
+
+                    # read the poses
+                    pose_fp = os.path.join(tartanair_path, env_name, rel_traj_path, f"pose_{camname}.txt")
+                    poses = np.loadtxt(pose_fp)
+                    
+                    job_args = [
+                        {
+                            "source_path": os.path.join(tartanair_path, env_name, rel_traj_path),
+                            "output_path": new_data_dir_path,
+                            "cam_name": camname,
+                            "cam0": {
+                                "frame_index": first_frame_index,
+                                "pose_raw_ta": poses[first_frame_index]
+                            },
+                            "cam1": {
+                                "frame_index": second_frame_index,
+                                "pose_raw_ta": poses[second_frame_index]
+                            },
+                        }
+                        for first_frame_index, second_frame_index in frame_pairs
+                    ]
+
+                    if num_workers <= 1:
+                        print("        Running sequentially.")
+                        for arglist in job_args:
+                            self.sample_flow_worker(arglist)
+                    else:
+                        # Run in parallel.
+                        print("        Running in parallel with", num_workers, "workers.")
+                        try:
+            
+                            with Pool(num_workers) as pool:
+                                pool.map(self.sample_flow_worker, job_args)
+
+                        except KeyboardInterrupt:
+                            exit()
+
+    def sample_flow_worker(self, argslist):
+
+        # Some mappings between attributes and parameters.
+        self.reader = TartanAirImageReader()
+        modality_to_reader = {"image": self.reader.read_bgr, "depth": self.reader.read_dist, "seg": self.reader.read_seg}
+        modality_to_interpolation = {"image": "linear", "seg": "nearest", "depth": "blend"}
+        modality_to_writer = {"image": self.reader.write_as_is, "seg": self.reader.write_as_is, "depth": self.reader.write_float_depth}
+        
+        source_path = argslist["source_path"]
+        output_path = argslist["output_path"]
+        cam_name = argslist["cam_name"]
+        cam0 = argslist["cam0"]
+        cam1 = argslist["cam1"]
+
+        # prepare the views for resampling
+        views = []
+        for cam_info in [cam0, cam1]:
+            frame_index = cam_info["frame_index"]
+
+            # cam_name = f"{cam_side[0]}cam_front"
+
+            depth_filepath = os.path.join(source_path, f"depth_{cam_name}", f"{frame_index:06d}_{cam_name}_depth.png")
+            
+            depth_image = self.reader.read_depth(depth_filepath)
+
+            # populate views
+            view = {}
+
+            # depthmap 
+            view["depthmap"] = depth_image
+
+            NED_R_cam = np.array([
+                [0, 0, 1],
+                [1, 0, 0],
+                [0, 1, 0]
+            ], dtype=np.float32)
+
+            cam0_R_camsample0 = np.eye(3, dtype=np.float32)
+
+            # camera pose
+            view["camera_pose"] = np.eye(4, dtype=np.float32)
+            view["camera_pose"][0:3, 0:3] = Rotation.from_quat(cam_info["pose_raw_ta"][3:]).as_matrix() @ NED_R_cam @ cam0_R_camsample0
+            view["camera_pose"][0:3, 3] = cam_info["pose_raw_ta"][:3]
+            
+            # intrinsics
+            view["camera_intrinsics"] = np.array([
+                [320, 0, 320 - 0.5],
+                [0, 320, 320 - 0.5],
+                [0, 0, 1]
+            ], dtype=np.float32)
+
+            view["pts3d"], view["valid_mask"] = depthmap_to_absolute_camera_coordinates(
+                view["depthmap"], view["camera_intrinsics"], view["camera_pose"]
+            )
+
+            # convert all array into tensor, and prepend a batch dimension
+            for k, v in view.items():
+                view[k] = torch.tensor(v, device=self.device).unsqueeze(0)
+
+            views.append(view)
+
+        # invoke the flow and occlusion calculation code
+        flow_occlusion_post_processing(
+            views,
+            depth_error_threshold=0.1,
+            depth_error_temperature=0.1,
+            relative_depth_error_threshold=0.01,
+            opt_iters=2    
+        )
+
+        # write flow and occlusion to the output path (npz)
+        flow_filepath = os.path.join(output_path, f"{cam0['frame_index']:06d}_{cam1['frame_index']:06d}_{cam_name}_flow.npz")
+
+        content = {
+            "flow_fwd": views[0]["flow"].cpu().numpy(),
+            "flow_bwd": views[1]["flow"].cpu().numpy(),
+            "fov_mask_fwd": views[0]["fov_mask"].cpu().numpy(),
+            "fov_mask_bwd": views[1]["fov_mask"].cpu().numpy(),
+            "covisible_mask_fwd": views[0]["non_occluded_mask"].cpu().numpy(),
+            "covisible_mask_bwd": views[1]["non_occluded_mask"].cpu().numpy(),
+        }
+
+        np.savez(flow_filepath, **content)
+
+        # docs: Assumption(static, mention what will happen for dynamic objects; high level description for how flow is computed, explain mask, explain npz, link to detailed description)
