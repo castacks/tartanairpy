@@ -107,7 +107,7 @@ def flow_occlusion_post_processing(
 
             # compute flow
             flow = uv - get_meshgrid_torch(W, H, device=uv.device)
-            flow[~valid_mask, :] = 0.0
+            # flow[~valid_mask, :] = 0.0
 
             # compute occlusion based on depth reprojection error thresholding
             expected_norm_depth = torch.linalg.norm(current_points_in_other[valid_mask], dim=-1)
