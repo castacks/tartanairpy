@@ -13,7 +13,7 @@ sys.path.append('..')
 import tartanair as ta
 
 # Create a TartanAir object.
-tartanair_data_root = '/my/path/to/root/folder/for/tartanair-v2'
+tartanair_data_root = '/home/wenshan/tmp' #'/my/path/to/root/folder/for/tartanair-v2'
 
 ta.init(tartanair_data_root)
 
@@ -29,5 +29,5 @@ ta.download(env = env,
               camera_name = ['lcam_front', 'lcam_right', 'lcam_back', 'lcam_left', 'lcam_top', 'lcam_bottom'], 
               unzip = True)
 
-# Can also download via a yaml config file.
-ta.download(config = 'download_config.yaml')
+# # Can also download via a yaml config file.
+# ta.download(config = 'download_config.yaml')
