@@ -327,7 +327,7 @@ Given a pair of RGB and depth image cubes and two direction, the tool will compu
     ta.customize_flow(env = 'ArchVizTinyHouseDay',
                 difficulty = 'easy',
                 trajectory_id = ['P000'],
-                cam_sides=["left", "right"],
+                camera_name=["lcam_left", "lcam_back"],
                 num_workers = 4,
                 frame_sep = 1,
                 device = "cuda") # or cpu
