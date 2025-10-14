@@ -8,6 +8,7 @@ from .iterator import TartanAirIterator
 from .evaluator import TartanAirEvaluator
 from .reader import TartanAirTrajectoryReader
 from .dataloader import TartanAirDataLoader
+from .downloader_hf import TartanGroundHFDownloader
 # from .random_accessor import TartanAirRandomAccessor
 
 print("TartanAir toolbox initialized.")
@@ -41,6 +42,8 @@ def init(tartanair_root):
     downloader = TartanAirDownloader(tartanair_data_root)
     global downloader_ground
     downloader_ground = TartanGroundDownloader(tartanair_data_root)
+    global downloader_hf
+    downloader_hf = TartanGroundHFDownloader(tartanair_data_root)
 
     # TODO: 
     global dataset
@@ -176,6 +179,31 @@ def download_ground(env = [], version = [], traj=[], modality = [], camera_name 
     global downloader_ground
     check_init()
     downloader_ground.download(env, version, traj, modality, camera_name, config, unzip)
+
+def download_ground_hf(env = [], version = [], traj=[], modality = [], camera_name = [], config = None, unzip = False):
+    """
+    Download data from the TartanAir dataset. This method will download the data from the CloudFlare server and store it in the `tartanair_root` directory.
+
+    :param env: The environment to download. Can be a list of environments.
+    :type env: str or list
+    :param version: The version of the trajectory. Valid versions are omni, diff and anymal.
+    :type version: str or list
+    :param traj: The id of the trajectory to download. Can be a list of trajectory ids of form P0000, P0001, P2000 etc.
+    :type traj: str or list
+    :param modality: The modality to download. Can be a list of modalities. Valid modalities are: 'image', 'meta', 'depth', 'seg', 'imu', 'lidar', 'rosbag' (only anymal version), 'sem_pcd', 'rgb_pcd', 'seg_labels'. Default will include all.
+    :type modality: str or list
+    :param camera_name: The camera name to download. Can be a list of camera names. Default will include all. Choices are `lcam_front`, `lcam_right`, `lcam_back`, `lcam_left`, `lcam_top`, `lcam_bottom`, `rcam_front`, `rcam_right`, `rcam_back`, `rcam_left`, `rcam_top`, `rcam_bottom`.
+     Modalities IMU and LIDAR do not need camera names specified.
+    :type camera_name: str or list
+    :param config: Optional. Path to a yaml file containing the download configuration. If a config file is provided, the other arguments will be ignored.
+    :type config: str
+    :param unzip: Unzip the downloaded files. Default is False. If True, the files will be unzipped after downloading.
+    :type unzip: bool
+    """
+
+    global downloader_hf
+    check_init()
+    downloader_hf.download(env, version, traj, modality, camera_name, config, unzip)
 
 def download_ground_multi_thread(env = [], version = [], traj=[], modality = [], camera_name = [], config = None, unzip = False, num_workers = 8):
     """

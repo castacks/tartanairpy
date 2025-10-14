@@ -1,8 +1,8 @@
 """
 Author: Manthan Patel
-Date: 2025-08-08
+Date: 2025-10-10
 
-Example script for downloading TartanGround using the TartanAir dataset toolbox.
+Example script for downloading TartanGround using the TartanAir dataset toolbox via hugging face
 """
 # General imports.
 import sys
@@ -19,7 +19,7 @@ ta.init(tartanground_data_root)
 # Download data from following environments.
 env = [ "AbandonedFactory",
         "ConstructionSite",
-        "Hospital",
+        "Gascola",
 ]
 
 # Following versions are available: ['omni', 'diff', 'anymal']
@@ -31,7 +31,7 @@ env = [ "AbandonedFactory",
 # "diff" refers to the differential drive robot -> Trajectories are in the form of P1000, P1001, etc.
 # "anymal" refers to the quadrupedal robot -> Trajectories are in the form of P2000, P2001, etc.
 
-ta.download_ground(env = env, 
+ta.download_ground_hf(env = env, 
               version = ['omni', 'diff', 'anymal'], 
               traj =[],
               modality = ['image', 'meta', 'depth', 'seg', 'lidar', 'imu', 'rosbag', 'sem_pcd', 'seg_labels', 'rgb_pcd'],  
@@ -39,7 +39,7 @@ ta.download_ground(env = env,
               unzip = False)
 
 # Download all modalities from provided environments for the omnidirectional robot
-# ta.download_ground(env = env, 
+# ta.download_ground_hf(env = env, 
 #               version = ['omni'], 
 #               traj =[],
 #               modality = [],  
@@ -47,7 +47,7 @@ ta.download_ground(env = env,
 #               unzip = False)
 
 # Download One Trajectory Front camera from each environement (Omni-directional motion).
-# ta.download_ground(env = [], 
+# ta.download_ground_hf(env = [], 
 #               version = ['omni'], 
 #               traj =['P0000'],
 #               modality = [],  
@@ -55,7 +55,7 @@ ta.download_ground(env = env,
 #               unzip = False)
 
 # Download all data from all environments.
-# ta.download_ground(env = [], 
+# ta.download_ground_hf(env = [], 
 #               version = [], 
 #               traj =[],
 #               modality = [],  
@@ -63,26 +63,9 @@ ta.download_ground(env = env,
 #               unzip = False)
 
 # Download the semantic occupancy data for all environments.
-# ta.download_ground(env = [], 
+# ta.download_ground_hf(env = [], 
 #               version = [], 
 #               traj = [],
 #               modality = ['seg_labels', 'sem_pcd'],  
 #               camera_name = [], 
 #               unzip = False)
-
-# All above downloads can be done in parallel using multi-threading.
-
-# ta.download_ground_multi_thread(env = env, 
-#               version = ['omni', 'diff', 'anymal'], 
-#               traj =[],
-#               modality = ['image', 'meta', 'depth', 'seg', 'lidar', 'imu', 'rosbag', 'sem_pcd', 'seg_labels', 'rgb_pcd'],  
-#               camera_name = ['lcam_front', 'lcam_right', 'lcam_left', 'lcam_back'], 
-#               unzip = False)
-
-# ta.download_ground_multi_thread(env = [], 
-#               version = [], 
-#               traj = [],
-#               modality = [],  
-#               camera_name = [], 
-#               unzip = False, 
-#               num_workers = 8)
