@@ -24,7 +24,41 @@ For each time step, we provide 12 RGB images from 12 cameras covering a stereo s
     - Distortion coefficients: (0, 0, 0, 0) (no distortion)
 
 The images are sampled at 10 Hz, and the cameras are perfectly synchronized. The images are in PNG format, with 8 bits per channel.
-In addition, We provide tools for adding random noise and motion blur to the images, to improve the realism. 
+In addition, We provide tools for adding random noise and motion blur to the images, to improve the realism.
+
+1000 Hz RGB MP4s
+-------------------
+The MP4 files consist of 1000 Hz sampled RGB images of the left front camera (lcam_front) that was originally used to generate event camera data. The MP4 files were generating using the following ffmpeg command:
+
+.. code-block:: text
+    ffmpeg -y -framerate 1000 -pattern_type glob -i "${IMG_DIR}/*.png" \
+  -c:v libx265 -crf 14 -preset slow -loglevel error -movflags +faststart \
+  "$VIDEO_PATH"
+
+The camera's intrinsics for the sequence is the same as the 10 Hz sampled images.
+Below is an example of how to read an MP4 file:
+
+.. code-block:: python
+    import cv2
+    video_path = "/path/to/MP4/file"
+    cap = cv2.VideoCapture(video_path)
+
+    # Get total frames in MP4 file
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+    # Iterate each frame
+    while True:
+        # Read a frame in BGR format
+        ret, frame = cap.read()
+
+        # If frame is not read successfully, break the loop
+        if not ret:
+            break
+    
+    # Extract specific frame (0 indexed)
+    frame_number = 100
+    cap.set(1, frame_number - 1)
+    ret, frame = cap.read()
 
 Raw depth image
 -------------------
