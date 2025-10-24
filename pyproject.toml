@@ -4,10 +4,13 @@ build-backend = "hatchling.build"
 
 [project]
 name = "tartanair"
-version = "1.1.0"
+version = "1.2.0"
 authors = [
   { name="Yorai Shaoul", email="yorai@cmu.edu" },
-  { name="Wenshan Wang", email="wenshanw@cs.cmu.edu " } 
+  { name="Yuchen Zhang", email="yuchenz7@andrew.cmu.edu" },
+  { name="Yaoyu Hu", email="yaoyuh@andrew.cmu.edu" },
+  { name="Manthan Patel", email="manthanp@leggedrobotics.com" },
+  { name="Wenshan Wang", email="wenshanw@andrew.cmu.edu" } 
 ]
 description = "TartanAir"
 readme = "README.md"
