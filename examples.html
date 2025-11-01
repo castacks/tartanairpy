@@ -1,0 +1,430 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Examples &mdash; TartanAir  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Dense Correspondence / Flow Sampling" href="flow_sampling.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            TartanAir
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#download-example">Download Example</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#download-via-python-api">Download via Python API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#download-via-a-yaml-config-file">Download via a yaml config file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#download-tartanground">Download TartanGround</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#customization-example">Customization Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dataloader-example">Dataloader Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-iteration-example">Data Iteration Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#evaluation-example">Evaluation Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#flow-sampling-example">Flow Sampling Example</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="flow_sampling.html">Dense Correspondence / Flow Sampling</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tartanground.html">TartanGround Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modalities.html">Modalities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.html">Environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">TartanAir</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Examples</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/examples.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="examples">
+<h1>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h1>
+<p>TartanAir V2 is a flexible dataset when used with this Python package. Using it, you can download, iterate, and modify the raw data. Here are some examples of what you can do with it.</p>
+<section id="download-example">
+<h2>Download Example<a class="headerlink" href="#download-example" title="Link to this heading"></a></h2>
+<section id="download-via-python-api">
+<h3>Download via Python API<a class="headerlink" href="#download-via-python-api" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">tartanair</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ta</span>
+
+<span class="c1"># Initialize TartanAir.</span>
+<span class="n">tartanair_data_root</span> <span class="o">=</span> <span class="s1">&#39;/my/path/to/root/folder/for/tartanair-v2&#39;</span>
+<span class="n">ta</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">tartanair_data_root</span><span class="p">)</span>
+
+<span class="c1"># Download a trajectory.</span>
+<span class="n">ta</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">env</span> <span class="o">=</span> <span class="s2">&quot;ArchVizTinyHouseDay&quot;</span><span class="p">,</span>
+            <span class="n">difficulty</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;easy&#39;</span><span class="p">],</span> <span class="c1"># this can be &#39;easy&#39;, and/or &#39;hard&#39;</span>
+            <span class="n">modality</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;image&#39;</span><span class="p">,</span> <span class="s1">&#39;depth&#39;</span><span class="p">,</span> <span class="s1">&#39;seg&#39;</span><span class="p">,</span> <span class="s1">&#39;imu&#39;</span><span class="p">],</span> <span class="c1"># available modalities are: image&#39;, &#39;depth&#39;, &#39;seg&#39;, &#39;imu&#39;, &#39;lidar&#39;, &#39;flow&#39;</span>
+            <span class="n">camera_name</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;lcam_front&#39;</span><span class="p">,</span> <span class="s1">&#39;lcam_left&#39;</span><span class="p">,</span> <span class="s1">&#39;lcam_right&#39;</span><span class="p">,</span> <span class="s1">&#39;lcam_back&#39;</span><span class="p">,</span> <span class="s1">&#39;lcam_top&#39;</span><span class="p">,</span> <span class="s1">&#39;lcam_bottom&#39;</span><span class="p">],</span>
+            <span class="n">unzip</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="n">delete_zip</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">num_workers</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span> <span class="c1"># unzip files autonomously after download</span>
+
+<span class="c1"># To download the entire dataset</span>
+<span class="n">all_data</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">get_all_data</span><span class="p">()</span> <span class="c1"># this will fill in all available TAv2 data for env, difficulty, modality and camera_name</span>
+<span class="n">ta</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="o">**</span><span class="n">all_data</span><span class="p">,</span>
+            <span class="n">unzip</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="n">num_workers</span> <span class="o">=</span> <span class="mi">8</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="download-via-a-yaml-config-file">
+<h3>Download via a yaml config file<a class="headerlink" href="#download-via-a-yaml-config-file" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ta</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">config</span> <span class="o">=</span> <span class="s1">&#39;download_config.yaml&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The config file if of the following format:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">env</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;ArchVizTinyHouseDay&#39;</span><span class="p p-Indicator">]</span>
+<span class="nt">difficulty</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;easy&#39;</span><span class="p p-Indicator">]</span>
+<span class="nt">modality</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;image&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;depth&#39;</span><span class="p p-Indicator">]</span>
+<span class="nt">camera_name</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;lcam_front&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;lcam_left&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;lcam_right&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;lcam_back&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;lcam_top&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;lcam_bottom&#39;</span><span class="p p-Indicator">]</span>
+<span class="nt">unzip</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+</pre></div>
+</div>
+</section>
+<section id="download-tartanground">
+<h3>Download TartanGround<a class="headerlink" href="#download-tartanground" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">tartanair</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ta</span>
+
+<span class="c1"># Initialize TartanAir.</span>
+<span class="n">tartanground_data_root</span> <span class="o">=</span> <span class="s1">&#39;/my/path/to/root/folder/for/tartanair-v2&#39;</span>
+<span class="n">ta</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">tartanground_data_root</span><span class="p">)</span>
+
+<span class="c1"># Download a trajectory.</span>
+<span class="n">ta</span><span class="o">.</span><span class="n">download_ground</span><span class="p">(</span><span class="n">env</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;OldTownSummer&#39;</span><span class="p">,</span> <span class="s1">&#39;DesertGasStation&#39;</span><span class="p">],</span>
+            <span class="n">version</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;omni&#39;</span><span class="p">,</span> <span class="s1">&#39;diff&#39;</span><span class="p">,</span> <span class="s1">&#39;anymal&#39;</span><span class="p">],</span> <span class="c1"># available versions are: &#39;v1&#39;, &#39;v2&#39;, &#39;v3_anymal&#39;</span>
+            <span class="n">modality</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;image&#39;</span><span class="p">,</span> <span class="s1">&#39;depth&#39;</span><span class="p">,</span> <span class="s1">&#39;seg&#39;</span><span class="p">,</span> <span class="s1">&#39;lidar&#39;</span><span class="p">,</span> <span class="s1">&#39;imu&#39;</span><span class="p">],</span> <span class="c1"># available modalities are: image&#39;, &#39;depth&#39;, &#39;seg&#39;, &#39;imu&#39;, &#39;lidar&#39;</span>
+            <span class="n">camera_name</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;lcam_front&#39;</span><span class="p">,</span> <span class="s1">&#39;lcam_bottom&#39;</span><span class="p">],</span> <span class="c1"># available cameras are: &#39;lcam_front&#39;, &#39;lcam_left&#39;, &#39;lcam_right&#39;, &#39;lcam_back&#39;, &#39;lcam_top&#39;, &#39;lcam_bottom&#39;</span>
+            <span class="n">unzip</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="c1"># unzip files autonomously after download</span>
+            <span class="n">delete_zip</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">num_workers</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="n">data_source</span> <span class="o">=</span> <span class="s1">&#39;huggingface&#39;</span><span class="p">)</span> <span class="c1"># data_source can be &#39;huggingface&#39; or &#39;airlab&#39;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="customization-example">
+<h2>Customization Example<a class="headerlink" href="#customization-example" title="Link to this heading"></a></h2>
+<p>TartanAir V2 allows you to synthesize your own dataset by modifying the raw data. For example, by specifying a new camera model and generating images using it.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">tartanair</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ta</span>
+
+<span class="c1"># For help with rotations.</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial.transform</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rotation</span>
+
+<span class="c1"># Initialize TartanAir.</span>
+<span class="n">tartanair_data_root</span> <span class="o">=</span> <span class="s1">&#39;/my/path/to/root/folder/for/tartanair-v2&#39;</span>
+<span class="n">ta</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">tartanair_data_root</span><span class="p">)</span>
+
+<span class="c1"># Create your camera model(s).</span>
+<span class="n">R_raw_new0</span> <span class="o">=</span> <span class="n">Rotation</span><span class="o">.</span><span class="n">from_euler</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="n">degrees</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+<span class="n">cam_model_0</span> <span class="o">=</span>  <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;pinhole&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;raw_side&#39;</span><span class="p">:</span> <span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="c1"># TartanAir has two cameras, one on the left and one on the right. This parameter specifies which camera to use.</span>
+                <span class="s1">&#39;params&#39;</span><span class="p">:</span>
+                        <span class="p">{</span><span class="s1">&#39;fx&#39;</span><span class="p">:</span> <span class="mi">320</span><span class="p">,</span>
+                         <span class="s1">&#39;fy&#39;</span><span class="p">:</span> <span class="mi">320</span><span class="p">,</span>
+                         <span class="s1">&#39;cx&#39;</span><span class="p">:</span> <span class="mi">320</span><span class="p">,</span>
+                         <span class="s1">&#39;cy&#39;</span><span class="p">:</span> <span class="mi">320</span><span class="p">,</span>
+                         <span class="s1">&#39;width&#39;</span><span class="p">:</span> <span class="mi">640</span><span class="p">,</span>
+                         <span class="s1">&#39;height&#39;</span><span class="p">:</span> <span class="mi">640</span><span class="p">},</span>
+                <span class="s1">&#39;R_raw_new&#39;</span><span class="p">:</span> <span class="n">R_raw_new0</span><span class="p">}</span>
+
+<span class="n">R_raw_new1</span> <span class="o">=</span> <span class="n">Rotation</span><span class="o">.</span><span class="n">from_euler</span><span class="p">(</span><span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">45</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">degrees</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+<span class="n">cam_model_1</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;doublesphere&#39;</span><span class="p">,</span>
+               <span class="s1">&#39;raw_side&#39;</span><span class="p">:</span> <span class="s1">&#39;left&#39;</span><span class="p">,</span>
+               <span class="s1">&#39;params&#39;</span><span class="p">:</span>
+                        <span class="p">{</span><span class="s1">&#39;fx&#39;</span><span class="p">:</span> <span class="mi">300</span><span class="p">,</span>
+                        <span class="s1">&#39;fy&#39;</span><span class="p">:</span> <span class="mi">300</span><span class="p">,</span>
+                        <span class="s1">&#39;cx&#39;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+                        <span class="s1">&#39;cy&#39;</span><span class="p">:</span> <span class="mi">500</span><span class="p">,</span>
+                        <span class="s1">&#39;width&#39;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+                        <span class="s1">&#39;height&#39;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+                        <span class="s1">&#39;alpha&#39;</span><span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
+                        <span class="s1">&#39;xi&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.2</span><span class="p">,</span>
+                        <span class="s1">&#39;fov_degree&#39;</span><span class="p">:</span> <span class="mi">195</span><span class="p">},</span>
+               <span class="s1">&#39;R_raw_new&#39;</span><span class="p">:</span> <span class="n">R_raw_new1</span><span class="p">}</span>
+
+<span class="c1"># Customize the dataset.</span>
+<span class="n">ta</span><span class="o">.</span><span class="n">customize</span><span class="p">(</span><span class="n">env</span> <span class="o">=</span> <span class="s1">&#39;ArchVizTinyHouseDay&#39;</span><span class="p">,</span>
+             <span class="n">difficulty</span> <span class="o">=</span> <span class="s1">&#39;easy&#39;</span><span class="p">,</span>
+             <span class="n">trajectory_id</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;P000&#39;</span><span class="p">],</span>
+             <span class="n">modality</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;image&#39;</span><span class="p">,</span> <span class="s1">&#39;depth&#39;</span><span class="p">],</span>
+             <span class="n">new_camera_models_params</span><span class="o">=</span><span class="p">[</span><span class="n">cam_model_1</span><span class="p">,</span> <span class="n">cam_model_0</span><span class="p">],</span>
+             <span class="n">num_workers</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+             <span class="n">device</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span><span class="p">)</span> <span class="c1"># or cpu</span>
+</pre></div>
+</div>
+</section>
+<section id="dataloader-example">
+<h2>Dataloader Example<a class="headerlink" href="#dataloader-example" title="Link to this heading"></a></h2>
+<p>TartanAir-V2 includes a powerful parallelized dataloader. It can be used to load data from the dataset and serve mini-batches in parallel, and also to apply (some) transformations to the data on the fly. We highly recommend that you use it for efficient data loading.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">tartanair</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ta</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+
+<span class="c1"># Initialize TartanAir.</span>
+<span class="n">tartanair_data_root</span> <span class="o">=</span> <span class="s1">&#39;/my/path/to/root/folder/for/tartanair-v2&#39;</span>
+<span class="n">ta</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">tartanair_data_root</span><span class="p">)</span>
+
+<span class="c1"># Specify the environments, difficulties, and trajectory ids to load.</span>
+<span class="n">envs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ArchVizTinyHouseDay&#39;</span><span class="p">]</span>
+<span class="n">difficulties</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;easy&#39;</span><span class="p">]</span>
+<span class="n">trajectory_ids</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;P000&#39;</span><span class="p">,</span> <span class="s1">&#39;P001&#39;</span><span class="p">]</span>
+
+<span class="c1"># Specify the modalities to load.</span>
+<span class="n">modalities</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;image&#39;</span><span class="p">,</span> <span class="s1">&#39;pose&#39;</span><span class="p">,</span> <span class="s1">&#39;imu&#39;</span><span class="p">]</span>
+<span class="n">camnames</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;lcam_front&#39;</span><span class="p">,</span> <span class="s1">&#39;lcam_left&#39;</span><span class="p">,</span> <span class="s1">&#39;lcam_right&#39;</span><span class="p">,</span> <span class="s1">&#39;lcam_back&#39;</span><span class="p">,</span> <span class="s1">&#39;lcam_top&#39;</span><span class="p">,</span> <span class="s1">&#39;lcam_bottom&#39;</span><span class="p">]</span>
+
+<span class="c1"># Specify the dataloader parameters.</span>
+<span class="n">new_image_shape_hw</span> <span class="o">=</span> <span class="p">[</span><span class="mi">640</span><span class="p">,</span> <span class="mi">640</span><span class="p">]</span> <span class="c1"># If None, no resizing is performed. If a value is passed, then the image is resized to this shape.</span>
+<span class="n">subset_framenum</span> <span class="o">=</span> <span class="mi">200</span> <span class="c1"># This is the number of frames in a subset. Notice that this is an upper bound on the batch size. Ideally, make this number large to utilize your RAM efficiently. Information about the allocated memory will be provided in the console.</span>
+<span class="n">seq_length</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;image&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;pose&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;imu&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">}</span> <span class="c1"># This is the length of the data-sequences. For example, if the sequence length is 2, then the dataloader will load pairs of images.</span>
+<span class="n">seq_stride</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1"># This is the stride between the data-sequences. For example, if the sequence length is 2 and the stride is 1, then the dataloader will load pairs of images [0,1], [1,2], [2,3], etc. If the stride is 2, then the dataloader will load pairs of images [0,1], [2,3], [4,5], etc.</span>
+<span class="n">frame_skip</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># This is the number of frames to skip between each frame. For example, if the frame skip is 2 and the sequence length is 3, then the dataloader will load frames [0, 3, 6], [1, 4, 7], [2, 5, 8], etc.</span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">8</span> <span class="c1"># This is the number of data-sequences in a mini-batch.</span>
+<span class="n">num_workers</span> <span class="o">=</span> <span class="mi">4</span> <span class="c1"># This is the number of workers to use for loading the data.</span>
+<span class="n">shuffle</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1"># Whether to shuffle the data. Let&#39;s set this to False for now, so that we can see the data loading in a nice video. Yes it is nice don&#39;t argue with me please. Just look at it! So nice. :)</span>
+
+<span class="c1"># Create a dataloader object.</span>
+<span class="n">dataloader</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">dataloader</span><span class="p">(</span><span class="n">env</span> <span class="o">=</span> <span class="n">envs</span><span class="p">,</span>
+            <span class="n">difficulty</span> <span class="o">=</span> <span class="n">difficulties</span><span class="p">,</span>
+            <span class="n">trajectory_id</span> <span class="o">=</span> <span class="n">trajectory_ids</span><span class="p">,</span>
+            <span class="n">modality</span> <span class="o">=</span> <span class="n">modalities</span><span class="p">,</span>
+            <span class="n">camera_name</span> <span class="o">=</span> <span class="n">camnames</span><span class="p">,</span>
+            <span class="n">new_image_shape_hw</span> <span class="o">=</span> <span class="n">new_image_shape_hw</span><span class="p">,</span>
+            <span class="n">seq_length</span> <span class="o">=</span> <span class="n">seq_length</span><span class="p">,</span>
+            <span class="n">subset_framenum</span> <span class="o">=</span> <span class="n">subset_framenum</span><span class="p">,</span>
+            <span class="n">seq_stride</span> <span class="o">=</span> <span class="n">seq_stride</span><span class="p">,</span>
+            <span class="n">frame_skip</span> <span class="o">=</span> <span class="n">frame_skip</span><span class="p">,</span>
+            <span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">num_workers</span> <span class="o">=</span> <span class="n">num_workers</span><span class="p">,</span>
+            <span class="n">shuffle</span> <span class="o">=</span> <span class="n">shuffle</span><span class="p">,</span>
+            <span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Iterate over the batches.</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+    <span class="c1"># Get the next batch.</span>
+    <span class="n">batch</span> <span class="o">=</span> <span class="n">dataloader</span><span class="o">.</span><span class="n">load_sample</span><span class="p">()</span>
+    <span class="c1"># Visualize some images.</span>
+    <span class="c1"># The shape of an image batch is (B, S, H, W, C), where B is the batch size, S is the sequence length, H is the height, W is the width, and C is the number of channels.</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Batch number: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="s2">&quot;Loaded </span><span class="si">{}</span><span class="s2"> samples so far.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">((</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">batch_size</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">batch_size</span><span class="p">):</span>
+
+        <span class="c1"># Create image cross.</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;image_lcam_left&#39;</span><span class="p">][</span><span class="n">b</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">front</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;image_lcam_front&#39;</span><span class="p">][</span><span class="n">b</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">right</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;image_lcam_right&#39;</span><span class="p">][</span><span class="n">b</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">back</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;image_lcam_back&#39;</span><span class="p">][</span><span class="n">b</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">top</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;image_lcam_top&#39;</span><span class="p">][</span><span class="n">b</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">bottom</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;image_lcam_bottom&#39;</span><span class="p">][</span><span class="n">b</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">cross_mid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">left</span><span class="p">,</span> <span class="n">front</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">back</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">cross_top</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">top</span><span class="p">),</span> <span class="n">top</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">top</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">top</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">cross_bottom</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">bottom</span><span class="p">),</span> <span class="n">bottom</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">bottom</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">bottom</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">cross</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">cross_top</span><span class="p">,</span> <span class="n">cross_mid</span><span class="p">,</span> <span class="n">cross_bottom</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">pose</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;pose_lcam_front&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="n">imu</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s1">&#39;imu&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+
+        <span class="c1"># Resize.</span>
+        <span class="n">cross</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">cross</span><span class="p">,</span> <span class="p">(</span><span class="n">cross</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">//</span><span class="mi">4</span><span class="p">,</span> <span class="n">cross</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">//</span><span class="mi">4</span><span class="p">))</span>
+
+        <span class="c1"># Show the image cross.</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="s1">&#39;cross&#39;</span><span class="p">,</span> <span class="n">cross</span><span class="p">)</span>
+        <span class="n">cv2</span><span class="o">.</span><span class="n">waitKey</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  Pose: &quot;</span><span class="p">,</span> <span class="n">pose</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  IMU: &quot;</span><span class="p">,</span> <span class="n">imu</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="n">dataloader</span><span class="o">.</span><span class="n">stop_cachers</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="data-iteration-example">
+<h2>Data Iteration Example<a class="headerlink" href="#data-iteration-example" title="Link to this heading"></a></h2>
+<p>Create a data iterator to get samples from the TartanAir V2 dataset. The samples include data in the specified modalities.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">tartanair</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ta</span>
+
+<span class="c1"># Initialize TartanAir.</span>
+<span class="n">tartanair_data_root</span> <span class="o">=</span> <span class="s1">&#39;/my/path/to/root/folder/for/tartanair-v2&#39;</span>
+<span class="n">ta</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">tartanair_data_root</span><span class="p">)</span>
+
+<span class="c1"># Create iterator.</span>
+<span class="n">ta_iterator</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">iterator</span><span class="p">(</span><span class="n">env</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ArchVizTinyHouseDay&#39;</span><span class="p">],</span>
+                        <span class="n">difficulty</span> <span class="o">=</span> <span class="s1">&#39;easy&#39;</span><span class="p">,</span>
+                        <span class="n">trajectory_id</span> <span class="o">=</span> <span class="p">[],</span>
+                        <span class="n">modality</span> <span class="o">=</span> <span class="s1">&#39;image&#39;</span><span class="p">,</span>
+                        <span class="n">camera_name</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;lcam_left&#39;</span><span class="p">])</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+    <span class="n">sample</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">ta_iterator</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="evaluation-example">
+<h2>Evaluation Example<a class="headerlink" href="#evaluation-example" title="Link to this heading"></a></h2>
+<p>TartanAir also provides tools for evaluating estimated trajectories against the ground truth. The evaluation is based on the ATE and RPE metrics, which can be computed for the entire trajectory, a subset of the trajectory, and also a scaled and shifted version of the estimated trajectory that matched the ground truth better, if that is requested.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">tartanair</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ta</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Initialize TartanAir.</span>
+<span class="n">tartanair_data_root</span> <span class="o">=</span> <span class="s1">&#39;/my/path/to/root/folder/for/tartanair-v2&#39;</span>
+<span class="n">ta</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">tartanair_data_root</span><span class="p">)</span>
+
+<span class="c1"># Create an example trajectory. This is a noisy version of the ground truth trajectory.</span>
+<span class="n">env</span> <span class="o">=</span> <span class="s1">&#39;ArchVizTinyHouseDay&#39;</span>
+<span class="n">difficulty</span> <span class="o">=</span> <span class="s1">&#39;easy&#39;</span>
+<span class="n">trajectory_id</span> <span class="o">=</span> <span class="s1">&#39;P002&#39;</span>
+<span class="n">camera_name</span> <span class="o">=</span> <span class="s1">&#39;lcam_front&#39;</span>
+<span class="n">gt_traj</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">get_traj_np</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">difficulty</span><span class="p">,</span> <span class="n">trajectory_id</span><span class="p">,</span> <span class="n">camera_name</span><span class="p">)</span>
+<span class="n">est_traj</span> <span class="o">=</span> <span class="n">gt_traj</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">gt_traj</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="c1"># Pass the ground truth trajectory directly to the evaluation function.</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">evaluate_traj</span><span class="p">(</span><span class="n">est_traj</span><span class="p">,</span>
+                           <span class="n">gt_traj</span> <span class="o">=</span> <span class="n">gt_traj</span><span class="p">,</span>
+                           <span class="n">enforce_length</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                           <span class="n">plot</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                           <span class="n">plot_out_path</span> <span class="o">=</span> <span class="n">plot_out_path</span><span class="p">,</span>
+                           <span class="n">do_scale</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                           <span class="n">do_align</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Or pass the environment, difficulty, and trajectory id to the evaluation function.</span>
+<span class="n">plot_out_path</span> <span class="o">=</span> <span class="s2">&quot;evaluator_example_plot.png&quot;</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">ta</span><span class="o">.</span><span class="n">evaluate_traj</span><span class="p">(</span><span class="n">est_traj</span><span class="p">,</span>
+                           <span class="n">env</span> <span class="o">=</span> <span class="n">env</span><span class="p">,</span>
+                           <span class="n">difficulty</span> <span class="o">=</span> <span class="n">difficulty</span><span class="p">,</span>
+                           <span class="n">trajectory_id</span> <span class="o">=</span> <span class="n">trajectory_id</span><span class="p">,</span>
+                           <span class="n">camera_name</span> <span class="o">=</span> <span class="n">camera_name</span><span class="p">,</span>
+                           <span class="n">enforce_length</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                           <span class="n">plot</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                           <span class="n">plot_out_path</span> <span class="o">=</span> <span class="n">plot_out_path</span><span class="p">,</span>
+                           <span class="n">do_scale</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                           <span class="n">do_align</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="flow-sampling-example">
+<h2>Flow Sampling Example<a class="headerlink" href="#flow-sampling-example" title="Link to this heading"></a></h2>
+<p>TartanAir V2 also includes a power dense correspondense sampling tool that can be used to calculate desnse correspondences between any points in the same environment.</p>
+<p>The tool supports sampling dense correspondence between any combination of pinhole, fisheye(doublesphere), and equirectangular cameras. Yes, you can sample dense correspondences between different camera models such as pinhole and equirectangular.</p>
+<p>Given a pair of RGB and depth image cubes and two direction, the tool will compute dense correspondense represented as optical flow and a occlusion mask signaling is the pixel directly observable.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">tartanair</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ta</span>
+
+<span class="c1"># For help with rotations.</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial.transform</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rotation</span>
+
+<span class="c1"># Initialize TartanAir.</span>
+<span class="n">tartanair_data_root</span> <span class="o">=</span> <span class="s1">&#39;your/path/to_tav2&#39;</span>
+<span class="n">ta</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">tartanair_data_root</span><span class="p">)</span>
+
+<span class="c1"># Customize the dataset.</span>
+<span class="n">ta</span><span class="o">.</span><span class="n">customize_flow</span><span class="p">(</span><span class="n">env</span> <span class="o">=</span> <span class="s1">&#39;ArchVizTinyHouseDay&#39;</span><span class="p">,</span>
+            <span class="n">difficulty</span> <span class="o">=</span> <span class="s1">&#39;easy&#39;</span><span class="p">,</span>
+            <span class="n">trajectory_id</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;P000&#39;</span><span class="p">],</span>
+            <span class="n">camera_name</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;lcam_left&quot;</span><span class="p">,</span> <span class="s2">&quot;lcam_back&quot;</span><span class="p">],</span>
+            <span class="n">num_workers</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="n">frame_sep</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">device</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span><span class="p">)</span> <span class="c1"># or cpu</span>
+</pre></div>
+</div>
+<p>Please refer to flow_resampling_example.py for a complete example.</p>
+<a class="reference internal image-reference" href="_images/flow_sampling_example.png"><img alt="Algorithm" class="align-center" src="_images/flow_sampling_example.png" style="width: 80%;" />
+</a>
+<p>To learn more about how the resampling happens, see flow_sampling.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="flow_sampling.html">Dense Correspondence / Flow Sampling</a></li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="flow_sampling.html" class="btn btn-neutral float-right" title="Dense Correspondence / Flow Sampling" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Carnegie Mellon University, 2023, Wenshan Wang, Yaoyu Hu, Yuheng Qiu, Shihao Shen, Yorai Shaoul..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

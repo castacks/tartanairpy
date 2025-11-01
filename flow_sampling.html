@@ -1,0 +1,265 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dense Correspondence / Flow Sampling &mdash; TartanAir  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="TartanGround Dataset" href="tartanground.html" />
+    <link rel="prev" title="Examples" href="examples.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            TartanAir
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="examples.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="examples.html#download-example">Download Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#customization-example">Customization Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#dataloader-example">Dataloader Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#data-iteration-example">Data Iteration Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples.html#evaluation-example">Evaluation Example</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="examples.html#flow-sampling-example">Flow Sampling Example</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Dense Correspondence / Flow Sampling</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#problem-formulation">Problem Formulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#previous-method-projection-error-thresholding">Previous Method: Projection error thresholding</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nearest-approximation-invalidated-by-large-fov-change">Nearest Approximation invalidated by large FOV change</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#our-method">Our Method</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ablations">Ablations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#some-hard-cases">Some Hard Cases</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tartanground.html">TartanGround Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modalities.html">Modalities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environments.html">Environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">TartanAir</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="examples.html">Examples</a></li>
+      <li class="breadcrumb-item active">Dense Correspondence / Flow Sampling</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/flow_sampling.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="dense-correspondence-flow-sampling">
+<span id="new-page-label"></span><h1>Dense Correspondence / Flow Sampling<a class="headerlink" href="#dense-correspondence-flow-sampling" title="Link to this heading"></a></h1>
+<p>Given a pair of images, computing the dense correspondence is to compute which pixel location in the second image correspond to each pixel location in the first image, and the dense confidence, or the probability that the pair is occluded.
+This is a fundamental problem in computer vision and has many applications such as optical flow, stereo matching, and image registration.</p>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h2>
+<p>Based on the need for accurate, pixel-level correspondance information for the Match-Anything project, we select to leverage existing datasets that contains accurate camera intrinsics/extrinsics, and depth map.</p>
+<p>However, the real problem comes from how we store depth - by depth maps. Therefore, we only have depth information at discrete points that does not capture the full information. For example, when reprojecting image points from the first image onto the second image, it will almost always land onto a non-integer coordinate, which we do not have the depth information stored. Or, in other words we only have points at integer pixel coordinate of both images, and it is unlikely that two points will coincide in the 3D space.</p>
+</section>
+<section id="problem-formulation">
+<h2>Problem Formulation<a class="headerlink" href="#problem-formulation" title="Link to this heading"></a></h2>
+<p>Given the following information from a pair of depth images:</p>
+<ul>
+<li><p>Camera extrinsics <span class="math notranslate nohighlight">\(\mathcal{T} \in SE(3)\)</span></p></li>
+<li><p>Camera projection functions:</p>
+<div class="math notranslate nohighlight">
+\[\pi(x): \mathbb{R}^3 \to \mathcal{I}, \quad \hat{\pi}^{-1}(x): \mathcal{I} \to \mathbb{R}^3\]</div>
+<p>In which <span class="math notranslate nohighlight">\(\pi(x)\)</span> projects a 3D point in the camera’s coordinate system to the image coordinate, and <span class="math notranslate nohighlight">\(\hat{\pi}^{-1}\)</span> maps an image coordinate to a (unit-norm) ray in 3D that will project onto this image location.</p>
+</li>
+<li><p>Discrete depth image <span class="math notranslate nohighlight">\(\tilde{D} \in \mathbb{R}^{W \times H}\)</span></p></li>
+</ul>
+<p>Find:</p>
+<ul>
+<li><p>(easy) Find the dense warp:</p>
+<div class="math notranslate nohighlight">
+\[W^{1 \to 2}: \mathcal{I}_1 \to \mathcal{I}_2\]</div>
+<p>so that 3D points that are perceived at location <span class="math notranslate nohighlight">\(i_1\)</span> in the <strong>discrete</strong> image <span class="math notranslate nohighlight">\(\tilde{D}_1\)</span> will be perceived at <span class="math notranslate nohighlight">\(W^{1 \to 2}(i_1)\)</span> in the <strong>continuous</strong> depth image <span class="math notranslate nohighlight">\(D_2\)</span>.</p>
+</li>
+<li><p>(hard) Find the dense confidence (occlusion):</p>
+<div class="math notranslate nohighlight">
+\[\rho^{1 \to 2}: \mathcal{I}_1 \to [0, 1]\]</div>
+<p>that the match is valid.</p>
+</li>
+</ul>
+<p>The dense warp is easy, since TartanAir is a synthetic dataset and all geomrtric information is accurate. The problem is to determine is the pixel from the first image directly observed in the second image, or is it occluded by another object although projecting to the expected position.</p>
+<p>Existing methods uses depth error thresholding to determine the confidence, which is:</p>
+</section>
+<section id="previous-method-projection-error-thresholding">
+<h2>Previous Method: Projection error thresholding<a class="headerlink" href="#previous-method-projection-error-thresholding" title="Link to this heading"></a></h2>
+<p>For each point <span class="math notranslate nohighlight">\(i_1 \in \mathcal{I}_1\)</span>:</p>
+<ol class="arabic">
+<li><p>Project into 3D space with
+<span class="math notranslate nohighlight">\(x^{\{C_1\}}_{i_1} = \hat{\pi}_1^{-1}(i_1) \cdot \tilde{D}[i_1]\)</span></p></li>
+<li><p>Transform to camera 2’s coordinate with
+<span class="math notranslate nohighlight">\(x^{\{C_2\}}_{i_1} = \mathcal{T}_{\{C_1\}}^{\{C_2\}} \cdot x^{\{C_1\}}_{i_1}\)</span></p></li>
+<li><p>Compute the projected image coordinate <span class="math notranslate nohighlight">\(i_2\)</span> and expected depth <span class="math notranslate nohighlight">\(d\)</span></p>
+<div class="math notranslate nohighlight">
+\[i_2 = \pi_2(x^{\{C_2\}}_{i_1}), \quad d = \|x^{\{C_2\}}_{i_1}\|\]</div>
+</li>
+<li><p>Get the depth value at <span class="math notranslate nohighlight">\(i_2\)</span> from <span class="math notranslate nohighlight">\(\tilde{D}_2\)</span>, compute and threshold the error</p>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[e = |d - \tilde{D}_2[i_2]| , \quad \rho^{1 \to 2}[i_1] = P(e &lt; \epsilon), W^{1 \to 2}(i_1) = i_2\]</div>
+<p>The problem is, <strong>we only have discrete sample of</strong> <span class="math notranslate nohighlight">\(D_2\)</span>: <span class="math notranslate nohighlight">\(\tilde{D}_2\)</span>. <strong>We cannot get depth at fractional pixel location</strong> <span class="math notranslate nohighlight">\(i_2\)</span> <strong>from discrete</strong> <span class="math notranslate nohighlight">\(\tilde{D}_2\)</span>.</p>
+<p>Therefore, we need to interpolate the depth map for a approximate expected depth. In this step, the expected depth may not be accurate and may lead to aliasing artifacts at large FOV change.</p>
+<div class="math notranslate nohighlight">
+\[\tilde{D}_2 \approx \text{intrep}(\tilde{D}_2, i_2), \quad \tilde{D}_2[i_2] \approx \tilde{D}_2[\text{nearest}(i_2)]\]</div>
+</div></blockquote>
+</li>
+</ol>
+<a class="reference internal image-reference" href="_images/incline_occlusion_aliasing.png"><img alt="Aliasing artifacts at inclined corridor walls" class="align-center" src="_images/incline_occlusion_aliasing.png" style="width: 100%;" />
+</a>
+<p>The rightmost image shows the occlusion map with the above method. The aliasing artifacts are shown as the block dots at the far side of the corridor.</p>
+</section>
+<section id="nearest-approximation-invalidated-by-large-fov-change">
+<h2>Nearest Approximation invalidated by large FOV change<a class="headerlink" href="#nearest-approximation-invalidated-by-large-fov-change" title="Link to this heading"></a></h2>
+<p>With large FOV change, walls that are perpendicular in one view may become highly inclined in the other.</p>
+<a class="reference internal image-reference" href="_images/nearest_large_incline.svg"><img alt="Nearest Approximation invalidated by large FOV change" class="align-center" src="_images/nearest_large_incline.svg" style="width: 60%;" />
+</a>
+<p>As shown in the figure, points projected from C1’s camera model and depth map land in few pixels in C2’s image. The nearest approximation will lead to a large error in the depth value as shown by the difference between the red and black lines.</p>
+</section>
+<section id="our-method">
+<h2>Our Method<a class="headerlink" href="#our-method" title="Link to this heading"></a></h2>
+<p>We propose a fix to the above formulation by interpolating wisely:</p>
+<ol class="arabic">
+<li><p>Use linear interpolation to get the depth value at fractional pixel location <span class="math notranslate nohighlight">\(i_2\)</span> from <span class="math notranslate nohighlight">\(\tilde{D}_2\)</span>:</p>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[\tilde{D}_2[i_2] = \text{bilinear}(\tilde{D}_2, i_2)\]</div>
+<p>At most cases, the depth value can be seen as continuous. The reason we do not use nearest interpolation at depth images is that depth can change rapidly, and we do not want to create non-existing depth at object edges. However, we are only using depth as verification, which means its effect is not propogated beyond occlusion calculation, and it is highly unlikely that the non-existing depth value will hit the reprojection since we use a very small threshold, minimizing the risk of doing so.</p>
+</div></blockquote>
+</li>
+<li><p>We allow a small error in the pixel space.</p>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[\rho^{1 \to 2}[i_1] = P\left( \min_{i \in B_{r_0}(i_2)}|d - \text{bilinear}(\tilde{D}_2, i)| &lt; \epsilon\right)\]</div>
+<p>In other words, we threshold the lower bound of the reprojection error in a small neighborhood of the projected pixel location. This helps to compensate homography effect in non-pinhole cameras and further reduce aliasing artifacts.</p>
+</div></blockquote>
+</li>
+</ol>
+<p>In conclusion, the full method is:</p>
+<a class="reference internal image-reference" href="_images/algorithm.png"><img alt="Algorithm" class="align-center" src="_images/algorithm.png" style="width: 80%;" />
+</a>
+<p>With typical parameters:</p>
+<ol class="arabic simple">
+<li><p><span class="math notranslate nohighlight">\(R_0 = 0.1\)</span>: Maximum search radius in pixels</p></li>
+<li><p><span class="math notranslate nohighlight">\(n = 1\)</span>: Maximum number of iterations</p></li>
+<li><p><span class="math notranslate nohighlight">\(\alpha = 0.2\)</span>: Step size for gradient descent</p></li>
+<li><p><span class="math notranslate nohighlight">\(t_a = 0.04\)</span>: absolute depth error threshold</p></li>
+<li><p><span class="math notranslate nohighlight">\(t_r = 0.005\)</span>: relative depth error threshold</p></li>
+<li><p><span class="math notranslate nohighlight">\(\tau = 0.02\)</span>: temperature for error confidence</p></li>
+</ol>
+</section>
+<section id="ablations">
+<h2>Ablations<a class="headerlink" href="#ablations" title="Link to this heading"></a></h2>
+<p>How necessary is the above method? We ablate:</p>
+<ol class="arabic simple">
+<li><p>Nearest interpolation: We use nearest interpolation instead of bilinear interpolation.</p></li>
+</ol>
+<a class="reference internal image-reference" href="_images/linear_ablation.png"><img alt="Ablation linear interpolation" class="align-center" src="_images/linear_ablation.png" style="width: 80%;" />
+</a>
+<p>Left - with bilinear interpolation. Mid - with nearest interpolation. Right - difference between the occlusion masks.</p>
+<p>In this extereme example we see linear interpolation avoids major aliasing artifacts.</p>
+<ol class="arabic simple" start="2">
+<li><p>No optimization: We do not optimize for lower bound of reprojection error, and threshold the error directly.</p></li>
+</ol>
+<a class="reference internal image-reference" href="_images/optimization_ablation.png"><img alt="Ablation optimization" class="align-center" src="_images/optimization_ablation.png" style="width: 80%;" />
+</a>
+<p>Left - with bilinear interpolation. Mid - with nearest interpolation. Right - difference between the occlusion masks.</p>
+<p>Some occlusion will be missing due to the lack of optimization at highly distorted regions.</p>
+</section>
+<section id="some-hard-cases">
+<h2>Some Hard Cases<a class="headerlink" href="#some-hard-cases" title="Link to this heading"></a></h2>
+<a class="reference internal image-reference" href="_images/0053_combined.png"><img alt="Hard cases" class="align-center" src="_images/0053_combined.png" style="width: 100%;" />
+</a>
+<a class="reference internal image-reference" href="_images/0161_combined.png"><img alt="Hard cases" class="align-center" src="_images/0161_combined.png" style="width: 100%;" />
+</a>
+<a class="reference internal image-reference" href="_images/0279_combined.png"><img alt="Hard cases" class="align-center" src="_images/0279_combined.png" style="width: 100%;" />
+</a>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="examples.html" class="btn btn-neutral float-left" title="Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tartanground.html" class="btn btn-neutral float-right" title="TartanGround Dataset" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Carnegie Mellon University, 2023, Wenshan Wang, Yaoyu Hu, Yuheng Qiu, Shihao Shen, Yorai Shaoul..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

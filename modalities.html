@@ -1,0 +1,225 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modalities &mdash; TartanAir  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Environments" href="environments.html" />
+    <link rel="prev" title="API Reference" href="usage.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            TartanAir
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tartanground.html">TartanGround Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">API Reference</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Modalities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#raw-rgb-image">Raw RGB image</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#hz-rgb-mp4s">1000 Hz RGB MP4s</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#raw-depth-image">Raw depth image</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#raw-semantic-segmentation">Raw semantic segmentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#raw-camera-pose">Raw camera pose</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#lidar">LiDAR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fisheye-and-panorama">Fisheye and Panorama</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#optical-flow">Optical flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#old-optical-flow-format">Old Optical flow format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#imu-and-noise-model">IMU and noise model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#event-camera">Event Camera</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#occupancy-map">Occupancy Map</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="environments.html">Environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">TartanAir</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Modalities</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/modalities.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="modalities">
+<h1>Modalities<a class="headerlink" href="#modalities" title="Link to this heading"></a></h1>
+<p>We placed 12 cameras in the environment, collecting raw data, including RGB images, depth images, semantic segmentation images, and camera poses. The 12 cameras all produce pinhole images with 90 degree field of views. They are separated as 2 stereo sets of 6-cameras pointing in 6 directions to cover 360 degree views. The raw data are processed to generate other modalities including optical flow, fisheye image, LiDAR, and IMU.</p>
+<a class="reference internal image-reference" href="_images/cameras2.png"><img alt="Cameras" class="align-center" src="_images/cameras2.png" style="width: 83%;" />
+</a>
+<section id="raw-rgb-image">
+<h2>Raw RGB image<a class="headerlink" href="#raw-rgb-image" title="Link to this heading"></a></h2>
+<p>For each time step, we provide 12 RGB images from 12 cameras covering a stereo set of 360 degree views. Each image is sampled using an FoV of 90 degree and a resolution of 640 x 640. The stereo baseline is 0.25 m. The intrinsics of the cameras are:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>- Camera model: Pinhole
+- Width: 640 pixels
+- Height: 640 pixels
+- Focal length: 320 pixels
+- Principal point: (320, 320) pixels
+- Distortion coefficients: (0, 0, 0, 0) (no distortion)
+</pre></div>
+</div>
+<p>The images are sampled at 10 Hz, and the cameras are perfectly synchronized. The images are in PNG format, with 8 bits per channel.
+In addition, We provide tools for adding random noise and motion blur to the images, to improve the realism.</p>
+</section>
+<section id="hz-rgb-mp4s">
+<h2>1000 Hz RGB MP4s<a class="headerlink" href="#hz-rgb-mp4s" title="Link to this heading"></a></h2>
+<p>The MP4 files consist of 1000 Hz sampled RGB images of the left front camera (lcam_front) that was originally used to generate event camera data. The MP4 files were generating using the following ffmpeg command:</p>
+<p>The camera’s intrinsics for the sequence is the same as the 10 Hz sampled images.
+Below is an example of how to read an MP4 file:</p>
+</section>
+<section id="raw-depth-image">
+<h2>Raw depth image<a class="headerlink" href="#raw-depth-image" title="Link to this heading"></a></h2>
+<p>The depth images are sampled with the same camera intrinsics and extrinsics setups as the RGB images. It is perfectly aligned and synchronized with the RGB images.
+Each pixel of the depth image is represented using a float32 number. Depending on the environment setup, the far pixels pointing to the sky usually return a very large value.
+For the convenience of the downloading, we compress the depth image, which is H x W 32-bit format, to 4 channel PNG format H x W x 4 8-bit, which is lossless. The decoding code is as follows.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">read_decode_depth</span><span class="p">(</span><span class="n">depthpath</span><span class="p">):</span>
+    <span class="n">depth_rgba</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">depthpath</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">IMREAD_UNCHANGED</span><span class="p">)</span>
+    <span class="n">depth</span> <span class="o">=</span> <span class="n">depth_rgba</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="s2">&quot;&lt;f4&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">depth</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="raw-semantic-segmentation">
+<h2>Raw semantic segmentation<a class="headerlink" href="#raw-semantic-segmentation" title="Link to this heading"></a></h2>
+<p>We provide category-level semantic labels. We overcome the disadvantage of AirSim, which provides random semantic labels with respect to each type of the models in the environment, by manually labeling the model types in all the environments. So each label in the semantic segmentation images is mapped to a semantic class. With 65 highly distinct environments, our data covers a wide range of 1447 semantic classes. However, due to the consecutive format of the data, large objects such as building, ground and sky take much higher percentage. We provide statistics files for each environment, with which people can easily balance the data while training their semantic models. There is a seg_label_map.json file for each environment, which maps the label in the segmentation image to the semantic class. Detailed statistics of the semantic classes can be found in the <a class="reference external" href="segmentation.html">semantic segmentation</a> page. To load and visualize the segmentation images, please download the <a class="reference external" href="https://github.com/castacks/tartanairpy/tree/main/segfiles.zip">segmentation mapping file</a>. We provide an <a class="reference external" href="https://github.com/castacks/tartanairpy/tree/main/examples/seg_vis_example.py">example code</a> in the examples folder. It uses the seg_label_map.json file to map the labels to semantic classes. An example visualization is shown below.</p>
+<img alt="_images/seg_vis.png" src="_images/seg_vis.png" />
+</section>
+<section id="raw-camera-pose">
+<h2>Raw camera pose<a class="headerlink" href="#raw-camera-pose" title="Link to this heading"></a></h2>
+<p>Camera pose are in the same format with TartanAir V1. Each line of the pose file consists of 3 numbers of translation and 4 numbers of orientation in quarternion format, describing in NED frame.</p>
+</section>
+<section id="lidar">
+<h2>LiDAR<a class="headerlink" href="#lidar" title="Link to this heading"></a></h2>
+<p>The LiDAR data is sampled from the raw depth images of 6 left-side cameras, following the pattern of Velodyn Puck (VLP-16). As a result, the LiDAR frame is perfectly aligned with the left camera frame.  We didn’t use AirSim LiDAR sensor because it is based on the collision model, which misses a lot of objects that don’t have collision model, such as branches and leaves. While sampling from the depth, we balance carefully the accuracy and realism. We use linear interpolation on smooth surfaces and nearest interpolation on the edges of the objects to avoid ghost points at object edges. We provide the processing script as well as other LiDAR models, such as Velodyn Ultra Puck (VLP-32C), allowing users to create their own LiDAR data.</p>
+</section>
+<section id="fisheye-and-panorama">
+<h2>Fisheye and Panorama<a class="headerlink" href="#fisheye-and-panorama" title="Link to this heading"></a></h2>
+<p>The fisheye and Panorama data are sampled from the raw pinhole data, thus containing all three modalities of RGB, depth, and semantics. One of the biggest challenges for the fisheye model is that those real-world fisheye cameras have diverse FoVs and distortions. We have done two things to resolve the potential generalization issue. First, we define a standard model called Linear Spherical model for fisheye images. To test real-world fisheye data with different intrinsics and distortion on the model trained on TartanAir-V2 dataset, we just need to convert the real-world data into the Linear Spherical model. Second, we open-source our sampling code, together with a rich set of fisheye and pinhole camera models, which allow users to sample their own fisheye images (see the <a class="reference external" href="examples.html#customization-example">customization examples</a> ).</p>
+</section>
+<section id="optical-flow">
+<h2>Optical flow<a class="headerlink" href="#optical-flow" title="Link to this heading"></a></h2>
+<p>Due to the high serving demand of the dataset, we are moving away from pre-computing the flow labels for download, as they can simply be generated from pose, intrinsics, and depth locally. Please refer to examples/flow_resampling_example.py for the code to generate optical flow from the raw data.</p>
+<p>Also, we are changing the storage format due to increased precision of flow models. For a pair of images, the generated flow information is stored as a npz file containing the following fields:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>flow_fwd/bwd: x,y coordinate of the flow in float32 format</p></li>
+<li><p>fov_mask_fwd/bwd: boolean mask indicating if the pixel have a valid projection in the forward/backward image, i.e., is it out of the image space</p></li>
+<li><p>covisible_mask_fwd/bwd: boolean mask indicating if the pixel is covisible in the forward/backward image, i.e., is it occluded by other objects in the scene</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="old-optical-flow-format">
+<h2>Old Optical flow format<a class="headerlink" href="#old-optical-flow-format" title="Link to this heading"></a></h2>
+<p>Same as TartanAir V1, the optical flow is calculated for the static environments by image warping, using the camera pose and depth images. The biggest upgrades are that we accelerate the code by a Cuda implementation and provide tools for generating optical flow across any type of camera model (e.g. between pinhole and fisheye). For the convenience of the downloading, we compress the optical flow to use 8-bit representation. The decoding code is as follows.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">read_decode_flow</span><span class="p">(</span><span class="n">flowpath</span><span class="p">):</span>
+    <span class="n">flow16</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">flowpath</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">IMREAD_UNCHANGED</span><span class="p">)</span>
+    <span class="n">flow32</span> <span class="o">=</span> <span class="n">flow16</span><span class="p">[:,:,:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">flow32</span> <span class="o">=</span> <span class="p">(</span><span class="n">flow32</span> <span class="o">-</span> <span class="mi">32768</span><span class="p">)</span> <span class="o">/</span> <span class="mf">64.0</span>
+
+    <span class="n">mask8</span> <span class="o">=</span> <span class="n">flow16</span><span class="p">[:,:,</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">flow32</span><span class="p">,</span> <span class="n">mask8</span>
+</pre></div>
+</div>
+</section>
+<section id="imu-and-noise-model">
+<h2>IMU and noise model<a class="headerlink" href="#imu-and-noise-model" title="Link to this heading"></a></h2>
+<p>The IMU ground truth data is generated by interpolating the camera pose, as a result, the IMU frame is perfectly aligned and synchronized with the left camera data. In specific, we double-differentiate the translation pose using a spline for the acceleration and differentiate the orientation using a spline for the angular rate. We provide the code for customizing the data generation (such as changing the frequency) as well as the code to add realistic noise.</p>
+</section>
+<section id="event-camera">
+<h2>Event Camera<a class="headerlink" href="#event-camera" title="Link to this heading"></a></h2>
+<p>Following the same trajectories with other modalities, we recollect the front-facing camera data at 1000 Hz. We use the <a class="reference external" href="https://github.com/uzh-rpg/rpg_esim">ESIM</a> as that is one of the fastest event camera simulators available and close to SoTA performance. We sample the 640 x 640 RGB images at 1000 Hz and then generate the events using the simulator. To improve the generalization across various event cameras we used a wide range of contrast thresholds between 0.2 to 1.0.
+Because the event data is collected separately from other modalities, some frames are inconsistent with other modalities in dynamic scenes.</p>
+</section>
+<section id="occupancy-map">
+<h2>Occupancy Map<a class="headerlink" href="#occupancy-map" title="Link to this heading"></a></h2>
+<p>Occupancy grid maps are built while the data collection as will be detailed in the data collection pipeline section. The resolution of the map ranges from 0.125 m to 0.5 m depending on the size of the environment. The map can be used in evaluating the mapping algorithm.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="usage.html" class="btn btn-neutral float-left" title="API Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="environments.html" class="btn btn-neutral float-right" title="Environments" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Carnegie Mellon University, 2023, Wenshan Wang, Yaoyu Hu, Yuheng Qiu, Shihao Shen, Yorai Shaoul..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

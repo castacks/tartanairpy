@@ -1,0 +1,1001 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Environments &mdash; TartanAir  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Troubleshooting" href="troubleshooting.html" />
+    <link rel="prev" title="Modalities" href="modalities.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            TartanAir
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tartanground.html">TartanGround Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modalities.html">Modalities</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Environments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">TartanAir</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Environments</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/environments.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="environments">
+<h1>Environments<a class="headerlink" href="#environments" title="Link to this heading"></a></h1>
+<p>There are 65 environments in the dataset, covering a wide range of scenarios, including urban, rural, Domes, infrastructure, Them, and nature. Each environment is designed to provide a unique setting for training and testing autonomous systems. The environments vary in size, complexity, and type of content. Some environments are split into multiple sub-environments to provide more diverse scenarios, such as weather variations or different times of day.</p>
+<p>You can find a general overview of the environments in the following table. Each environment is listed with its name, number of trajectories, type (Infra - Infrastructure, Domes - Domestic, Rural, Them - Thematic, Nature, Urban), whether it is indoor or outdoor, size, intersting features, and a preview image.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 5.0%" />
+<col style="width: 15.0%" />
+<col style="width: 10.0%" />
+<col style="width: 5.0%" />
+<col style="width: 15.0%" />
+<col style="width: 40.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Environment</p></th>
+<th class="head"><p>Traj</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>In/Out</p></th>
+<th class="head"><p>Size</p></th>
+<th class="head"><p>Feature</p></th>
+<th class="head"><p>Preview</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><div class="line-block">
+<div class="line">Abandoned</div>
+<div class="line">Cable</div>
+</div>
+</td>
+<td><p>8</p></td>
+<td><p>Infra</p></td>
+<td><p>Mix</p></td>
+<td><p>Large</p></td>
+<td><p>Weather</p></td>
+<td><img alt="_images/AbandonedCable.gif" src="_images/AbandonedCable.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><div class="line-block">
+<div class="line">Abandoned</div>
+<div class="line">Factory</div>
+</div>
+</td>
+<td><p>9</p></td>
+<td><p>Infra</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Medium</p></td>
+<td><p>Dusty</p></td>
+<td><img alt="_images/AbandonedFactory.gif" src="_images/AbandonedFactory.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><div class="line-block">
+<div class="line">Abandoned</div>
+<div class="line">Factory2</div>
+</div>
+</td>
+<td><p>6</p></td>
+<td><p>Infra</p></td>
+<td><p>Indoor</p></td>
+<td><p>Small</p></td>
+<td></td>
+<td><img alt="_images/AbandonedFactory2.gif" src="_images/AbandonedFactory2.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><div class="line-block">
+<div class="line">Abandoned</div>
+<div class="line">School</div>
+</div>
+</td>
+<td><p>10</p></td>
+<td><p>Infra</p></td>
+<td><p>Mix</p></td>
+<td><p>Large</p></td>
+<td></td>
+<td><img alt="_images/AbandonedSchool.gif" src="_images/AbandonedSchool.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><div class="line-block">
+<div class="line">American</div>
+<div class="line">Diner</div>
+</div>
+</td>
+<td><p>5</p></td>
+<td><p>Domes</p></td>
+<td><p>Indoor</p></td>
+<td><p>Medium</p></td>
+<td></td>
+<td><img alt="_images/AmericanDiner.gif" src="_images/AmericanDiner.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><div class="line-block">
+<div class="line">Amusement</div>
+<div class="line">Park</div>
+</div>
+</td>
+<td><p>8</p></td>
+<td><p>Rural</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Medium</p></td>
+<td></td>
+<td><img alt="_images/AmusementPark.gif" src="_images/AmusementPark.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><div class="line-block">
+<div class="line">Ancient</div>
+<div class="line">Towns</div>
+</div>
+</td>
+<td><p>7</p></td>
+<td><p>Rural</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Medium</p></td>
+<td></td>
+<td><img alt="_images/AncientTowns.gif" src="_images/AncientTowns.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><p>Antiquity3D</p></td>
+<td><p>10</p></td>
+<td><p>Them</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Large</p></td>
+<td><p>Day/Night</p></td>
+<td><img alt="_images/Antiquity3D.gif" src="_images/Antiquity3D.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><p>Apocalyptic</p></td>
+<td><p>5</p></td>
+<td><p>Them</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Medium</p></td>
+<td></td>
+<td><img alt="_images/Apocalyptic.gif" src="_images/Apocalyptic.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><div class="line-block">
+<div class="line">ArchVizTiny</div>
+<div class="line">HouseDay</div>
+</div>
+</td>
+<td><p>7</p></td>
+<td><p>Domes</p></td>
+<td><p>Indoor</p></td>
+<td><p>Small</p></td>
+<td><p>Day/Night</p></td>
+<td><img alt="_images/ArchVizTinyHouseDay.gif" src="_images/ArchVizTinyHouseDay.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><div class="line-block">
+<div class="line">ArchVizTiny</div>
+<div class="line">HouseNight</div>
+</div>
+</td>
+<td><p>7</p></td>
+<td><p>Domes</p></td>
+<td><p>Indoor</p></td>
+<td><p>Small</p></td>
+<td><p>Day/Night</p></td>
+<td><img alt="_images/ArchVizTinyHouseNight.gif" src="_images/ArchVizTinyHouseNight.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><div class="line-block">
+<div class="line">Brushify</div>
+<div class="line">Moon</div>
+</div>
+</td>
+<td><p>6</p></td>
+<td><p>Nature</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Large</p></td>
+<td></td>
+<td><img alt="_images/BrushifyMoon.gif" src="_images/BrushifyMoon.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><p>CarWelding</p></td>
+<td><p>9</p></td>
+<td><p>Infra</p></td>
+<td><p>Indoor</p></td>
+<td><p>Medium</p></td>
+<td><p>Dynamic</p></td>
+<td><img alt="_images/CarWelding.gif" src="_images/CarWelding.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><div class="line-block">
+<div class="line">Castle</div>
+<div class="line">Fortress</div>
+</div>
+</td>
+<td><p>12</p></td>
+<td><p>Rural</p></td>
+<td><p>Mix</p></td>
+<td><p>Large</p></td>
+<td></td>
+<td><img alt="_images/CastleFortress.gif" src="_images/CastleFortress.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><p>CoalMine</p></td>
+<td><p>6</p></td>
+<td><p>Infra</p></td>
+<td><p>Indoor</p></td>
+<td><p>Medium</p></td>
+<td></td>
+<td><img alt="_images/CoalMine.gif" src="_images/CoalMine.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><div class="line-block">
+<div class="line">Construction</div>
+<div class="line">Site</div>
+</div>
+</td>
+<td><p>10</p></td>
+<td><p>Infra</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Medium</p></td>
+<td><p>Lighting</p></td>
+<td><img alt="_images/ConstructionSite.gif" src="_images/ConstructionSite.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><div class="line-block">
+<div class="line">Country</div>
+<div class="line">House</div>
+</div>
+</td>
+<td><p>6</p></td>
+<td><p>Domes</p></td>
+<td><p>Indoor</p></td>
+<td><p>Small</p></td>
+<td></td>
+<td><img alt="_images/CountryHouse.gif" src="_images/CountryHouse.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><p>Cyberpunk</p></td>
+<td><p>8</p></td>
+<td><p>Them</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Medium</p></td>
+<td></td>
+<td><img alt="_images/CyberPunkDowntown.gif" src="_images/CyberPunkDowntown.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><div class="line-block">
+<div class="line">CyberPunk</div>
+<div class="line">Downtown</div>
+</div>
+</td>
+<td><p>7</p></td>
+<td><p>Them</p></td>
+<td><p>Indoor</p></td>
+<td><p>Medium</p></td>
+<td><p>Dynamic</p></td>
+<td><img alt="_images/Cyberpunk.gif" src="_images/Cyberpunk.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><div class="line-block">
+<div class="line">Desert</div>
+<div class="line">GasStation</div>
+</div>
+</td>
+<td><p>5</p></td>
+<td><p>Rural</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Small</p></td>
+<td><p>Lighting</p></td>
+<td><img alt="_images/DesertGasStation.gif" src="_images/DesertGasStation.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><p>Downtown</p></td>
+<td><p>9</p></td>
+<td><p>Urban</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Medium</p></td>
+<td></td>
+<td><img alt="_images/Downtown.gif" src="_images/Downtown.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><div class="line-block">
+<div class="line">EndofThe</div>
+<div class="line">World</div>
+</div>
+</td>
+<td><p>6</p></td>
+<td><p>Rural</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Medium</p></td>
+<td><p>Dusty</p></td>
+<td><img alt="_images/EndofTheWorld.gif" src="_images/EndofTheWorld.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><div class="line-block">
+<div class="line">Factory</div>
+<div class="line">Weather</div>
+</div>
+</td>
+<td><p>14</p></td>
+<td><p>Infra</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Large</p></td>
+<td><p>Weather</p></td>
+<td><img alt="_images/FactoryWeather.gif" src="_images/FactoryWeather.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><p>Fantasy</p></td>
+<td><p>7</p></td>
+<td><p>Rural</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Medium</p></td>
+<td></td>
+<td><img alt="_images/Fantasy.gif" src="_images/Fantasy.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><p>ForestEnv</p></td>
+<td><p>9</p></td>
+<td><p>Nature</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Large</p></td>
+<td></td>
+<td><img alt="_images/ForestEnv.gif" src="_images/ForestEnv.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><p>Gascola</p></td>
+<td><p>10</p></td>
+<td><p>Nature</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Medium</p></td>
+<td><p>Day/Night</p></td>
+<td><img alt="_images/Gascola.gif" src="_images/Gascola.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><p>GothicIsland</p></td>
+<td><p>11</p></td>
+<td><p>Rural</p></td>
+<td><p>Mix</p></td>
+<td><p>Large</p></td>
+<td></td>
+<td><img alt="_images/GothicIsland.gif" src="_images/GothicIsland.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><p>GreatMarsh</p></td>
+<td><p>10</p></td>
+<td><p>Rural</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Medium</p></td>
+<td><p>Fog</p></td>
+<td><img alt="_images/GreatMarsh.gif" src="_images/GreatMarsh.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><p>HongKong</p></td>
+<td><p>5</p></td>
+<td><p>Urban</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Small</p></td>
+<td><p>Night</p></td>
+<td><img alt="_images/HongKong.gif" src="_images/HongKong.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><p>Hospital</p></td>
+<td><p>11</p></td>
+<td><p>Infra</p></td>
+<td><p>Indoor</p></td>
+<td><p>Large</p></td>
+<td></td>
+<td><img alt="_images/Hospital.gif" src="_images/Hospital.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><p>House</p></td>
+<td><p>8</p></td>
+<td><p>Domes</p></td>
+<td><p>Indoor</p></td>
+<td><p>Medium</p></td>
+<td></td>
+<td><img alt="_images/House.gif" src="_images/House.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><div class="line-block">
+<div class="line">HQWestern</div>
+<div class="line">Saloon</div>
+</div>
+</td>
+<td><p>8</p></td>
+<td><p>Rural</p></td>
+<td><p>Mix</p></td>
+<td><p>Medium</p></td>
+<td></td>
+<td><img alt="_images/HQWesternSaloon.gif" src="_images/HQWesternSaloon.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><div class="line-block">
+<div class="line">Industrial</div>
+<div class="line">Hangar</div>
+</div>
+</td>
+<td><p>7</p></td>
+<td><p>Infra</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Medium</p></td>
+<td></td>
+<td><img alt="_images/IndustrialHangar.gif" src="_images/IndustrialHangar.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><div class="line-block">
+<div class="line">Japanese</div>
+<div class="line">Alley</div>
+</div>
+</td>
+<td><p>7</p></td>
+<td><p>Urban</p></td>
+<td><p>Mix</p></td>
+<td><p>Small</p></td>
+<td><div class="line-block">
+<div class="line">Rain</div>
+<div class="line">Night</div>
+</div>
+</td>
+<td><img alt="_images/JapaneseAlley.gif" src="_images/JapaneseAlley.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><p>JapaneseCity</p></td>
+<td><p>11</p></td>
+<td><p>Urban</p></td>
+<td><p>Mix</p></td>
+<td><p>Medium</p></td>
+<td></td>
+<td><img alt="_images/JapaneseCity.gif" src="_images/JapaneseCity.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><p>MiddleEast</p></td>
+<td><p>12</p></td>
+<td><p>Urban</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Medium</p></td>
+<td><p>Weather</p></td>
+<td><img alt="_images/MiddleEast.gif" src="_images/MiddleEast.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><div class="line-block">
+<div class="line">ModernCity</div>
+<div class="line">Downtown</div>
+</div>
+</td>
+<td><p>9</p></td>
+<td><p>Urban</p></td>
+<td><p>Mix</p></td>
+<td><p>Medium</p></td>
+<td></td>
+<td><img alt="_images/ModernCityDowntown.gif" src="_images/ModernCityDowntown.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><div class="line-block">
+<div class="line">Modular</div>
+<div class="line">Neighborhood</div>
+</div>
+</td>
+<td><p>11</p></td>
+<td><p>Urban</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Large</p></td>
+<td></td>
+<td><img alt="_images/ModularNeighborhood.gif" src="_images/ModularNeighborhood.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><div class="line-block">
+<div class="line">Modular</div>
+<div class="line">Neighborhood</div>
+<div class="line">IntExt</div>
+</div>
+</td>
+<td><p>8</p></td>
+<td><p>Urban</p></td>
+<td><p>Mix</p></td>
+<td><p>Large</p></td>
+<td></td>
+<td><img alt="_images/ModularNeighborhoodIntExt.gif" src="_images/ModularNeighborhoodIntExt.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><div class="line-block">
+<div class="line">ModUrban</div>
+<div class="line">City</div>
+</div>
+</td>
+<td><p>12</p></td>
+<td><p>Urban</p></td>
+<td><p>Mix</p></td>
+<td><p>Medium</p></td>
+<td></td>
+<td><img alt="_images/ModUrbanCity.gif" src="_images/ModUrbanCity.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><div class="line-block">
+<div class="line">Nordic</div>
+<div class="line">Harbor</div>
+</div>
+</td>
+<td><p>8</p></td>
+<td><p>Urban</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Medium</p></td>
+<td></td>
+<td><img alt="_images/NordicHarbor.gif" src="_images/NordicHarbor.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><p>Ocean</p></td>
+<td><p>9</p></td>
+<td><p>Nature</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Medium</p></td>
+<td><p>Dynamic</p></td>
+<td><img alt="_images/Ocean.gif" src="_images/Ocean.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><p>Office</p></td>
+<td><p>7</p></td>
+<td><p>Domes</p></td>
+<td><p>Indoor</p></td>
+<td><p>Medium</p></td>
+<td></td>
+<td><img alt="_images/Office.gif" src="_images/Office.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><div class="line-block">
+<div class="line">OldBrick</div>
+<div class="line">HouseDay</div>
+</div>
+</td>
+<td><p>7</p></td>
+<td><p>Domes</p></td>
+<td><p>Indoor</p></td>
+<td><p>Small</p></td>
+<td><p>Day/Night</p></td>
+<td><img alt="_images/OldBrickHouseDay.gif" src="_images/OldBrickHouseDay.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><div class="line-block">
+<div class="line">OldBrick</div>
+<div class="line">HouseNight</div>
+</div>
+</td>
+<td><p>6</p></td>
+<td><p>Domes</p></td>
+<td><p>Indoor</p></td>
+<td><p>Small</p></td>
+<td><p>Day/Night</p></td>
+<td><img alt="_images/OldBrickHouseNight.gif" src="_images/OldBrickHouseNight.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><div class="line-block">
+<div class="line">OldIndustrial</div>
+<div class="line">City</div>
+</div>
+</td>
+<td><p>10</p></td>
+<td><p>Infra</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Medium</p></td>
+<td></td>
+<td><img alt="_images/OldIndustrialCity.gif" src="_images/OldIndustrialCity.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><div class="line-block">
+<div class="line">Old</div>
+<div class="line">Scandinavia</div>
+</div>
+</td>
+<td><p>8</p></td>
+<td><p>Nature</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Large</p></td>
+<td><p>Day/Night</p></td>
+<td><img alt="_images/OldScandinavia.gif" src="_images/OldScandinavia.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><div class="line-block">
+<div class="line">OldTown</div>
+<div class="line">Fall</div>
+</div>
+</td>
+<td><p>3</p></td>
+<td><p>Urban</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Medium</p></td>
+<td><p>Season</p></td>
+<td><img alt="_images/OldTownFall.gif" src="_images/OldTownFall.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><div class="line-block">
+<div class="line">OldTown</div>
+<div class="line">Night</div>
+</div>
+</td>
+<td><p>3</p></td>
+<td><p>Urban</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Medium</p></td>
+<td><p>Season</p></td>
+<td><img alt="_images/OldTownNight.gif" src="_images/OldTownNight.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><div class="line-block">
+<div class="line">OldTown</div>
+<div class="line">Summer</div>
+</div>
+</td>
+<td><p>3</p></td>
+<td><p>Urban</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Medium</p></td>
+<td><p>Season</p></td>
+<td><img alt="_images/OldTownSummer.gif" src="_images/OldTownSummer.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><div class="line-block">
+<div class="line">OldTown</div>
+<div class="line">Winter</div>
+</div>
+</td>
+<td><p>3</p></td>
+<td><p>Urban</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Medium</p></td>
+<td><p>Season</p></td>
+<td><img alt="_images/OldTownWinter.gif" src="_images/OldTownWinter.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><p>PolarSciFi</p></td>
+<td><p>9</p></td>
+<td><p>Them</p></td>
+<td><p>Mix</p></td>
+<td><p>Medium</p></td>
+<td><p>Snow</p></td>
+<td><img alt="_images/PolarSciFi.gif" src="_images/PolarSciFi.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><p>Prison</p></td>
+<td><p>12</p></td>
+<td><p>Infra</p></td>
+<td><p>Mix</p></td>
+<td><p>Large</p></td>
+<td></td>
+<td><img alt="_images/Prison.gif" src="_images/Prison.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><p>Restaurant</p></td>
+<td><p>9</p></td>
+<td><p>Domes</p></td>
+<td><p>Indoor</p></td>
+<td><p>Medium</p></td>
+<td></td>
+<td><img alt="_images/Restaurant.gif" src="_images/Restaurant.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><p>RetroOffice</p></td>
+<td><p>6</p></td>
+<td><p>Domes</p></td>
+<td><p>Indoor</p></td>
+<td><p>Small</p></td>
+<td></td>
+<td><img alt="_images/RetroOffice.gif" src="_images/RetroOffice.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><p>Rome</p></td>
+<td><p>7</p></td>
+<td><p>Them</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Medium</p></td>
+<td></td>
+<td><img alt="_images/Rome.gif" src="_images/Rome.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><p>Ruins</p></td>
+<td><p>9</p></td>
+<td><p>Nature</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Medium</p></td>
+<td></td>
+<td><img alt="_images/Ruins.gif" src="_images/Ruins.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><p>SeasideTown</p></td>
+<td><p>8</p></td>
+<td><p>Rural</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Medium</p></td>
+<td></td>
+<td><img alt="_images/SeasideTown.gif" src="_images/SeasideTown.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><div class="line-block">
+<div class="line">Seasonal</div>
+<div class="line">Forest</div>
+<div class="line">Autumn</div>
+</div>
+</td>
+<td><p>3</p></td>
+<td><p>Nature</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Large</p></td>
+<td><p>Season</p></td>
+<td><img alt="_images/SeasonalForestAutumn.gif" src="_images/SeasonalForestAutumn.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><div class="line-block">
+<div class="line">Seasonal</div>
+<div class="line">Forest</div>
+<div class="line">Spring</div>
+</div>
+</td>
+<td><p>4</p></td>
+<td><p>Nature</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Large</p></td>
+<td><p>Season</p></td>
+<td><img alt="_images/SeasonalForestSpring.gif" src="_images/SeasonalForestSpring.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><div class="line-block">
+<div class="line">Seasonal</div>
+<div class="line">Forest</div>
+<div class="line">SummerNight</div>
+</div>
+</td>
+<td><p>2</p></td>
+<td><p>Nature</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Large</p></td>
+<td><div class="line-block">
+<div class="line">Season</div>
+<div class="line">Night</div>
+</div>
+</td>
+<td><img alt="_images/SeasonalForestSummerNight.gif" src="_images/SeasonalForestSummerNight.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><div class="line-block">
+<div class="line">Seasonal</div>
+<div class="line">Forest</div>
+<div class="line">Winter</div>
+</div>
+</td>
+<td><p>3</p></td>
+<td><p>Nature</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Large</p></td>
+<td><p>Season</p></td>
+<td><img alt="_images/SeasonalForestWinter.gif" src="_images/SeasonalForestWinter.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><div class="line-block">
+<div class="line">Seasonal</div>
+<div class="line">Forest</div>
+<div class="line">WinterNight</div>
+</div>
+</td>
+<td><p>3</p></td>
+<td><p>Nature</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Large</p></td>
+<td><div class="line-block">
+<div class="line">Season</div>
+<div class="line">Night</div>
+</div>
+</td>
+<td><img alt="_images/SeasonalForestWinterNight.gif" src="_images/SeasonalForestWinterNight.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><p>Sewerage</p></td>
+<td><p>12</p></td>
+<td><p>Infra</p></td>
+<td><p>Indoor</p></td>
+<td><p>Large</p></td>
+<td></td>
+<td><img alt="_images/Sewerage.gif" src="_images/Sewerage.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><p>ShoreCaves</p></td>
+<td><p>8</p></td>
+<td><p>Nature</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Small</p></td>
+<td></td>
+<td><img alt="_images/ShoreCaves.gif" src="_images/ShoreCaves.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><p>Slaughter</p></td>
+<td><p>12</p></td>
+<td><p>Them</p></td>
+<td><p>Mix</p></td>
+<td><p>Medium</p></td>
+<td></td>
+<td><img alt="_images/Slaughter.gif" src="_images/Slaughter.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><p>SoulCity</p></td>
+<td><p>9</p></td>
+<td><p>Rural</p></td>
+<td><p>Mix</p></td>
+<td><p>Medium</p></td>
+<td><p>Dynamic</p></td>
+<td><img alt="_images/SoulCity.gif" src="_images/SoulCity.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><p>Supermarket</p></td>
+<td><p>8</p></td>
+<td><p>Domes</p></td>
+<td><p>Indoor</p></td>
+<td><p>Medium</p></td>
+<td><p>Rain</p></td>
+<td><img alt="_images/Supermarket.gif" src="_images/Supermarket.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><div class="line-block">
+<div class="line">Terrain</div>
+<div class="line">Blending</div>
+</div>
+</td>
+<td><p>4</p></td>
+<td><p>Nature</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Small</p></td>
+<td></td>
+<td><img alt="_images/TerrainBlending.gif" src="_images/TerrainBlending.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><div class="line-block">
+<div class="line">Urban</div>
+<div class="line">Construction</div>
+</div>
+</td>
+<td><p>5</p></td>
+<td><p>Urban</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Medium</p></td>
+<td></td>
+<td><img alt="_images/UrbanConstruction.gif" src="_images/UrbanConstruction.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><div class="line-block">
+<div class="line">Victorian</div>
+<div class="line">Street</div>
+</div>
+</td>
+<td><p>8</p></td>
+<td><p>Urban</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Medium</p></td>
+<td></td>
+<td><img alt="_images/VictorianStreet.gif" src="_images/VictorianStreet.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><div class="line-block">
+<div class="line">WaterMill</div>
+<div class="line">Day</div>
+</div>
+</td>
+<td><p>6</p></td>
+<td><p>Rural</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Medium</p></td>
+<td><p>Day/Night</p></td>
+<td><img alt="_images/WaterMillDay.gif" src="_images/WaterMillDay.gif" />
+</td>
+</tr>
+<tr class="row-even"><td><div class="line-block">
+<div class="line">WaterMill</div>
+<div class="line">Night</div>
+</div>
+</td>
+<td><p>7</p></td>
+<td><p>Rural</p></td>
+<td><p>Outdoor</p></td>
+<td><p>Medium</p></td>
+<td><p>Day/Night</p></td>
+<td><img alt="_images/WaterMillNight.gif" src="_images/WaterMillNight.gif" />
+</td>
+</tr>
+<tr class="row-odd"><td><div class="line-block">
+<div class="line">Western</div>
+<div class="line">Desert</div>
+<div class="line">Town</div>
+</div>
+</td>
+<td><p>12</p></td>
+<td><p>Rural</p></td>
+<td><p>Mix</p></td>
+<td><p>Large</p></td>
+<td><p>Day/Night</p></td>
+<td><img alt="_images/WesternDesertTown.gif" src="_images/WesternDesertTown.gif" />
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="modalities.html" class="btn btn-neutral float-left" title="Modalities" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="troubleshooting.html" class="btn btn-neutral float-right" title="Troubleshooting" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Carnegie Mellon University, 2023, Wenshan Wang, Yaoyu Hu, Yuheng Qiu, Shihao Shen, Yorai Shaoul..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
