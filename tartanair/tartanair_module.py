@@ -8,9 +8,11 @@ import os
 from colorama import Fore, Style
 
 def print_error(msg):
+    msg = "❌ " + msg
     print(Fore.RED + msg + Style.RESET_ALL)
 
 def print_warn(msg):
+    msg = "⚠️  " + msg
     print(Fore.YELLOW + msg + Style.RESET_ALL)
 
 def print_highlight(msg):

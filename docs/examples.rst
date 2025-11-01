@@ -24,8 +24,15 @@ Download via Python API
                 difficulty = ['easy'], # this can be 'easy', and/or 'hard'
                 modality = ['image', 'depth', 'seg', 'imu'], # available modalities are: image', 'depth', 'seg', 'imu', 'lidar', 'flow'
                 camera_name = ['lcam_front', 'lcam_left', 'lcam_right', 'lcam_back', 'lcam_top', 'lcam_bottom'], 
-                unzip = True) # unzip files autonomously after download
+                unzip = True,
+                delete_zip = False, 
+                num_workers = 4) # unzip files autonomously after download
 
+    # To download the entire dataset
+    all_data = ta.get_all_data() # this will fill in all available TAv2 data for env, difficulty, modality and camera_name
+    ta.download(**all_data, 
+                unzip = True,
+                num_workers = 8)
 
 Download via a yaml config file
 ................................
@@ -44,35 +51,6 @@ The config file if of the following format:
     unzip: True
 
 
-Multi-Thread Download via Python API
-............................................
-
-.. code-block:: python
-
-    import tartanair as ta
-    
-    # Create a TartanAir object.
-    tartanair_data_root = '/my/path/to/root/folder/for/tartanair-v2'
-    
-    ta.init(tartanair_data_root)
-    
-    # Download data from following environments.
-    env = [ "Prison",
-            "Ruins",
-            "UrbanConstruction"]
-    ta.download_multi_thread(env = env, 
-                             difficulty = ['easy', 'hard'], 
-                             modality = ['image', 'depth'],  
-                             camera_name = ['lcam_front', 'lcam_right', 'lcam_back', 'lcam_left', 'lcam_top', 'lcam_bottom'], 
-                             unzip = True,
-                             num_workers = 8)
-    
-    # To download the entire dataset
-    all_data = ta.get_all_data() # this will fill in all available TAv2 data for env, difficulty, modality and camera_name
-    ta.download_multi_thread(**all_data, 
-                             unzip = True,
-                             num_workers = 8)
-
 Download TartanGround
 ............................
 
@@ -86,10 +64,13 @@ Download TartanGround
 
     # Download a trajectory.
     ta.download_ground(env = ['OldTownSummer', 'DesertGasStation'], 
-                version = ['v1', 'v2', 'v3_anymal'], # available versions are: 'v1', 'v2', 'v3_anymal'
+                version = ['omni', 'diff', 'anymal'], # available versions are: 'v1', 'v2', 'v3_anymal'
                 modality = ['image', 'depth', 'seg', 'lidar', 'imu'], # available modalities are: image', 'depth', 'seg', 'imu', 'lidar'
                 camera_name = ['lcam_front', 'lcam_bottom'], # available cameras are: 'lcam_front', 'lcam_left', 'lcam_right', 'lcam_back', 'lcam_top', 'lcam_bottom'
-                unzip = True) # unzip files autonomously after download
+                unzip = True, # unzip files autonomously after download
+                delete_zip = False,
+                num_workers = 4,
+                data_source = 'huggingface') # data_source can be 'huggingface' or 'airlab'
 
 Customization Example
 -------------------------------------

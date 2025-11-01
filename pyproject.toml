@@ -44,7 +44,8 @@ dependencies = [
     "minio", 
     "cupy-cuda12x",
     "torchvision",
-    "torch"
+    "torch",
+    "huggingface_hub",
     ]
 
 [project.urls]
