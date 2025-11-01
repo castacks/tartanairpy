@@ -27,7 +27,9 @@ ta.download(env = env,
               difficulty = ['easy', 'hard'], 
               modality = ['image', 'depth'],  
               camera_name = ['lcam_front', 'lcam_right', 'lcam_back', 'lcam_left', 'lcam_top', 'lcam_bottom'], 
-              unzip = True)
+              unzip = True,
+              delete_zip = False,
+              num_workers = 4)
 
 # Can also download via a yaml config file.
 ta.download(config = 'download_config.yaml')

@@ -8,7 +8,7 @@ from .iterator import TartanAirIterator
 from .evaluator import TartanAirEvaluator
 from .reader import TartanAirTrajectoryReader
 from .dataloader import TartanAirDataLoader
-from .downloader_hf import TartanGroundHFDownloader
+from .unzipper import Unzipper
 # from .random_accessor import TartanAirRandomAccessor
 
 print("TartanAir toolbox initialized.")
@@ -23,6 +23,7 @@ iterator = None
 evaluator = None
 dataloader = None
 slowloader = None
+unzipper = None
 
 # Flag for initialization.
 is_init = False
@@ -42,8 +43,8 @@ def init(tartanair_root):
     downloader = TartanAirDownloader(tartanair_data_root)
     global downloader_ground
     downloader_ground = TartanGroundDownloader(tartanair_data_root)
-    global downloader_hf
-    downloader_hf = TartanGroundHFDownloader(tartanair_data_root)
+    global unzipper
+    unzipper = Unzipper(tartanair_data_root)
 
     # TODO: 
     global dataset
@@ -103,32 +104,33 @@ def get_all_data():
             "camera_name": downloader.camera_names, 
     } 
 
-def download(env = [], difficulty = [], modality = [], camera_name = [], config = None, unzip = False):
-    """
-    Download data from the TartanAir dataset. This method will download the data from the CloudFlare server and store it in the `tartanair_root` directory.
+# def download(env = [], difficulty = [], modality = [], camera_name = [], config = None, unzip = False, delete_zip = False, data_source = "huggingface"):
+#     """
+#     Download data from the TartanAir dataset. This method will download the data from the CloudFlare server and store it in the `tartanair_root` directory.
 
-    :param env: The environment to download. Can be a list of environments.
-    :type env: str or list
-    :param difficulty: The difficulty of the trajectory. Can be a list of difficulties. Valid difficulties are: easy, hard.
-    :type difficulty: str or list
-    :param trajectory_id: The id of the trajectory to download. Can be a list of trajectory ids of form P000, P001, etc.
-    :type trajectory_id: str or list
-    :param modality: The modality to download. Can be a list of modalities. Valid modalities are: image, depth, seg, imu{_acc, _gyro, _time, ...}, lidar. Default will include all.
-    :type modality: str or list
-    :param camera_name: The camera name to download. Can be a list of camera names. Default will include all. Choices are `lcam_front`, `lcam_right`, `lcam_back`, `lcam_left`, `lcam_top`, `lcam_bottom`, `rcam_front`, `rcam_right`, `rcam_back`, `rcam_left`, `rcam_top`, `rcam_bottom`, `lcam_fish`, `rcam_fish`, `lcam_equirect`, `rcam_equirect`.
-     Modalities IMU and LIDAR do not need camera names specified.
-    :type camera_name: str or list
-    :param config: Optional. Path to a yaml file containing the download configuration. If a config file is provided, the other arguments will be ignored.
-    :type config: str
-    :param unzip: Unzip the downloaded files. Default is False. If True, the files will be unzipped after downloading.
-    :type unzip: bool
-    """
+#     :param env: The environment to download. Can be a list of environments.
+#     :type env: str or list
+#     :param difficulty: The difficulty of the trajectory. Can be a list of difficulties. Valid difficulties are: easy, hard.
+#     :type difficulty: str or list
+#     :param trajectory_id: The id of the trajectory to download. Can be a list of trajectory ids of form P000, P001, etc.
+#     :type trajectory_id: str or list
+#     :param modality: The modality to download. Can be a list of modalities. Valid modalities are: image, depth, seg, imu{_acc, _gyro, _time, ...}, lidar. Default will include all.
+#     :type modality: str or list
+#     :param camera_name: The camera name to download. Can be a list of camera names. Default will include all. Choices are `lcam_front`, `lcam_right`, `lcam_back`, `lcam_left`, `lcam_top`, `lcam_bottom`, `rcam_front`, `rcam_right`, `rcam_back`, `rcam_left`, `rcam_top`, `rcam_bottom`, `lcam_fish`, `rcam_fish`, `lcam_equirect`, `rcam_equirect`.
+#      Modalities IMU and LIDAR do not need camera names specified.
+#     :type camera_name: str or list
+#     :param config: Optional. Path to a yaml file containing the download configuration. If a config file is provided, the other arguments will be ignored.
+#     :type config: str
+#     :param unzip: Unzip the downloaded files. Default is False. If True, the files will be unzipped after downloading.
+#     :type unzip: bool
+#     :param data_source: The data source to download from. Can be either "airlab" or "huggingface". Default is "huggingface".
+#     """
 
-    global downloader
-    check_init()
-    downloader.download(env, difficulty, modality, camera_name, config, unzip)
+#     global downloader
+#     check_init()
+#     downloader.download(env, difficulty, modality, camera_name, config, unzip = unzip, delete_zip = delete_zip, data_source = data_source)
 
-def download_multi_thread(env = [], difficulty = [], modality = [], camera_name = [], config = None, unzip = False, num_workers = 8):
+def download(env = [], difficulty = [], modality = [], camera_name = [], config = None, unzip = False, delete_zip = False, num_workers = 1, data_source = "huggingface"):
     """
     Download data from the TartanAir dataset. This method will download the data from the CloudFlare server and store it in the `tartanair_root` directory.
 
@@ -149,13 +151,14 @@ def download_multi_thread(env = [], difficulty = [], modality = [], camera_name 
     :type unzip: bool
     :param num_workders: The number of workers to use for downloading. Default is 8.
     :type num_workders: int
+    :param data_source: The data source to download from. Can be either "airlab" or "huggingface". Default is "huggingface".
     """
 
     global downloader
     check_init()
-    downloader.download_multi_thread(env = env, difficulty = difficulty, modality = modality, camera_name = camera_name, config = config, unzip = unzip, num_workers = num_workers)
+    downloader.download_multi_thread(env = env, difficulty = difficulty, modality = modality, camera_name = camera_name, config = config, unzip = unzip, delete_zip = delete_zip, num_workers = num_workers, data_source = data_source)
 
-def download_ground(env = [], version = [], traj=[], modality = [], camera_name = [], config = None, unzip = False):
+def download_ground(env = [], version = [], traj=[], modality = [], camera_name = [], config = None, unzip = False, delete_zip = False, num_workers = 1, data_source = "huggingface"):
     """
     Download data from the TartanAir dataset. This method will download the data from the CloudFlare server and store it in the `tartanair_root` directory.
 
@@ -174,63 +177,32 @@ def download_ground(env = [], version = [], traj=[], modality = [], camera_name 
     :type config: str
     :param unzip: Unzip the downloaded files. Default is False. If True, the files will be unzipped after downloading.
     :type unzip: bool
-    """
-
-    global downloader_ground
-    check_init()
-    downloader_ground.download(env, version, traj, modality, camera_name, config, unzip)
-
-def download_ground_hf(env = [], version = [], traj=[], modality = [], camera_name = [], config = None, unzip = False):
-    """
-    Download data from the TartanAir dataset. This method will download the data from the CloudFlare server and store it in the `tartanair_root` directory.
-
-    :param env: The environment to download. Can be a list of environments.
-    :type env: str or list
-    :param version: The version of the trajectory. Valid versions are omni, diff and anymal.
-    :type version: str or list
-    :param traj: The id of the trajectory to download. Can be a list of trajectory ids of form P0000, P0001, P2000 etc.
-    :type traj: str or list
-    :param modality: The modality to download. Can be a list of modalities. Valid modalities are: 'image', 'meta', 'depth', 'seg', 'imu', 'lidar', 'rosbag' (only anymal version), 'sem_pcd', 'rgb_pcd', 'seg_labels'. Default will include all.
-    :type modality: str or list
-    :param camera_name: The camera name to download. Can be a list of camera names. Default will include all. Choices are `lcam_front`, `lcam_right`, `lcam_back`, `lcam_left`, `lcam_top`, `lcam_bottom`, `rcam_front`, `rcam_right`, `rcam_back`, `rcam_left`, `rcam_top`, `rcam_bottom`.
-     Modalities IMU and LIDAR do not need camera names specified.
-    :type camera_name: str or list
-    :param config: Optional. Path to a yaml file containing the download configuration. If a config file is provided, the other arguments will be ignored.
-    :type config: str
-    :param unzip: Unzip the downloaded files. Default is False. If True, the files will be unzipped after downloading.
-    :type unzip: bool
-    """
-
-    global downloader_hf
-    check_init()
-    downloader_hf.download(env, version, traj, modality, camera_name, config, unzip)
-
-def download_ground_multi_thread(env = [], version = [], traj=[], modality = [], camera_name = [], config = None, unzip = False, num_workers = 8):
-    """
-    Download data from the TartanAir dataset. This method will download the data from the CloudFlare server and store it in the `tartanair_root` directory.
-
-       :param env: The environment to download. Can be a list of environments.
-    :type env: str or list
-    :param version: The version of the trajectory. Valid versions are omni, diff and anymal.
-    :type version: str or list
-    :param traj: The id of the trajectory to download. Can be a list of trajectory ids of form P0000, P0001, P2000 etc.
-    :type traj: str or list
-    :param modality: The modality to download. Can be a list of modalities. Valid modalities are: 'image', 'meta', 'depth', 'seg', 'imu', 'lidar', 'rosbag' (only anymal version), 'sem_pcd', 'rgb_pcd', 'seg_labels'. Default will include all.
-    :type modality: str or list
-    :param camera_name: The camera name to download. Can be a list of camera names. Default will include all. Choices are `lcam_front`, `lcam_right`, `lcam_back`, `lcam_left`, `lcam_top`, `lcam_bottom`, `rcam_front`, `rcam_right`, `rcam_back`, `rcam_left`, `rcam_top`, `rcam_bottom`.
-     Modalities IMU and LIDAR do not need camera names specified.
-    :type camera_name: str or list
-    :param config: Optional. Path to a yaml file containing the download configuration. If a config file is provided, the other arguments will be ignored.
-    :type config: str
-    :param unzip: Unzip the downloaded files. Default is False. If True, the files will be unzipped after downloading.
-    :type unzip: bool
+    :param delete_zip: Delete the original zip files after extracting. Default is False.
+    :type delete_zip: bool
     :param num_workders: The number of workers to use for downloading. Default is 8.
     :type num_workders: int
+    :param data_source: The data source to download from. Can be either "airlab" or "huggingface". Default is "huggingface".
+    :type data_source: str
     """
 
     global downloader_ground
     check_init()
-    downloader_ground.download_multi_thread(env = env, version = version, traj=traj, modality = modality, camera_name = camera_name, config = config, unzip = unzip, num_workers = num_workers)
+    downloader_ground.download_multi_thread(env = env, version = version, traj=traj, modality = modality, camera_name = camera_name, config = config, unzip = unzip, delete_zip = delete_zip, num_workers = num_workers, data_source = data_source)
+
+def unzip(output_dir=None, num_workers=4):
+    """
+    Unzip the downloaded files.
+
+    :param output_dir: The output directory to unzip the files to. If None, the files will be unzipped to the `tartanair_root` directory.
+    :type output_dir: str
+    :param num_workers: The number of workers to use for unzipping. Default is 4.
+    :type num_workers: int
+    """
+    global unzipper
+    check_init()
+    if output_dir is None:
+        output_dir = tartanair_data_root
+    unzipper.unzip_all(output_dir=output_dir, num_workers=num_workers)
 
 def customize(env, difficulty, trajectory_id, modality, new_camera_models_params = [{}], num_workers = 1, device = "cpu"):
     """

@@ -5,3 +5,5 @@
   modality: ['image', 'depth', 'seg', 'imu'] 
   camera_name: ['lcam_fish', 'lcam_front', 'lcam_left', 'lcam_right', 'lcam_back', 'lcam_top', 'lcam_bottom']
   unzip: True
+  delete_zip: False
+  num_workers: 4
