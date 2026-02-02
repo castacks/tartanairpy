@@ -30,14 +30,14 @@ def chunked_iterable(iterable, chunk_size):
         yield chunk
 
 class AirLabDownloader(object):
-    def __init__(self, bucket_name = 'tartanair2') -> None:
+    def __init__(self, bucket_name = 'tartanair_v2') -> None:
         from minio import Minio
 
-        if bucket_name == 'tartanair2':
-            endpoint_url = "airlab-share-01.andrew.cmu.edu:9000"
+        if bucket_name == 'tartanair_v2':
+            endpoint_url = "airlab-cloud.andrew.cmu.edu:8080"    # <========= THIS IS NEW =========
             # public key (for downloading): 
-            access_key = "4e54CkGDFg2RmPjaQYmW"
-            secret_key = "mKdGwketlYUcXQwcPxuzinSxJazoyMpAip47zYdl"
+            access_key = "9d6f8aab81c14f75b6d027b392cb7c93"    # <========= THIS IS NEW =========
+            secret_key = "43b98da5d8ae4704a09a957b73615746"
         elif bucket_name == 'tartanground':
             endpoint_url = "airlab-share-02.andrew.cmu.edu:9000"
             # public key (for downloading): 
@@ -182,7 +182,7 @@ class TartanAirDownloader(TartanAirModule):
         super().__init__(tartanair_data_root)
 
         # self.downloader = CloudFlareDownloader()
-        self.downloader = AirLabDownloader(bucket_name = 'tartanair2')
+        self.downloader = AirLabDownloader(bucket_name = 'tartanair_v2')
 
     def generate_filelist(self, envs, difficulties, modalities, camera_names): 
         '''
@@ -347,7 +347,6 @@ class TartanAirDownloader(TartanAirModule):
             return False
         
         zipfilelist = self.generate_filelist(env, difficulty, modality, camera_name)
-        # import ipdb;ipdb.set_trace()
         CURDIR = os.path.dirname(os.path.abspath(__file__))
         gtfile = CURDIR + '/download_files.txt'
         if not self.doublecheck_filelist(zipfilelist, gtfile = gtfile):

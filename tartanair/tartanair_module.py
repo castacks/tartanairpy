@@ -48,7 +48,7 @@ class TartanAirModule():
 
         self.camera_directions = ["front", "right", "back", "left", "top", "bottom"]
 
-        self.modality_names = ['image', 'depth', 'seg', 'imu', 'lidar', 'flow', 'event']
+        self.modality_names = ['image', 'depth', 'seg', 'imu', 'lidar', 'flow', 'event', 'mp4']
 
         self.cam_modalities = ['image', 'depth', 'seg'] # the modalities that support all camera names
 
@@ -371,6 +371,9 @@ class TartanAirModule():
                         print_warn("Warn: flow modality doesn't have {}! We only have flow for {}".format(camname, self.flow_camlist))
             elif mod == 'lidar' or mod == 'imu': # for lidar and imu
                 folderstr = mod
+                folderlist.append(folderstr)
+            elif mod == 'mp4' and "lcam_front" in camera_names:
+                folderstr =  mod + '_lcam_front' 
                 folderlist.append(folderstr)
             else:
                 if mod != "pose" and mod != "event":
