@@ -30,6 +30,7 @@ def chunked_iterable(iterable, chunk_size):
         yield chunk
 
 class AirLabDownloader(object):
+<<<<<<< HEAD
     def __init__(self, bucket_name = 'tartanair_v2') -> None:
         from minio import Minio
 
@@ -48,6 +49,15 @@ class AirLabDownloader(object):
             return
         
         self.client = Minio(endpoint_url, access_key=access_key, secret_key=secret_key, secure=True)
+=======
+    def __init__(self, bucket_name = 'tartanair2') -> None:
+        import boto3
+        from botocore import UNSIGNED
+        from botocore.client import Config
+
+        endpoint_url = "https://airlab-cloud.andrew.cmu.edu:8080/swift/v1/AUTH_ac8533a83cff4d48bc8c608ad222d330"
+        self.client = boto3.client("s3", endpoint_url=endpoint_url, config=Config(signature_version=UNSIGNED))
+>>>>>>> main
         self.bucket_name = bucket_name
 
     def download(self, filelist, output_dir):
@@ -58,10 +68,19 @@ class AirLabDownloader(object):
                 print_error('Error: Target file {} already exists..'.format(target_file_name))
                 continue
                 # return False, success_source_files, success_target_files
+            target_dir = os.path.dirname(target_file_name)
+            if not os.path.exists(target_dir):
+                # make recursive directory
+                os.makedirs(target_dir)
 
             print(f"  Downloading {source_file_name} from {self.bucket_name}...")
             try:
-                self.client.fget_object(self.bucket_name, source_file_name, target_file_name)
+                resp = self.client.get_object(Bucket=self.bucket_name, Key=source_file_name)
+
+                with open(target_file_name, "wb") as f:
+                    for chunk in resp["Body"].iter_chunks(chunk_size=1024 * 1024):
+                        if chunk:
+                            f.write(chunk)
             except Exception as e:
                 print_error(f"Error: Failed to download {source_file_name} due to {e}.")
                 continue
