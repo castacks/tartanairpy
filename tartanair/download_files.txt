@@ -1699,7 +1699,6 @@ CountryHouse/Data_easy/image_rcam_top.zip 1.078870515 G
 CountryHouse/Data_easy/imu.zip 0.008978224 G
 CountryHouse/Data_easy/lidar.zip 1.184302924 G
 CountryHouse/Data_easy/mp4_lcam_front.zip 4.146 G
-CountryHouse/Data_easy/mp4_lcam_front.zip 4.14921 G
 CountryHouse/Data_easy/seg_lcam_back.zip 0.020499347 G
 CountryHouse/Data_easy/seg_lcam_bottom.zip 0.015364331 G
 CountryHouse/Data_easy/seg_lcam_equirect.zip 0.078697576 G

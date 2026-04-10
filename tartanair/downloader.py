@@ -30,26 +30,6 @@ def chunked_iterable(iterable, chunk_size):
         yield chunk
 
 class AirLabDownloader(object):
-<<<<<<< HEAD
-    def __init__(self, bucket_name = 'tartanair_v2') -> None:
-        from minio import Minio
-
-        if bucket_name == 'tartanair_v2':
-            endpoint_url = "airlab-cloud.andrew.cmu.edu:8080"    # <========= THIS IS NEW =========
-            # public key (for downloading): 
-            access_key = "9d6f8aab81c14f75b6d027b392cb7c93"    # <========= THIS IS NEW =========
-            secret_key = "43b98da5d8ae4704a09a957b73615746"
-        elif bucket_name == 'tartanground':
-            endpoint_url = "airlab-share-02.andrew.cmu.edu:9000"
-            # public key (for downloading): 
-            access_key = "nu8ylTnuSBKmHtPgj6xB"
-            secret_key = "3njOB53mTzrvMRkBEm8MN8GvGrKuKvtwg1Bh4QLS"
-        else:
-            print_error("Error: Invalid bucket name. Please use 'tartanair2' or 'tartanground'.")
-            return
-        
-        self.client = Minio(endpoint_url, access_key=access_key, secret_key=secret_key, secure=True)
-=======
     def __init__(self, bucket_name = 'tartanair2') -> None:
         import boto3
         from botocore import UNSIGNED
@@ -57,7 +37,6 @@ class AirLabDownloader(object):
 
         endpoint_url = "https://airlab-cloud.andrew.cmu.edu:8080/swift/v1/AUTH_ac8533a83cff4d48bc8c608ad222d330"
         self.client = boto3.client("s3", endpoint_url=endpoint_url, config=Config(signature_version=UNSIGNED))
->>>>>>> main
         self.bucket_name = bucket_name
 
     def download(self, filelist, output_dir):
@@ -93,7 +72,7 @@ class AirLabDownloader(object):
             return True, success_source_files, success_target_files
         else:
             return False, success_source_files, success_target_files
-
+        
 # @deprecated
 # class CloudFlareDownloader(object):
 #     def __init__(self, bucket_name = "tartanair-v2") -> None:
