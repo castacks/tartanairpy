@@ -181,6 +181,7 @@ class TartanAirDownloader(TartanAirModule):
 
         # self.downloader = CloudFlareDownloader()
         self.downloader = AirLabDownloader(bucket_name = 'tartanair_v2')
+        self.downloader = AirLabDownloader(bucket_name = 'tartanair_v2')
 
     def generate_filelist(self, envs, difficulties, modalities, camera_names): 
         '''
@@ -345,7 +346,6 @@ class TartanAirDownloader(TartanAirModule):
             return False
         
         zipfilelist = self.generate_filelist(env, difficulty, modality, camera_name)
-        # import ipdb;ipdb.set_trace()
         CURDIR = os.path.dirname(os.path.abspath(__file__))
         gtfile = CURDIR + '/download_files.txt'
         if not self.doublecheck_filelist(zipfilelist, gtfile = gtfile):
