@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Meta tags for social media banners, these should be filled in appropriatly as they are your "business card" -->
+  <!-- Replace the content tag with appropriate information -->
+  <meta name="description" content="Discover our perception and navigation dataset for ground robots">
+  <meta property="og:title" content="TartanGround: A Large-Scale Dataset for Ground Robot Perception and Navigation"/>
+  <meta property="og:description" content="We present a large-scale dataset for ground robot perception and navgiation"/>
+  <meta property="og:url" content="https://tartanair.org/tartanground"/>
+  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X630-->
+  <meta property="og:image" content="static/image/anymal_logo.png" />
+  <meta property="og:image:width" content="1225"/>
+  <meta property="og:image:height" content="410"/>
+
+
+  <meta name="twitter:title" content="TartanGround: A Large-Scale Dataset for Ground Robot Perception and Navigation">
+  <meta name="twitter:description" content="Discover our perception and navigation dataset for ground robots">
+  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X600-->
+  <meta name="twitter:image" content="static/images/roadrunner_title.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <!-- Keywords for your paper to be indexed by-->
+  <meta name="keywords" content="Dataset, perception dataset, tartanground, tartanair, occupancy prediction, gaussian splatting, anymal, ground robots, robotic perception, field robotics, elevation mapping, navigation, offroad autonomy">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+  <title>TartanGround: A Large-Scale Dataset for Ground Robot Perception and Navigation</title>
+  <link rel="icon" type="image/x-icon" href="static/images/anymal.ico">
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+  rel="stylesheet">
+
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script src="static/js/bulma-carousel.min.js"></script>
+  <script src="static/js/bulma-slider.min.js"></script>
+  <script src="static/js/index.js"></script>
+  <script src="static/js/video-slider.js"></script>
+
+</head>
+<body>
+
+
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">TartanGround</h1>
+            <h2 class="subtitle is-3">A Large-Scale Dataset for Ground Robot Perception and Navigation</h2>
+            <div class="is-size-5 publication-authors">
+              <!-- Paper authors -->
+              <span class="author-block">
+                <a href="https://manthan99.github.io/" target="_blank">Manthan Patel</a>,</span>
+                <span class="author-block">
+                  <a href="https://scholar.google.com/citations?user=R3OeSRoAAAAJ&hl=en" target="_blank">Fan Yang</a>,</span>
+                  <span class="author-block">
+                    <a href="https://haleqiu.github.io/" target="_blank">Yuheng Qiu</a>,</span>
+                  <span class="author-block">
+                    <a href="https://mavt.ethz.ch/people/person-detail.MjIzNzE0.TGlzdC81NTksLTE3MDY5NzgwMTc=.html" target="_blank">Cesar Cadena</a>,</span>
+                  <span class="author-block">
+                    <a href="https://www.ri.cmu.edu/ri-faculty/sebastian-scherer/" target="_blank">Sebastian Scherer</a>,</span>
+                  <span class="author-block">
+                    <a href="https://rsl.ethz.ch/the-lab/people/person-detail.MTIxOTEx.TGlzdC8yNDQxLC0xNDI1MTk1NzM1.html" target="_blank">Marco Hutter</a>,</span>
+                    <span class="author-block">
+                      <a href="https://www.ri.cmu.edu/ri-faculty/wenshan-wang/" target="_blank">Wenshan Wang</a>
+                  </span>
+                  </div>
+
+                  <div class="is-size-5 publication-authors">
+                    <span class="author-block">Robotic Systems Lab, ETH Zurich | Airlab, Carnegie Mellon Unviersity <br>IEEE/RSJ IROS 2025</span>
+                  </div>
+
+                  <div class="column has-text-centered">
+                    <div class="publication-links">
+                         <!-- Arxiv PDF link -->
+                      <span class="link-block">
+                        <a href="https://arxiv.org/abs/2505.10696" target="_blank"
+                        class="external-link button is-normal is-rounded is-dark">
+                        <span class="icon">
+                          <i class="fas fa-file-pdf"></i>
+                        </span>
+                        <span>Paper</span>
+                      </a>
+                    </span>
+                  
+                    <!-- Supplementary PDF link -->
+                    <span class="link-block">
+                      <a href="https://tartanair.org/tartanground.html" target="_blank"
+                      class="external-link button is-normal is-rounded is-dark">
+                      <span class="icon">
+                        <i class="fas fa-database"></i>
+                      </span>
+                      <span>Dataset</span>
+                    </a>
+                  </span>
+
+                  <!-- Github link -->
+                  <span class="link-block">
+                    <a href="https://github.com/castacks/tartanairpy" target="_blank"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fas fa-list-alt"></i>
+                    </span>
+                    <span>Code</span>
+                  </a>
+                </span>
+
+                <!-- ArXiv abstract Link -->
+                <span class="link-block">
+                  <a href="https://docs.google.com/spreadsheets/d/1d_px4Ss19OmrJrdOLwPsVNYe7Blcdmr6JKs0GdOORCg/edit?usp=sharing" target="_blank"
+                  class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="fas fa-database"></i>
+                  </span>
+                  <span>MetaData</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Teaser video-->
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <iframe width="840" height="472" src="https://www.youtube.com/embed/1cuKMT8uXWA?autoplay=1&mute=1&rel=0&showinfo=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      <h2 class="subtitle has-text-centered">
+      </h2>
+    </div>
+  </div>
+</section>
+<!-- End teaser video -->
+
+<!-- Dataset Highlights -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-multiline has-text-centered">
+
+      <div class="column is-one-quarter">
+        <p class="title has-text-danger has-text-weight-bold" style="font-size: 4rem;">60+</p>
+        <p class="subtitle is-6">Photorealistic Environments</p>
+      </div>
+
+      <div class="column is-one-quarter">
+        <p class="title has-text-danger has-text-weight-bold" style="font-size: 4rem;">878</p>
+        <p class="subtitle is-6">Trajectories</p>
+      </div>
+
+      <div class="column is-one-quarter">
+        <p class="title has-text-danger has-text-weight-bold" style="font-size: 4rem;">1.4 M</p>
+        <p class="subtitle is-6">Samples</p>
+      </div>
+
+      <div class="column is-one-quarter">
+        <p class="title has-text-danger has-text-weight-bold" style="font-size: 4rem;">3</p>
+        <p class="subtitle is-6">Ground Robot Motions</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Paper abstract -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            We present TartanGround, a large-scale, multi-modal dataset to advance the perception and autonomy of ground robots operating in diverse 
+            environments. This dataset, collected in various photorealistic simulation environments includes multiple RGB stereo cameras for 360-degree 
+            coverage, along with depth, optical flow, stereo disparity, LiDAR point clouds, ground truth poses, semantic segmented images, and occupancy 
+            maps with semantic labels. Data is collected using an integrated automatic pipeline, which generates trajectories mimicking the motion 
+            patterns of various ground robot platforms, including wheeled and legged robots. We collect 878 trajectories across 63 environments, 
+            resulting in 1.44 million samples. Evaluations on occupancy prediction and SLAM tasks reveal that state-of-the-art methods trained on 
+            existing datasets struggle to generalize across diverse scenes. TartanGround can serve as a testbed for training and evaluation of a broad 
+            range of learning-based tasks, including occupancy prediction, SLAM, neural scene representation, perception-based navigation, and more, 
+            enabling advancements in robotic perception and autonomy towards achieving robust models generalizable to more diverse scenarios.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End paper abstract -->
+
+<!-- Introduction Section -->
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <div class="item">
+            <img src="static/images/figure_1_anymal_v2.png" alt="TartanGround Overview" style="width: 75%;" />
+            <p class="has-text-justified">
+              A trajectory from TartanGround (Winter Forest environment) includes multiple stereo RGB images covering a full 360° field-of-view, 
+              along with accurate depth and semantic annotations.It also provides ground truth poses, LiDAR, IMU data, and semantic occupancy 
+              maps for comprehensive scene understanding.
+            </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Dataset Modalities - Fancy Card Layout -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">The Dataset</h2>
+    <p class="subtitle has-text-centered mb-6">
+      TartanGround provides diverse and synchronized multi-modal data streams designed to support advanced robotic perception and learning tasks.
+    </p>
+
+    <div class="columns is-multiline">
+
+      <div class="column is-half">
+        <div class="box has-shadow">
+          <span class="icon is-large has-text-danger"><i class="fas fa-camera-retro fa-2x"></i></span>
+          <h4 class="title is-5">6 RGB Stereo Camera Pairs</h4>
+          <p>Front, back, left, right, top, and bottom stereo pairs for full 360° scene coverage.</p>
+        </div>
+      </div>
+
+      <div class="column is-half">
+        <div class="box has-shadow">
+          <span class="icon is-large has-text-info"><i class="fas fa-layer-group fa-2x"></i></span>
+          <h4 class="title is-5">Depth & Semantic Segmentation</h4>
+          <p>Pixel-level depth maps and semantic labels aligned with stereo imagery.</p>
+        </div>
+      </div>
+
+      <div class="column is-half">
+        <div class="box has-shadow">
+          <span class="icon is-large has-text-success"><i class="fas fa-cubes fa-2x"></i></span>
+          <h4 class="title is-5">Semantic Occupancy Maps</h4>
+          <p>3D voxel grids with semantic labels for detailed spatial understanding.</p>
+        </div>
+      </div>
+
+      <div class="column is-half">
+        <div class="box has-shadow">
+          <span class="icon is-large has-text-warning"><i class="fas fa-car-crash fa-2x"></i></span>
+          <h4 class="title is-5">LiDAR & IMU</h4>
+          <p>Simulated LiDAR point clouds and inertial data for robust state estimation.</p>
+        </div>
+      </div>
+
+      <div class="column is-half">
+        <div class="box has-shadow">
+          <span class="icon is-large has-text-primary"><i class="fas fa-ruler-combined fa-2x"></i></span>
+          <h4 class="title is-5">Optical Flow & Disparity</h4>
+          <p>Dense motion and stereo disparity fields for temporal and depth supervision.</p>
+        </div>
+      </div>
+
+      <div class="column is-half">
+        <div class="box has-shadow">
+          <span class="icon is-large has-text-danger"><i class="fas fa-map-marker-alt fa-2x"></i></span>
+          <h4 class="title is-5">Ground Truth Poses</h4>
+          <p>Accurate 6-DoF pose at each timestep for training and evaluation</p>
+        </div>
+      </div>
+
+      <div class="column is-half">
+        <div class="box has-shadow">
+          <span class="icon is-large has-text-link"><i class="fas fa-robot fa-2x"></i></span>
+          <h4 class="title is-5">Proprioceptive Data</h4>
+          <p>Joint states, velocities, and contact forces for quadruped trajectories</p>
+        </div>
+      </div>
+
+      <div class="column is-half">
+        <div class="box has-shadow">
+          <span class="icon is-large has-text-dark"><i class="fas fa-sliders-h fa-2x"></i></span>
+          <h4 class="title is-5">Camera Resampling</h4>
+          <p>Render new views with user-defined intrinsics and orientations—ideal for real robot alignment.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+<!-- End Dataset Modalities -->
+
+
+<section class="section" id="environments">
+  <div class="container is-max-desktop content">
+    <h2 class="title is-3 has-text-centered">Environments</h2>
+    <p class="has-text-justified">
+      The TartanGround dataset features 63 photorealistic simulation environments carefully selected to cover a wide range of real-world conditions. 
+      These environments are categorized into six types: <strong>Indoor</strong>, <strong>Nature</strong>, <strong>Rural</strong>, 
+      <strong>Urban</strong>, <strong>Industrial/Infrastructure</strong>, and <strong>Historical/Thematic</strong>. 
+      This diversity supports robust generalization across varied terrain and lighting conditions.
+    </p>
+    <figure class="has-text-centered">
+      <img src="static/images/fig2_grid.png" alt="Environment Categories" style="width: 100%;" />
+      <p class="has-text-centered">
+        Overview of the environments in the TartanGround dataset
+      </p>
+    </figure>
+  </div>
+</section>
+
+<!-- End Environments -->
+
+
+<!-- Test Sequences-->
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-3">Applications</h1>
+          <div class="item">
+            <p class="has-text-justified">
+              The TartanGround dataset can be used for training and evaluation of various tasks such as Semantic Occupancy prediction, Open-Vocabulary Occupancy Prediction, 
+              visual SLAM, Neural scene representation, Bird's-eye-view prediction, Navigation and more.
+            </p>
+            </div>
+          </div>
+        </div>
+      <div id="results-carousel" class="carousel results-carousel">
+  
+        <div class="item">
+        <img src="static/images/fig4_occ_v2.png" alt="Semantic Occupancy Prediction"/>
+        <h2 class="subtitle has-text-centered">
+          3D semantic occupancy prediction from multi-view RGB inputs
+        </h2>
+        </div>
+  
+        <div class="item">
+          <div class="publication-video">
+            <iframe src="https://www.youtube.com/embed/RClz1jl4TUs?si=0LuXvG_VZm6yUk6x?autoplay=1&mute=1&rel=0&showinfo=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          </div>
+        <h2 class="subtitle has-text-centered">
+          Novel view synthesis using Gaussian Splatting on the Rome environment
+        </h2>
+        </div>
+        <div>
+          <div class="publication-video">
+            <iframe src="https://www.youtube.com/embed/J-XtG4P1BLE?autoplay=1&mute=1&rel=0&showinfo=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          </div>
+          <h2 class="subtitle has-text-centered">
+            Performance of <a href="https://github.com/MAC-VO/MAC-VO" target="_blank" rel="noopener noreferrer">
+              Mac-VO
+            </a> in forest environment with tall grass and heavy occlusions
+          </h2>
+        </div>
+        <div>
+          <div class="publication-video">
+            <iframe src="https://www.youtube.com/embed/fFSKUBHx5gA?si=JIl4lMVqkyPhTJr_&amp;start=131&autoplay=1&mute=1&rel=0&showinfo=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          </div>
+          <h2 class="subtitle has-text-centered">
+            <a href="https://rayfronts.github.io/" target="_blank" rel="noopener noreferrer">RayFronts</a> (open-set semantic occupancy mapping) uses the TartanGround Dataset for evaluations 
+          </h2>
+        </div>
+        <div>
+          <div class="publication-video">
+            <iframe src="https://www.youtube.com/embed/jGtGOIMxccI?si=VQ1Pe8MYYsv3iUXI?autoplay=1&mute=1&rel=0&showinfo=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          </div>
+          <h2 class="subtitle has-text-centered">
+            Novel view synthesis using Gaussian Splatting on the Coalmine environment
+          </h2>
+        </div>
+        <div>
+          <div class="publication-video">
+            <iframe src="https://www.youtube.com/embed/pmWqfKL0-g4?autoplay=1&mute=1&rel=0&showinfo=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          </div>
+          <h2 class="subtitle has-text-centered">
+            Performance of <a href="https://github.com/MAC-VO/MAC-VO" target="_blank" rel="noopener noreferrer">
+              Mac-VO
+            </a>  in structured, cluttered urban environment
+          </h2>
+        </div>
+      </div>
+    </div>
+  </div>
+  </section>
+
+<!--License -->
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">License</h2>
+    <p class="has-text-justified">
+      The TartanGround dataset is licensed under the 
+      <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">
+        Creative Commons Attribution 4.0 International License
+      </a>. 
+      The accompanying toolkit and codebase are released under the 
+      <a href="https://opensource.org/license/mit" target="_blank" rel="noopener noreferrer">
+        MIT License
+      </a>.
+    </p>
+  </div>
+</section>
+
+
+<!--End License -->
+
+<!--BibTex citation -->
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@article{patel2025tartanground,
+      title={TartanGround: A Large-Scale Dataset for Ground Robot Perception and Navigation},
+      author={Patel, Manthan and Yang, Fan and Qiu, Yuheng and Cadena, Cesar and Scherer, Sebastian and Hutter, Marco and Wang, Wenshan},
+      journal={arXiv preprint arXiv:2505.10696},
+      year={2025}}
+    </code></pre>
+  </div>
+</section>
+<!--End BibTex citation -->
+
+  <footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+
+          <p>
+            This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a> which was adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
+            You are free to borrow the of this website, we just ask that you link back to this page in the footer. <br> This website is licensed under a <a rel="license"  href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
