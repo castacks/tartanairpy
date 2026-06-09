@@ -1,0 +1,12 @@
+{
+    "environments": 0.109,
+    "examples": 0.008,
+    "flow_sampling": 0.017,
+    "index": 0.004,
+    "installation": 0.007,
+    "modalities": 0.01,
+    "segmentation": 0.122,
+    "tartanground": 0.04,
+    "troubleshooting": 0.001,
+    "usage": 0.052
+}
