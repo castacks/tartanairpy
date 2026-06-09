@@ -48,11 +48,13 @@ class TartanAirModule():
 
         self.camera_directions = ["front", "right", "back", "left", "top", "bottom"]
 
-        self.modality_names = ['image', 'depth', 'seg', 'imu', 'lidar', 'flow', 'event', 'mp4']
+        self.modality_names = ['image', 'depth', 'seg', 'imu', 'lidar', 'flow', 'events', 'mp4']
 
         self.cam_modalities = ['image', 'depth', 'seg'] # the modalities that support all camera names
 
         self.flow_camlist = ['lcam_front'] # valid camera name for the flow modality
+
+        self.event_camlist = ['lcam_front', 'rcam_front'] # valid camera name for the events modality
 
         self.env_names = [
             'AbandonedCable', 
@@ -355,29 +357,48 @@ class TartanAirModule():
         print_warn(f"The available difficulties are: {self.difficulty_names}")
         return False
 
-    def compile_modality_and_cameraname(self, modalities, camera_names):
+    def compile_modality_and_cameraname(self, difficulties, modalities, camera_names, mute = False):
         folderlist = []
-        for mod in modalities:
-            if mod in self.cam_modalities:
-                for camname in camera_names:
-                    folderstr =  mod + '_' + camname 
-                    folderlist.append(folderstr)
-            elif mod == 'flow':
-                for camname in camera_names:
-                    if camname in self.flow_camlist:
+
+        for difficulty in difficulties:
+            diffstr = 'Data_' + difficulty + '/'
+
+            for mod in modalities:
+                if mod in self.cam_modalities:
+                    for camname in camera_names:
                         folderstr =  mod + '_' + camname 
-                        folderlist.append(folderstr)
-                    else:
-                        print_warn("Warn: flow modality doesn't have {}! We only have flow for {}".format(camname, self.flow_camlist))
-            elif mod == 'lidar' or mod == 'imu': # for lidar and imu
-                folderstr = mod
-                folderlist.append(folderstr)
-            elif mod == 'mp4' and "lcam_front" in camera_names:
-                folderstr =  mod + '_lcam_front' 
-                folderlist.append(folderstr)
-            else:
-                if mod != "pose" and mod != "event":
-                    print_warn("Warn: note modality {} needs to be processed separately".format(mod))
+                        folderlist.append(diffstr + folderstr)
+                elif mod == 'flow':
+                    for camname in camera_names:
+                        if camname in self.flow_camlist:
+                            folderstr =  mod + '_' + camname 
+                            folderlist.append(diffstr + folderstr)
+                        else:
+                            if not mute:
+                                print_warn("Warn: flow modality doesn't have {}! We only have flow for {}".format(camname, self.flow_camlist))
+                elif mod == 'events':
+                    if difficulty != 'easy':
+                        if not mute:
+                            print_warn("Warn: events modality only exists for easy, skip the event modality for {}".format(difficulty))
+                        continue
+                    for camname in camera_names:
+                        if camname in self.event_camlist:
+                            folderstr =  mod + '_' + camname 
+                            folderlist.append(diffstr + folderstr)
+                        else:
+                            if not mute:
+                                print_warn("Warn: events modality doesn't have {}! We only have event for {}".format(camname, self.event_camlist))
+
+                elif mod == 'lidar' or mod == 'imu': # for lidar and imu
+                    folderstr = mod
+                    folderlist.append(diffstr + folderstr)
+                elif mod == 'mp4' and "lcam_front" in camera_names:
+                    folderstr =  mod + '_lcam_front' 
+                    folderlist.append(diffstr + folderstr)
+                else:
+                    if mod != "pose":
+                        if not mute:
+                            print_warn("Warn: note modality {} needs to be processed separately".format(mod))
                 
         return folderlist
 

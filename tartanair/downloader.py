@@ -30,7 +30,7 @@ def chunked_iterable(iterable, chunk_size):
         yield chunk
 
 class AirLabDownloader(object):
-    def __init__(self, bucket_name = 'tartanair2') -> None:
+    def __init__(self, bucket_name = 'tartanair_v2') -> None:
         import boto3
         from botocore import UNSIGNED
         from botocore.client import Config
@@ -139,11 +139,12 @@ class AirLabDownloader(object):
 
 class HuggingfaceDownloader(object):
     def __init__(self, bucket_name = 'tartanair2') -> None:
-        from huggingface_hub import snapshot_download
+        from huggingface_hub import snapshot_download, HfApi
         self.chunk_size = 100  # Number of files to download per chunk from Hugging Face
+        self.api = HfApi()
 
         if bucket_name == 'tartanair2':
-            pass
+            self.repo_id = "theairlabcmu/tartanair2"
         elif bucket_name == 'tartanground':
             self.repo_id = "theairlabcmu/TartanGround"
         else:
@@ -152,9 +153,16 @@ class HuggingfaceDownloader(object):
         self.downloader = snapshot_download
 
     def download(self, filelist, output_dir):
+        repofiles = self.api.list_repo_files(self.repo_id, repo_type="dataset")
+        filelist_exists = []
+        for file in filelist:
+            if file not in repofiles:
+                print_error(f"Error: File {file} not found in Hugging Face repo {self.repo_id}.")
+            else:
+                filelist_exists.append(file)
 
         success_source_files, success_target_files = [], []
-        for idx, chunk in enumerate(chunked_iterable(filelist, self.chunk_size), start=1):
+        for idx, chunk in enumerate(chunked_iterable(filelist_exists, self.chunk_size), start=1):
             print(f"\n📦 Chunk {idx}: Downloading {len(chunk)} files...")
             try:
                 self.downloader(
@@ -178,12 +186,11 @@ class HuggingfaceDownloader(object):
 class TartanAirDownloader(TartanAirModule):
     def __init__(self, tartanair_data_root):
         super().__init__(tartanair_data_root)
-
+        pass
         # self.downloader = CloudFlareDownloader()
-        self.downloader = AirLabDownloader(bucket_name = 'tartanair_v2')
-        self.downloader = AirLabDownloader(bucket_name = 'tartanair_v2')
+        # self.downloader = AirLabDownloader(bucket_name = 'tartanair_v2')
 
-    def generate_filelist(self, envs, difficulties, modalities, camera_names): 
+    def generate_filelist(self, envs, difficulties, modalities, camera_names, mute = False): 
         '''
         Return a list of zipfiles to be downloaded
         Example: 
@@ -197,18 +204,13 @@ class TartanAirDownloader(TartanAirModule):
         zipfilelist = []
         for env in envs: 
             envstr = env + '/'
-            for difficulty in difficulties:
-                diffstr = envstr + 'Data_' + difficulty + '/'
-                folderlist = self.compile_modality_and_cameraname(modalities, camera_names)
-                zipfiles = [diffstr + fl + '.zip' for fl in folderlist]
-                zipfilelist.extend(zipfiles)
-            if 'event' in modalities:
-                zipfile = envstr + 'Data_easy/events.zip' # hard code here, only easy events are available
-                zipfilelist.append(zipfile)
+            folderlist = self.compile_modality_and_cameraname(difficulties,modalities, camera_names, mute = mute)
+            zipfiles = [envstr + fl + '.zip' for fl in folderlist]
+            zipfilelist.extend(zipfiles)
 
         return zipfilelist
 
-    def doublecheck_filelist(self, filelist, gtfile=''):
+    def doublecheck_filelist(self, filelist, gtfile='', mute = False):
         '''
         Double check the filelist with the predefined filelist
         Print the total size of the files to be downloaded
@@ -222,19 +224,26 @@ class TartanAirDownloader(TartanAirModule):
             filesizedict[name] = float(size)
 
         totalsize = 0
+        updated_filelist = []
         for ff in filelist:
             if not ff in filesizedict:
+                if ff.endswith('events_rcam_front.zip'): # some env doesn't has event_rcam
+                    if not mute:
+                        print_warn("Warning: {} is not included in the raw data".format(ff))
+                    continue
                 print_error("Error: invalid file {}".format(ff))
-                return False
+                return False, updated_filelist
             totalsize += filesizedict[ff]
+            updated_filelist.append(ff)
 
-        print("*****")
-        print("The following {} files are going to be downloaded".format(len(filelist)))
-        for ff in filelist:
-            print("  - ", ff)
-        print_highlight("The total size is {} GB! Please make sure you have enough space!".format(totalsize))
-        print("*****")
-        return True
+        if not mute:
+            print("*****")
+            print("The following {} files are going to be downloaded".format(len(updated_filelist)))
+            for ff in updated_filelist:
+                print("  - ", ff)
+            print_highlight("The total size is {} GB! Please make sure you have enough space!".format(totalsize))
+            print("*****")
+        return True, updated_filelist
 
     def unzip_files(self, zipfilelist, remove_after = False):
         print_warn('Note unzipping will overwrite existing files ...')
@@ -328,9 +337,17 @@ class TartanAirDownloader(TartanAirModule):
 
         return suc, all_success_filelist
 
-    def download_multi_thread(self, env = [], difficulty = [], modality = [], camera_name = [], config = None, unzip = False, delete_zip = False, max_failure_trial = 3, num_workers = 8, **kwargs):
+    def download_multi_thread(self, env = [], difficulty = [], modality = [], camera_name = [], config = None, unzip = False, delete_zip = False, max_failure_trial = 3, num_workers = 8, data_source = "airlab", **kwargs):
 
         env, difficulty, modality, camera_name, unzip, delete_zip = self.refine_parameters(env, difficulty, modality, camera_name, unzip, delete_zip, config)
+
+        """
+        Multithreaded download that first generates the complete file list, then downloads in chunks.
+        """
+        if data_source == 'airlab':
+            self.downloader = AirLabDownloader(bucket_name = 'tartanair_v2')
+        elif data_source == 'huggingface':
+            self.downloader = HuggingfaceDownloader(bucket_name = 'tartanair2')
 
         # Check that the environments are valid.
         if not self.check_env_valid(env):
@@ -348,10 +365,11 @@ class TartanAirDownloader(TartanAirModule):
         zipfilelist = self.generate_filelist(env, difficulty, modality, camera_name)
         CURDIR = os.path.dirname(os.path.abspath(__file__))
         gtfile = CURDIR + '/download_files.txt'
-        if not self.doublecheck_filelist(zipfilelist, gtfile = gtfile):
+        check_suc, zipfilelist = self.doublecheck_filelist(zipfilelist, gtfile = gtfile)
+        if not check_suc:
             return False
 
-        if num_workers <= 1:
+        if num_workers <= 1 or data_source == 'huggingface':
             # use single thread download
             suc, all_success_filelist = self.download_single_thread(zipfilelist, max_failure_trial = max_failure_trial)
         else: 
@@ -359,7 +377,9 @@ class TartanAirDownloader(TartanAirModule):
                 futures = []
                 for ee in env:
                     for dd in difficulty:
-                        subfilelist = self.generate_filelist([ee], [dd], modality, camera_name)
+                        subfilelist = self.generate_filelist([ee], [dd], modality, camera_name, mute = True)
+                        _, subfilelist = self.doublecheck_filelist(subfilelist, gtfile = gtfile, mute = True) # mainly for rcam_events because it is missing for some envs. 
+
                         futures.append(executor.submit(self.download_single_thread, zipfilelist = subfilelist, 
                                        max_failure_trial = max_failure_trial,))
                         # Wait for a few seconds to avoid overloading the data server
@@ -518,7 +538,8 @@ class TartanGroundDownloader(TartanAirDownloader):
         # Validate against ground truth
         CURDIR = os.path.dirname(os.path.abspath(__file__))
         gtfile = CURDIR + '/download_ground_files.txt'
-        if not self.doublecheck_filelist(zipfilelist, gtfile=gtfile):
+        check_suc, zipfilelist = self.doublecheck_filelist(zipfilelist, gtfile = gtfile)
+        if not check_suc:
             return None, None
 
         # # Generate target file list

@@ -14,7 +14,6 @@ AbandonedCable/Data_easy/depth_rcam_front.zip 5.4489441 G
 AbandonedCable/Data_easy/depth_rcam_left.zip 5.755241717 G
 AbandonedCable/Data_easy/depth_rcam_right.zip 5.76792843 G
 AbandonedCable/Data_easy/depth_rcam_top.zip 3.475895905 G
-AbandonedCable/Data_easy/events.zip 109.17231962550431 G
 AbandonedCable/Data_easy/flow_lcam_front.zip 8.436072144 G
 AbandonedCable/Data_easy/image_lcam_back.zip 13.402229303 G
 AbandonedCable/Data_easy/image_lcam_bottom.zip 15.865297854 G
@@ -118,7 +117,6 @@ AbandonedFactory/Data_easy/depth_rcam_front.zip 1.972871662 G
 AbandonedFactory/Data_easy/depth_rcam_left.zip 1.959334447 G
 AbandonedFactory/Data_easy/depth_rcam_right.zip 2.030212238 G
 AbandonedFactory/Data_easy/depth_rcam_top.zip 1.3351291 G
-AbandonedFactory/Data_easy/events.zip 27.230900534428656 G
 AbandonedFactory/Data_easy/flow_lcam_front.zip 2.838131071 G
 AbandonedFactory/Data_easy/image_lcam_back.zip 4.14482746 G
 AbandonedFactory/Data_easy/image_lcam_bottom.zip 4.798724544 G
@@ -222,7 +220,6 @@ AbandonedFactory2/Data_easy/depth_rcam_front.zip 0.715326329 G
 AbandonedFactory2/Data_easy/depth_rcam_left.zip 0.73573234 G
 AbandonedFactory2/Data_easy/depth_rcam_right.zip 0.719371697 G
 AbandonedFactory2/Data_easy/depth_rcam_top.zip 0.522341401 G
-AbandonedFactory2/Data_easy/events.zip 19.357710039243102 G
 AbandonedFactory2/Data_easy/flow_lcam_front.zip 1.251468863 G
 AbandonedFactory2/Data_easy/image_lcam_back.zip 1.68347012 G
 AbandonedFactory2/Data_easy/image_lcam_bottom.zip 1.331157089 G
@@ -326,7 +323,6 @@ AbandonedSchool/Data_easy/depth_rcam_front.zip 2.974744195 G
 AbandonedSchool/Data_easy/depth_rcam_left.zip 2.93608844 G
 AbandonedSchool/Data_easy/depth_rcam_right.zip 2.945786195 G
 AbandonedSchool/Data_easy/depth_rcam_top.zip 1.859285133 G
-AbandonedSchool/Data_easy/events.zip 23.699512301012874 G
 AbandonedSchool/Data_easy/flow_lcam_front.zip 5.340727581 G
 AbandonedSchool/Data_easy/image_lcam_back.zip 8.781575463 G
 AbandonedSchool/Data_easy/image_lcam_bottom.zip 10.073128487 G
@@ -430,7 +426,6 @@ AmericanDiner/Data_easy/depth_rcam_front.zip 0.365905956 G
 AmericanDiner/Data_easy/depth_rcam_left.zip 0.383727124 G
 AmericanDiner/Data_easy/depth_rcam_right.zip 0.361814852 G
 AmericanDiner/Data_easy/depth_rcam_top.zip 0.205190401 G
-AmericanDiner/Data_easy/events.zip 7.576463023200631 G
 AmericanDiner/Data_easy/flow_lcam_front.zip 0.662231504 G
 AmericanDiner/Data_easy/image_lcam_back.zip 1.306797458 G
 AmericanDiner/Data_easy/image_lcam_bottom.zip 1.247726538 G
@@ -534,7 +529,6 @@ AmusementPark/Data_easy/depth_rcam_front.zip 4.131448695 G
 AmusementPark/Data_easy/depth_rcam_left.zip 4.10814454 G
 AmusementPark/Data_easy/depth_rcam_right.zip 4.20596306 G
 AmusementPark/Data_easy/depth_rcam_top.zip 2.425951873 G
-AmusementPark/Data_easy/events.zip 112.42548988200724 G
 AmusementPark/Data_easy/flow_lcam_front.zip 5.138274834 G
 AmusementPark/Data_easy/image_lcam_back.zip 7.56140459 G
 AmusementPark/Data_easy/image_lcam_bottom.zip 8.428598366 G
@@ -638,7 +632,6 @@ AncientTowns/Data_easy/depth_rcam_front.zip 1.445880935 G
 AncientTowns/Data_easy/depth_rcam_left.zip 1.449861919 G
 AncientTowns/Data_easy/depth_rcam_right.zip 1.498186146 G
 AncientTowns/Data_easy/depth_rcam_top.zip 1.133496281 G
-AncientTowns/Data_easy/events.zip 39.3120023580268 G
 AncientTowns/Data_easy/flow_lcam_front.zip 2.420480156 G
 AncientTowns/Data_easy/image_lcam_back.zip 3.993585388 G
 AncientTowns/Data_easy/image_lcam_bottom.zip 4.647496236 G
@@ -742,7 +735,6 @@ Antiquity3D/Data_easy/depth_rcam_front.zip 3.15181809 G
 Antiquity3D/Data_easy/depth_rcam_left.zip 3.277117204 G
 Antiquity3D/Data_easy/depth_rcam_right.zip 3.217843477 G
 Antiquity3D/Data_easy/depth_rcam_top.zip 2.224276314 G
-Antiquity3D/Data_easy/events.zip 40.565788737498224 G
 Antiquity3D/Data_easy/flow_lcam_front.zip 4.881245656 G
 Antiquity3D/Data_easy/image_lcam_back.zip 6.439499015 G
 Antiquity3D/Data_easy/image_lcam_bottom.zip 8.224643057 G
@@ -846,7 +838,6 @@ Apocalyptic/Data_easy/depth_rcam_front.zip 1.616164884 G
 Apocalyptic/Data_easy/depth_rcam_left.zip 1.61048782 G
 Apocalyptic/Data_easy/depth_rcam_right.zip 1.667112544 G
 Apocalyptic/Data_easy/depth_rcam_top.zip 1.305932185 G
-Apocalyptic/Data_easy/events.zip 13.796810832805932 G
 Apocalyptic/Data_easy/flow_lcam_front.zip 2.148834101 G
 Apocalyptic/Data_easy/image_lcam_back.zip 3.48592878 G
 Apocalyptic/Data_easy/image_lcam_bottom.zip 3.888806155 G
@@ -950,7 +941,6 @@ ArchVizTinyHouseDay/Data_easy/depth_rcam_front.zip 0.192927269 G
 ArchVizTinyHouseDay/Data_easy/depth_rcam_left.zip 0.175647834 G
 ArchVizTinyHouseDay/Data_easy/depth_rcam_right.zip 0.187021153 G
 ArchVizTinyHouseDay/Data_easy/depth_rcam_top.zip 0.113866573 G
-ArchVizTinyHouseDay/Data_easy/events.zip 3.8625497575849295 G
 ArchVizTinyHouseDay/Data_easy/flow_lcam_front.zip 0.407933838 G
 ArchVizTinyHouseDay/Data_easy/image_lcam_back.zip 0.563460907 G
 ArchVizTinyHouseDay/Data_easy/image_lcam_bottom.zip 0.592882671 G
@@ -1054,7 +1044,6 @@ ArchVizTinyHouseNight/Data_easy/depth_rcam_front.zip 0.192931775 G
 ArchVizTinyHouseNight/Data_easy/depth_rcam_left.zip 0.175647869 G
 ArchVizTinyHouseNight/Data_easy/depth_rcam_right.zip 0.186974283 G
 ArchVizTinyHouseNight/Data_easy/depth_rcam_top.zip 0.113795629 G
-ArchVizTinyHouseNight/Data_easy/events.zip 7.72179626300931 G
 ArchVizTinyHouseNight/Data_easy/flow_lcam_front.zip 0.407886752 G
 ArchVizTinyHouseNight/Data_easy/image_lcam_back.zip 0.41484446 G
 ArchVizTinyHouseNight/Data_easy/image_lcam_bottom.zip 0.439034066 G
@@ -1158,7 +1147,6 @@ BrushifyMoon/Data_easy/depth_rcam_front.zip 2.701597587 G
 BrushifyMoon/Data_easy/depth_rcam_left.zip 2.688658721 G
 BrushifyMoon/Data_easy/depth_rcam_right.zip 2.713675271 G
 BrushifyMoon/Data_easy/depth_rcam_top.zip 0.075489569 G
-BrushifyMoon/Data_easy/events.zip 202.38272092863917 G
 BrushifyMoon/Data_easy/flow_lcam_front.zip 6.106937482 G
 BrushifyMoon/Data_easy/image_lcam_back.zip 9.877832816 G
 BrushifyMoon/Data_easy/image_lcam_bottom.zip 21.078416534 G
@@ -1262,7 +1250,6 @@ CarWelding/Data_easy/depth_rcam_front.zip 1.93022009 G
 CarWelding/Data_easy/depth_rcam_left.zip 2.067114837 G
 CarWelding/Data_easy/depth_rcam_right.zip 2.166872387 G
 CarWelding/Data_easy/depth_rcam_top.zip 1.592018414 G
-CarWelding/Data_easy/events.zip 56.18492333590984 G
 CarWelding/Data_easy/flow_lcam_front.zip 3.042427947 G
 CarWelding/Data_easy/image_lcam_back.zip 5.533280432 G
 CarWelding/Data_easy/image_lcam_bottom.zip 4.606030529 G
@@ -1366,7 +1353,6 @@ CastleFortress/Data_easy/depth_rcam_front.zip 6.939267504 G
 CastleFortress/Data_easy/depth_rcam_left.zip 7.060146333 G
 CastleFortress/Data_easy/depth_rcam_right.zip 6.873638464 G
 CastleFortress/Data_easy/depth_rcam_top.zip 4.94400286 G
-CastleFortress/Data_easy/events.zip 173.2498695300892 G
 CastleFortress/Data_easy/flow_lcam_front.zip 9.660329472 G
 CastleFortress/Data_easy/image_lcam_back.zip 17.642528908 G
 CastleFortress/Data_easy/image_lcam_bottom.zip 19.84992872 G
@@ -1470,7 +1456,6 @@ CoalMine/Data_easy/depth_rcam_front.zip 0.994525606 G
 CoalMine/Data_easy/depth_rcam_left.zip 1.042336337 G
 CoalMine/Data_easy/depth_rcam_right.zip 1.008167933 G
 CoalMine/Data_easy/depth_rcam_top.zip 0.896652805 G
-CoalMine/Data_easy/events.zip 23.737462357617915 G
 CoalMine/Data_easy/flow_lcam_front.zip 1.648201244 G
 CoalMine/Data_easy/image_lcam_back.zip 2.148697476 G
 CoalMine/Data_easy/image_lcam_bottom.zip 1.930423677 G
@@ -1574,7 +1559,6 @@ ConstructionSite/Data_easy/depth_rcam_front.zip 2.711563901 G
 ConstructionSite/Data_easy/depth_rcam_left.zip 2.621639106 G
 ConstructionSite/Data_easy/depth_rcam_right.zip 2.883380969 G
 ConstructionSite/Data_easy/depth_rcam_top.zip 1.485663545 G
-ConstructionSite/Data_easy/events.zip 89.28555661719292 G
 ConstructionSite/Data_easy/flow_lcam_front.zip 4.18015816 G
 ConstructionSite/Data_easy/image_lcam_back.zip 5.189843206 G
 ConstructionSite/Data_easy/image_lcam_bottom.zip 4.018456443 G
@@ -1678,7 +1662,6 @@ CountryHouse/Data_easy/depth_rcam_front.zip 0.361983709 G
 CountryHouse/Data_easy/depth_rcam_left.zip 0.374036597 G
 CountryHouse/Data_easy/depth_rcam_right.zip 0.354230116 G
 CountryHouse/Data_easy/depth_rcam_top.zip 0.261067413 G
-CountryHouse/Data_easy/events.zip 7.276569786481559 G
 CountryHouse/Data_easy/flow_lcam_front.zip 0.811244855 G
 CountryHouse/Data_easy/image_lcam_back.zip 1.172193013 G
 CountryHouse/Data_easy/image_lcam_bottom.zip 1.157172851 G
@@ -1783,7 +1766,6 @@ CyberPunkDowntown/Data_easy/depth_rcam_front.zip 2.939510198 G
 CyberPunkDowntown/Data_easy/depth_rcam_left.zip 3.140587428 G
 CyberPunkDowntown/Data_easy/depth_rcam_right.zip 3.143024958 G
 CyberPunkDowntown/Data_easy/depth_rcam_top.zip 3.222408703 G
-CyberPunkDowntown/Data_easy/events.zip 10.002756534144282 G
 CyberPunkDowntown/Data_easy/flow_lcam_front.zip 4.097920837 G
 CyberPunkDowntown/Data_easy/image_lcam_back.zip 7.296527141 G
 CyberPunkDowntown/Data_easy/image_lcam_bottom.zip 7.09015738 G
@@ -1887,7 +1869,6 @@ Cyberpunk/Data_easy/depth_rcam_front.zip 4.336506741 G
 Cyberpunk/Data_easy/depth_rcam_left.zip 4.505573329 G
 Cyberpunk/Data_easy/depth_rcam_right.zip 4.639786931 G
 Cyberpunk/Data_easy/depth_rcam_top.zip 4.401198054 G
-Cyberpunk/Data_easy/events.zip 32.63250592537224 G
 Cyberpunk/Data_easy/flow_lcam_front.zip 5.306466309 G
 Cyberpunk/Data_easy/image_lcam_back.zip 8.591964385 G
 Cyberpunk/Data_easy/image_lcam_bottom.zip 10.514328309 G
@@ -1991,7 +1972,6 @@ DesertGasStation/Data_easy/depth_rcam_front.zip 0.73010184 G
 DesertGasStation/Data_easy/depth_rcam_left.zip 0.728748099 G
 DesertGasStation/Data_easy/depth_rcam_right.zip 0.774608828 G
 DesertGasStation/Data_easy/depth_rcam_top.zip 0.413306758 G
-DesertGasStation/Data_easy/events.zip 5.155338911339641 G
 DesertGasStation/Data_easy/flow_lcam_front.zip 1.110979713 G
 DesertGasStation/Data_easy/image_lcam_back.zip 1.26468397 G
 DesertGasStation/Data_easy/image_lcam_bottom.zip 1.088736797 G
@@ -2095,7 +2075,6 @@ Downtown/Data_easy/depth_rcam_front.zip 5.995804124 G
 Downtown/Data_easy/depth_rcam_left.zip 5.872411 G
 Downtown/Data_easy/depth_rcam_right.zip 5.863141211 G
 Downtown/Data_easy/depth_rcam_top.zip 5.15495334 G
-Downtown/Data_easy/events.zip 229.6086532296613 G
 Downtown/Data_easy/flow_lcam_front.zip 7.60958731 G
 Downtown/Data_easy/image_lcam_back.zip 14.23202779 G
 Downtown/Data_easy/image_lcam_bottom.zip 13.615741031 G
@@ -2199,7 +2178,6 @@ EndofTheWorld/Data_easy/depth_rcam_front.zip 1.348425358 G
 EndofTheWorld/Data_easy/depth_rcam_left.zip 1.403944591 G
 EndofTheWorld/Data_easy/depth_rcam_right.zip 1.31135435 G
 EndofTheWorld/Data_easy/depth_rcam_top.zip 0.86547149 G
-EndofTheWorld/Data_easy/events.zip 13.095969357527792 G
 EndofTheWorld/Data_easy/flow_lcam_front.zip 2.193059753 G
 EndofTheWorld/Data_easy/image_lcam_back.zip 4.13893431 G
 EndofTheWorld/Data_easy/image_lcam_bottom.zip 4.673936032 G
@@ -2303,7 +2281,6 @@ FactoryWeather/Data_easy/depth_rcam_front.zip 5.984615296 G
 FactoryWeather/Data_easy/depth_rcam_left.zip 6.244092465 G
 FactoryWeather/Data_easy/depth_rcam_right.zip 6.114334164 G
 FactoryWeather/Data_easy/depth_rcam_top.zip 3.055630532 G
-FactoryWeather/Data_easy/events.zip 24.025281614623964 G
 FactoryWeather/Data_easy/flow_lcam_front.zip 10.85554964 G
 FactoryWeather/Data_easy/image_lcam_back.zip 12.797704897 G
 FactoryWeather/Data_easy/image_lcam_bottom.zip 15.812414386 G
@@ -2407,7 +2384,6 @@ Fantasy/Data_easy/depth_rcam_front.zip 2.323013435 G
 Fantasy/Data_easy/depth_rcam_left.zip 2.310490798 G
 Fantasy/Data_easy/depth_rcam_right.zip 2.382119773 G
 Fantasy/Data_easy/depth_rcam_top.zip 1.378545841 G
-Fantasy/Data_easy/events.zip 22.09542430844158 G
 Fantasy/Data_easy/flow_lcam_front.zip 2.88086115 G
 Fantasy/Data_easy/image_lcam_back.zip 6.633817564 G
 Fantasy/Data_easy/image_lcam_bottom.zip 8.973310449 G
@@ -2511,7 +2487,6 @@ ForestEnv/Data_easy/depth_rcam_front.zip 11.301259054 G
 ForestEnv/Data_easy/depth_rcam_left.zip 11.485225877 G
 ForestEnv/Data_easy/depth_rcam_right.zip 11.260568607 G
 ForestEnv/Data_easy/depth_rcam_top.zip 6.978328989 G
-ForestEnv/Data_easy/events.zip 265.4465402364731 G
 ForestEnv/Data_easy/flow_lcam_front.zip 14.2418009 G
 ForestEnv/Data_easy/image_lcam_back.zip 20.704839098 G
 ForestEnv/Data_easy/image_lcam_bottom.zip 23.497890856 G
@@ -2615,7 +2590,6 @@ Gascola/Data_easy/depth_rcam_front.zip 7.920976333 G
 Gascola/Data_easy/depth_rcam_left.zip 7.993236121 G
 Gascola/Data_easy/depth_rcam_right.zip 8.139709682 G
 Gascola/Data_easy/depth_rcam_top.zip 6.490330539 G
-Gascola/Data_easy/events.zip 102.96806020662189 G
 Gascola/Data_easy/flow_lcam_front.zip 11.019075991 G
 Gascola/Data_easy/image_lcam_back.zip 9.204543288 G
 Gascola/Data_easy/image_lcam_bottom.zip 8.269871644 G
@@ -2719,7 +2693,6 @@ GothicIsland/Data_easy/depth_rcam_front.zip 6.357467171 G
 GothicIsland/Data_easy/depth_rcam_left.zip 6.579785619 G
 GothicIsland/Data_easy/depth_rcam_right.zip 6.370406819 G
 GothicIsland/Data_easy/depth_rcam_top.zip 5.614161952 G
-GothicIsland/Data_easy/events.zip 24.888017195276916 G
 GothicIsland/Data_easy/flow_lcam_front.zip 9.446383705 G
 GothicIsland/Data_easy/image_lcam_back.zip 11.061607711 G
 GothicIsland/Data_easy/image_lcam_bottom.zip 12.780668379 G
@@ -2823,7 +2796,6 @@ GreatMarsh/Data_easy/depth_rcam_front.zip 21.040391214 G
 GreatMarsh/Data_easy/depth_rcam_left.zip 21.149031202 G
 GreatMarsh/Data_easy/depth_rcam_right.zip 20.984831351 G
 GreatMarsh/Data_easy/depth_rcam_top.zip 10.183842814 G
-GreatMarsh/Data_easy/events.zip 8.696786959655583 G
 GreatMarsh/Data_easy/flow_lcam_front.zip 27.634843062 G
 GreatMarsh/Data_easy/image_lcam_back.zip 29.933345352 G
 GreatMarsh/Data_easy/image_lcam_bottom.zip 46.744161619 G
@@ -2927,7 +2899,6 @@ HQWesternSaloon/Data_easy/depth_rcam_front.zip 1.171502905 G
 HQWesternSaloon/Data_easy/depth_rcam_left.zip 1.259949905 G
 HQWesternSaloon/Data_easy/depth_rcam_right.zip 1.219131317 G
 HQWesternSaloon/Data_easy/depth_rcam_top.zip 0.922120286 G
-HQWesternSaloon/Data_easy/events.zip 12.439348638989031 G
 HQWesternSaloon/Data_easy/flow_lcam_front.zip 2.149277596 G
 HQWesternSaloon/Data_easy/image_lcam_back.zip 2.730104762 G
 HQWesternSaloon/Data_easy/image_lcam_bottom.zip 3.577935595 G
@@ -3031,7 +3002,6 @@ HongKong/Data_easy/depth_rcam_front.zip 0.742857502 G
 HongKong/Data_easy/depth_rcam_left.zip 0.742808155 G
 HongKong/Data_easy/depth_rcam_right.zip 0.679976064 G
 HongKong/Data_easy/depth_rcam_top.zip 0.92935664 G
-HongKong/Data_easy/events.zip 7.5689157620072365 G
 HongKong/Data_easy/flow_lcam_front.zip 1.506663359 G
 HongKong/Data_easy/image_lcam_back.zip 1.56750923 G
 HongKong/Data_easy/image_lcam_bottom.zip 1.39176236 G
@@ -3135,7 +3105,6 @@ Hospital/Data_easy/depth_rcam_front.zip 3.189180114 G
 Hospital/Data_easy/depth_rcam_left.zip 3.39246391 G
 Hospital/Data_easy/depth_rcam_right.zip 3.329443546 G
 Hospital/Data_easy/depth_rcam_top.zip 2.316859931 G
-Hospital/Data_easy/events.zip 91.76110874582082 G
 Hospital/Data_easy/flow_lcam_front.zip 6.892283245 G
 Hospital/Data_easy/image_lcam_back.zip 11.21401838 G
 Hospital/Data_easy/image_lcam_bottom.zip 10.909265746 G
@@ -3239,7 +3208,6 @@ House/Data_easy/depth_rcam_front.zip 0.63350777 G
 House/Data_easy/depth_rcam_left.zip 0.647615351 G
 House/Data_easy/depth_rcam_right.zip 0.607166539 G
 House/Data_easy/depth_rcam_top.zip 0.408563648 G
-House/Data_easy/events.zip 7.176807049661875 G
 House/Data_easy/flow_lcam_front.zip 1.523436398 G
 House/Data_easy/image_lcam_back.zip 1.880776151 G
 House/Data_easy/image_lcam_bottom.zip 2.354031758 G
@@ -3343,7 +3311,6 @@ IndustrialHangar/Data_easy/depth_rcam_front.zip 3.416240588 G
 IndustrialHangar/Data_easy/depth_rcam_left.zip 3.484890743 G
 IndustrialHangar/Data_easy/depth_rcam_right.zip 3.254570726 G
 IndustrialHangar/Data_easy/depth_rcam_top.zip 2.154899307 G
-IndustrialHangar/Data_easy/events.zip 38.83719727396965 G
 IndustrialHangar/Data_easy/flow_lcam_front.zip 5.345060443 G
 IndustrialHangar/Data_easy/image_lcam_back.zip 6.27843404 G
 IndustrialHangar/Data_easy/image_lcam_bottom.zip 8.135860855 G
@@ -3447,7 +3414,6 @@ JapaneseAlley/Data_easy/depth_rcam_front.zip 1.165513769 G
 JapaneseAlley/Data_easy/depth_rcam_left.zip 1.234142188 G
 JapaneseAlley/Data_easy/depth_rcam_right.zip 1.277037927 G
 JapaneseAlley/Data_easy/depth_rcam_top.zip 1.119667898 G
-JapaneseAlley/Data_easy/events.zip 25.85152404755354 G
 JapaneseAlley/Data_easy/flow_lcam_front.zip 1.926724031 G
 JapaneseAlley/Data_easy/image_lcam_back.zip 3.890547334 G
 JapaneseAlley/Data_easy/image_lcam_bottom.zip 4.076090147 G
@@ -3551,7 +3517,6 @@ JapaneseCity/Data_easy/depth_rcam_front.zip 3.987216584 G
 JapaneseCity/Data_easy/depth_rcam_left.zip 4.229404685 G
 JapaneseCity/Data_easy/depth_rcam_right.zip 4.344749011 G
 JapaneseCity/Data_easy/depth_rcam_top.zip 3.854730035 G
-JapaneseCity/Data_easy/events.zip 26.949656108394265 G
 JapaneseCity/Data_easy/flow_lcam_front.zip 5.883684078 G
 JapaneseCity/Data_easy/image_lcam_back.zip 10.389732998 G
 JapaneseCity/Data_easy/image_lcam_bottom.zip 10.216540985 G
@@ -3655,7 +3620,6 @@ MiddleEast/Data_easy/depth_rcam_front.zip 2.682771729 G
 MiddleEast/Data_easy/depth_rcam_left.zip 2.780498508 G
 MiddleEast/Data_easy/depth_rcam_right.zip 2.685558148 G
 MiddleEast/Data_easy/depth_rcam_top.zip 1.914682003 G
-MiddleEast/Data_easy/events.zip 20.31178224645555 G
 MiddleEast/Data_easy/flow_lcam_front.zip 4.578391585 G
 MiddleEast/Data_easy/image_lcam_back.zip 5.896365249 G
 MiddleEast/Data_easy/image_lcam_bottom.zip 5.831403803 G
@@ -3759,7 +3723,6 @@ ModUrbanCity/Data_easy/depth_rcam_front.zip 3.430662926 G
 ModUrbanCity/Data_easy/depth_rcam_left.zip 3.639853407 G
 ModUrbanCity/Data_easy/depth_rcam_right.zip 3.508474315 G
 ModUrbanCity/Data_easy/depth_rcam_top.zip 2.665485744 G
-ModUrbanCity/Data_easy/events.zip 70.18692488502711 G
 ModUrbanCity/Data_easy/flow_lcam_front.zip 6.103529972 G
 ModUrbanCity/Data_easy/image_lcam_back.zip 10.440761221 G
 ModUrbanCity/Data_easy/image_lcam_bottom.zip 11.459252182 G
@@ -3863,7 +3826,6 @@ ModernCityDowntown/Data_easy/depth_rcam_front.zip 2.999337115 G
 ModernCityDowntown/Data_easy/depth_rcam_left.zip 3.056982593 G
 ModernCityDowntown/Data_easy/depth_rcam_right.zip 3.210664079 G
 ModernCityDowntown/Data_easy/depth_rcam_top.zip 2.561283717 G
-ModernCityDowntown/Data_easy/events.zip 26.837682627141476 G
 ModernCityDowntown/Data_easy/flow_lcam_front.zip 4.40681127 G
 ModernCityDowntown/Data_easy/image_lcam_back.zip 7.338562917 G
 ModernCityDowntown/Data_easy/image_lcam_bottom.zip 6.957983886 G
@@ -3967,7 +3929,6 @@ ModularNeighborhood/Data_easy/depth_rcam_front.zip 10.887980439 G
 ModularNeighborhood/Data_easy/depth_rcam_left.zip 11.325005488 G
 ModularNeighborhood/Data_easy/depth_rcam_right.zip 11.803281405 G
 ModularNeighborhood/Data_easy/depth_rcam_top.zip 9.940568034 G
-ModularNeighborhood/Data_easy/events.zip 359.50574984867126 G
 ModularNeighborhood/Data_easy/flow_lcam_front.zip 15.330512258 G
 ModularNeighborhood/Data_easy/image_lcam_back.zip 20.28280145 G
 ModularNeighborhood/Data_easy/image_lcam_bottom.zip 20.870058296 G
@@ -4071,7 +4032,6 @@ ModularNeighborhoodIntExt/Data_easy/depth_rcam_front.zip 4.758809696 G
 ModularNeighborhoodIntExt/Data_easy/depth_rcam_left.zip 5.246452758 G
 ModularNeighborhoodIntExt/Data_easy/depth_rcam_right.zip 5.001222005 G
 ModularNeighborhoodIntExt/Data_easy/depth_rcam_top.zip 4.915965397 G
-ModularNeighborhoodIntExt/Data_easy/events.zip 151.9913146486506 G
 ModularNeighborhoodIntExt/Data_easy/flow_lcam_front.zip 6.907609122 G
 ModularNeighborhoodIntExt/Data_easy/image_lcam_back.zip 9.572451165 G
 ModularNeighborhoodIntExt/Data_easy/image_lcam_bottom.zip 8.837535293 G
@@ -4175,7 +4135,6 @@ NordicHarbor/Data_easy/depth_rcam_front.zip 5.090139891 G
 NordicHarbor/Data_easy/depth_rcam_left.zip 5.406689484 G
 NordicHarbor/Data_easy/depth_rcam_right.zip 5.453728321 G
 NordicHarbor/Data_easy/depth_rcam_top.zip 4.40400574 G
-NordicHarbor/Data_easy/events.zip 168.04271008819342 G
 NordicHarbor/Data_easy/flow_lcam_front.zip 7.36129558 G
 NordicHarbor/Data_easy/image_lcam_back.zip 14.794071636 G
 NordicHarbor/Data_easy/image_lcam_bottom.zip 14.78797802 G
@@ -4279,7 +4238,6 @@ Ocean/Data_easy/depth_rcam_front.zip 2.770861391 G
 Ocean/Data_easy/depth_rcam_left.zip 2.84316922 G
 Ocean/Data_easy/depth_rcam_right.zip 2.608817043 G
 Ocean/Data_easy/depth_rcam_top.zip 0.833829383 G
-Ocean/Data_easy/events.zip 15.528365327045321 G
 Ocean/Data_easy/flow_lcam_front.zip 3.488471501 G
 Ocean/Data_easy/image_lcam_back.zip 5.326850255 G
 Ocean/Data_easy/image_lcam_bottom.zip 6.925851618 G
@@ -4383,7 +4341,6 @@ Office/Data_easy/depth_rcam_front.zip 0.940830957 G
 Office/Data_easy/depth_rcam_left.zip 1.080712466 G
 Office/Data_easy/depth_rcam_right.zip 1.080038864 G
 Office/Data_easy/depth_rcam_top.zip 0.534822097 G
-Office/Data_easy/events.zip 32.90676665958017 G
 Office/Data_easy/flow_lcam_front.zip 2.04986498 G
 Office/Data_easy/image_lcam_back.zip 2.673631563 G
 Office/Data_easy/image_lcam_bottom.zip 2.427041793 G
@@ -4487,7 +4444,6 @@ OldBrickHouseDay/Data_easy/depth_rcam_front.zip 1.130322285 G
 OldBrickHouseDay/Data_easy/depth_rcam_left.zip 1.146132598 G
 OldBrickHouseDay/Data_easy/depth_rcam_right.zip 1.150035862 G
 OldBrickHouseDay/Data_easy/depth_rcam_top.zip 0.682811514 G
-OldBrickHouseDay/Data_easy/events.zip 1.0109347430989146 G
 OldBrickHouseDay/Data_easy/flow_lcam_front.zip 2.185646858 G
 OldBrickHouseDay/Data_easy/image_lcam_back.zip 3.298621845 G
 OldBrickHouseDay/Data_easy/image_lcam_bottom.zip 3.889373448 G
@@ -4591,7 +4547,6 @@ OldBrickHouseNight/Data_easy/depth_rcam_front.zip 0.947784109 G
 OldBrickHouseNight/Data_easy/depth_rcam_left.zip 0.950074186 G
 OldBrickHouseNight/Data_easy/depth_rcam_right.zip 0.978957601 G
 OldBrickHouseNight/Data_easy/depth_rcam_top.zip 0.551896589 G
-OldBrickHouseNight/Data_easy/events.zip 34.8266346110031 G
 OldBrickHouseNight/Data_easy/flow_lcam_front.zip 1.928334889 G
 OldBrickHouseNight/Data_easy/image_lcam_back.zip 2.768166678 G
 OldBrickHouseNight/Data_easy/image_lcam_bottom.zip 3.184861394 G
@@ -4695,7 +4650,6 @@ OldIndustrialCity/Data_easy/depth_rcam_front.zip 4.65792261 G
 OldIndustrialCity/Data_easy/depth_rcam_left.zip 4.69118857 G
 OldIndustrialCity/Data_easy/depth_rcam_right.zip 4.599967697 G
 OldIndustrialCity/Data_easy/depth_rcam_top.zip 3.023018494 G
-OldIndustrialCity/Data_easy/events.zip 223.8473482951522 G
 OldIndustrialCity/Data_easy/flow_lcam_front.zip 5.787843852 G
 OldIndustrialCity/Data_easy/image_lcam_back.zip 12.235259951 G
 OldIndustrialCity/Data_easy/image_lcam_bottom.zip 14.409230087 G
@@ -4799,7 +4753,6 @@ OldScandinavia/Data_easy/depth_rcam_front.zip 7.093319014 G
 OldScandinavia/Data_easy/depth_rcam_left.zip 7.208377123 G
 OldScandinavia/Data_easy/depth_rcam_right.zip 7.17661167 G
 OldScandinavia/Data_easy/depth_rcam_top.zip 5.07525861 G
-OldScandinavia/Data_easy/events.zip 117.89039530418813 G
 OldScandinavia/Data_easy/flow_lcam_front.zip 8.484810814 G
 OldScandinavia/Data_easy/image_lcam_back.zip 8.902702196 G
 OldScandinavia/Data_easy/image_lcam_bottom.zip 7.52725165 G
@@ -4903,7 +4856,6 @@ OldTownFall/Data_easy/depth_rcam_front.zip 0.57585788 G
 OldTownFall/Data_easy/depth_rcam_left.zip 0.565617657 G
 OldTownFall/Data_easy/depth_rcam_right.zip 0.562300556 G
 OldTownFall/Data_easy/depth_rcam_top.zip 0.287191597 G
-OldTownFall/Data_easy/events.zip 10.746394673362374 G
 OldTownFall/Data_easy/flow_lcam_front.zip 0.840207394 G
 OldTownFall/Data_easy/image_lcam_back.zip 1.259430762 G
 OldTownFall/Data_easy/image_lcam_bottom.zip 1.377175079 G
@@ -5007,7 +4959,6 @@ OldTownNight/Data_easy/depth_rcam_front.zip 0.791052803 G
 OldTownNight/Data_easy/depth_rcam_left.zip 0.807392859 G
 OldTownNight/Data_easy/depth_rcam_right.zip 0.800727676 G
 OldTownNight/Data_easy/depth_rcam_top.zip 0.66749285 G
-OldTownNight/Data_easy/events.zip 24.19155488535762 G
 OldTownNight/Data_easy/flow_lcam_front.zip 1.100468653 G
 OldTownNight/Data_easy/image_lcam_back.zip 0.999183374 G
 OldTownNight/Data_easy/image_lcam_bottom.zip 1.124765711 G
@@ -5111,7 +5062,6 @@ OldTownSummer/Data_easy/depth_rcam_front.zip 0.75156183 G
 OldTownSummer/Data_easy/depth_rcam_left.zip 0.737907667 G
 OldTownSummer/Data_easy/depth_rcam_right.zip 0.790680738 G
 OldTownSummer/Data_easy/depth_rcam_top.zip 0.390650481 G
-OldTownSummer/Data_easy/events.zip 25.158302354626358 G
 OldTownSummer/Data_easy/flow_lcam_front.zip 1.134687108 G
 OldTownSummer/Data_easy/image_lcam_back.zip 1.639301694 G
 OldTownSummer/Data_easy/image_lcam_bottom.zip 1.801778598 G
@@ -5215,7 +5165,6 @@ OldTownWinter/Data_easy/depth_rcam_front.zip 0.797337461 G
 OldTownWinter/Data_easy/depth_rcam_left.zip 0.851733979 G
 OldTownWinter/Data_easy/depth_rcam_right.zip 0.833091915 G
 OldTownWinter/Data_easy/depth_rcam_top.zip 0.435232137 G
-OldTownWinter/Data_easy/events.zip 14.311039328575134 G
 OldTownWinter/Data_easy/flow_lcam_front.zip 1.188146369 G
 OldTownWinter/Data_easy/image_lcam_back.zip 1.618967926 G
 OldTownWinter/Data_easy/image_lcam_bottom.zip 2.188907772 G
@@ -5319,7 +5268,6 @@ PolarSciFi/Data_easy/depth_rcam_front.zip 1.399400494 G
 PolarSciFi/Data_easy/depth_rcam_left.zip 1.498453181 G
 PolarSciFi/Data_easy/depth_rcam_right.zip 1.479185014 G
 PolarSciFi/Data_easy/depth_rcam_top.zip 1.023940812 G
-PolarSciFi/Data_easy/events.zip 20.341655518859625 G
 PolarSciFi/Data_easy/flow_lcam_front.zip 2.136433808 G
 PolarSciFi/Data_easy/image_lcam_back.zip 3.295497512 G
 PolarSciFi/Data_easy/image_lcam_bottom.zip 3.789552644 G
@@ -5423,7 +5371,6 @@ Prison/Data_easy/depth_rcam_front.zip 3.633157597 G
 Prison/Data_easy/depth_rcam_left.zip 3.856822197 G
 Prison/Data_easy/depth_rcam_right.zip 3.71108679 G
 Prison/Data_easy/depth_rcam_top.zip 2.842881203 G
-Prison/Data_easy/events.zip 21.898777302354574 G
 Prison/Data_easy/flow_lcam_front.zip 6.305673231 G
 Prison/Data_easy/image_lcam_back.zip 9.610489711 G
 Prison/Data_easy/image_lcam_bottom.zip 11.349539929 G
@@ -5527,7 +5474,6 @@ Restaurant/Data_easy/depth_rcam_front.zip 1.283549827 G
 Restaurant/Data_easy/depth_rcam_left.zip 1.309825593 G
 Restaurant/Data_easy/depth_rcam_right.zip 1.310124849 G
 Restaurant/Data_easy/depth_rcam_top.zip 1.318987464 G
-Restaurant/Data_easy/events.zip 0.1942959288135171 G
 Restaurant/Data_easy/flow_lcam_front.zip 2.113566331 G
 Restaurant/Data_easy/image_lcam_back.zip 3.854874635 G
 Restaurant/Data_easy/image_lcam_bottom.zip 3.944222015 G
@@ -5631,7 +5577,6 @@ RetroOffice/Data_easy/depth_rcam_front.zip 0.180356772 G
 RetroOffice/Data_easy/depth_rcam_left.zip 0.172131017 G
 RetroOffice/Data_easy/depth_rcam_right.zip 0.170604733 G
 RetroOffice/Data_easy/depth_rcam_top.zip 0.135730169 G
-RetroOffice/Data_easy/events.zip 0.8267362304031849 G
 RetroOffice/Data_easy/flow_lcam_front.zip 0.334795744 G
 RetroOffice/Data_easy/image_lcam_back.zip 0.636504865 G
 RetroOffice/Data_easy/image_lcam_bottom.zip 0.585013132 G
@@ -5735,7 +5680,6 @@ Rome/Data_easy/depth_rcam_front.zip 1.726499162 G
 Rome/Data_easy/depth_rcam_left.zip 1.749630543 G
 Rome/Data_easy/depth_rcam_right.zip 1.723094223 G
 Rome/Data_easy/depth_rcam_top.zip 1.47405732 G
-Rome/Data_easy/events.zip 14.497937666252255 G
 Rome/Data_easy/flow_lcam_front.zip 3.123422728 G
 Rome/Data_easy/image_lcam_back.zip 4.765761665 G
 Rome/Data_easy/image_lcam_bottom.zip 5.619302636 G
@@ -5839,7 +5783,6 @@ Ruins/Data_easy/depth_rcam_front.zip 7.56569284 G
 Ruins/Data_easy/depth_rcam_left.zip 7.262663997 G
 Ruins/Data_easy/depth_rcam_right.zip 7.374694244 G
 Ruins/Data_easy/depth_rcam_top.zip 3.936072736 G
-Ruins/Data_easy/events.zip 280.26702059898525 G
 Ruins/Data_easy/flow_lcam_front.zip 9.860189614 G
 Ruins/Data_easy/image_lcam_back.zip 13.631768341 G
 Ruins/Data_easy/image_lcam_bottom.zip 17.171254112 G
@@ -5943,7 +5886,6 @@ SeasideTown/Data_easy/depth_rcam_front.zip 1.386830128 G
 SeasideTown/Data_easy/depth_rcam_left.zip 1.427834192 G
 SeasideTown/Data_easy/depth_rcam_right.zip 1.362789024 G
 SeasideTown/Data_easy/depth_rcam_top.zip 1.123016079 G
-SeasideTown/Data_easy/events.zip 30.034938832744956 G
 SeasideTown/Data_easy/flow_lcam_front.zip 1.959594122 G
 SeasideTown/Data_easy/image_lcam_back.zip 3.600253843 G
 SeasideTown/Data_easy/image_lcam_bottom.zip 4.155873694 G
@@ -6047,7 +5989,6 @@ SeasonalForestAutumn/Data_easy/depth_rcam_front.zip 4.603853295 G
 SeasonalForestAutumn/Data_easy/depth_rcam_left.zip 4.542627404 G
 SeasonalForestAutumn/Data_easy/depth_rcam_right.zip 4.508648838 G
 SeasonalForestAutumn/Data_easy/depth_rcam_top.zip 2.621230594 G
-SeasonalForestAutumn/Data_easy/events.zip 117.41654038708657 G
 SeasonalForestAutumn/Data_easy/flow_lcam_front.zip 6.602737743 G
 SeasonalForestAutumn/Data_easy/image_lcam_back.zip 8.456343347 G
 SeasonalForestAutumn/Data_easy/image_lcam_bottom.zip 9.886562554 G
@@ -6151,7 +6092,6 @@ SeasonalForestSpring/Data_easy/depth_rcam_front.zip 5.067442013 G
 SeasonalForestSpring/Data_easy/depth_rcam_left.zip 5.058147002 G
 SeasonalForestSpring/Data_easy/depth_rcam_right.zip 5.063566397 G
 SeasonalForestSpring/Data_easy/depth_rcam_top.zip 2.711976636 G
-SeasonalForestSpring/Data_easy/events.zip 122.40178291685879 G
 SeasonalForestSpring/Data_easy/flow_lcam_front.zip 7.218632359 G
 SeasonalForestSpring/Data_easy/image_lcam_back.zip 8.969806158 G
 SeasonalForestSpring/Data_easy/image_lcam_bottom.zip 10.033202135 G
@@ -6255,7 +6195,6 @@ SeasonalForestSummerNight/Data_easy/depth_rcam_front.zip 3.291685438 G
 SeasonalForestSummerNight/Data_easy/depth_rcam_left.zip 3.335500638 G
 SeasonalForestSummerNight/Data_easy/depth_rcam_right.zip 3.27746961 G
 SeasonalForestSummerNight/Data_easy/depth_rcam_top.zip 1.839611663 G
-SeasonalForestSummerNight/Data_easy/events.zip 113.75735983997583 G
 SeasonalForestSummerNight/Data_easy/flow_lcam_front.zip 4.713905991 G
 SeasonalForestSummerNight/Data_easy/image_lcam_back.zip 3.994856957 G
 SeasonalForestSummerNight/Data_easy/image_lcam_bottom.zip 3.198510377 G
@@ -6359,7 +6298,6 @@ SeasonalForestWinter/Data_easy/depth_rcam_front.zip 3.534582059 G
 SeasonalForestWinter/Data_easy/depth_rcam_left.zip 3.494495941 G
 SeasonalForestWinter/Data_easy/depth_rcam_right.zip 3.57774973 G
 SeasonalForestWinter/Data_easy/depth_rcam_top.zip 2.00624869 G
-SeasonalForestWinter/Data_easy/events.zip 56.04933922179043 G
 SeasonalForestWinter/Data_easy/flow_lcam_front.zip 5.185025348 G
 SeasonalForestWinter/Data_easy/image_lcam_back.zip 6.926396788 G
 SeasonalForestWinter/Data_easy/image_lcam_bottom.zip 7.263317493 G
@@ -6463,7 +6401,6 @@ SeasonalForestWinterNight/Data_easy/depth_rcam_front.zip 3.988667881 G
 SeasonalForestWinterNight/Data_easy/depth_rcam_left.zip 4.021268033 G
 SeasonalForestWinterNight/Data_easy/depth_rcam_right.zip 4.153267281 G
 SeasonalForestWinterNight/Data_easy/depth_rcam_top.zip 2.194720538 G
-SeasonalForestWinterNight/Data_easy/events.zip 56.57223295234144 G
 SeasonalForestWinterNight/Data_easy/flow_lcam_front.zip 5.850424637 G
 SeasonalForestWinterNight/Data_easy/image_lcam_back.zip 3.439573112 G
 SeasonalForestWinterNight/Data_easy/image_lcam_bottom.zip 5.634205026 G
@@ -6567,7 +6504,6 @@ Sewerage/Data_easy/depth_rcam_front.zip 3.44544485 G
 Sewerage/Data_easy/depth_rcam_left.zip 3.453498943 G
 Sewerage/Data_easy/depth_rcam_right.zip 3.308226546 G
 Sewerage/Data_easy/depth_rcam_top.zip 2.686253167 G
-Sewerage/Data_easy/events.zip 33.65049557387829 G
 Sewerage/Data_easy/flow_lcam_front.zip 6.898245682 G
 Sewerage/Data_easy/image_lcam_back.zip 10.62862001 G
 Sewerage/Data_easy/image_lcam_bottom.zip 7.778130383 G
@@ -6671,7 +6607,6 @@ ShoreCaves/Data_easy/depth_rcam_front.zip 2.37906308 G
 ShoreCaves/Data_easy/depth_rcam_left.zip 2.473422582 G
 ShoreCaves/Data_easy/depth_rcam_right.zip 2.435471848 G
 ShoreCaves/Data_easy/depth_rcam_top.zip 1.718245908 G
-ShoreCaves/Data_easy/events.zip 42.1975807454437 G
 ShoreCaves/Data_easy/flow_lcam_front.zip 3.171468819 G
 ShoreCaves/Data_easy/image_lcam_back.zip 7.223805972 G
 ShoreCaves/Data_easy/image_lcam_bottom.zip 8.529572174 G
@@ -6775,7 +6710,6 @@ Slaughter/Data_easy/depth_rcam_front.zip 2.866861668 G
 Slaughter/Data_easy/depth_rcam_left.zip 3.031627806 G
 Slaughter/Data_easy/depth_rcam_right.zip 2.906178902 G
 Slaughter/Data_easy/depth_rcam_top.zip 2.491838252 G
-Slaughter/Data_easy/events.zip 38.642366397194564 G
 Slaughter/Data_easy/flow_lcam_front.zip 5.687841465 G
 Slaughter/Data_easy/image_lcam_back.zip 5.777429344 G
 Slaughter/Data_easy/image_lcam_bottom.zip 4.707373314 G
@@ -6879,7 +6813,6 @@ SoulCity/Data_easy/depth_rcam_front.zip 2.433140396 G
 SoulCity/Data_easy/depth_rcam_left.zip 2.562394079 G
 SoulCity/Data_easy/depth_rcam_right.zip 2.600092793 G
 SoulCity/Data_easy/depth_rcam_top.zip 1.923142809 G
-SoulCity/Data_easy/events.zip 93.28565510455519 G
 SoulCity/Data_easy/flow_lcam_front.zip 3.655380711 G
 SoulCity/Data_easy/image_lcam_back.zip 5.646409402 G
 SoulCity/Data_easy/image_lcam_bottom.zip 3.687319832 G
@@ -6983,7 +6916,6 @@ Supermarket/Data_easy/depth_rcam_front.zip 1.276278863 G
 Supermarket/Data_easy/depth_rcam_left.zip 1.294393353 G
 Supermarket/Data_easy/depth_rcam_right.zip 1.279846185 G
 Supermarket/Data_easy/depth_rcam_top.zip 0.592737828 G
-Supermarket/Data_easy/events.zip 35.10024632140994 G
 Supermarket/Data_easy/flow_lcam_front.zip 2.258091831 G
 Supermarket/Data_easy/image_lcam_back.zip 4.163574195 G
 Supermarket/Data_easy/image_lcam_bottom.zip 3.888046925 G
@@ -7087,7 +7019,6 @@ TerrainBlending/Data_easy/depth_rcam_front.zip 1.699846193 G
 TerrainBlending/Data_easy/depth_rcam_left.zip 1.698814189 G
 TerrainBlending/Data_easy/depth_rcam_right.zip 1.668489803 G
 TerrainBlending/Data_easy/depth_rcam_top.zip 0.971980976 G
-TerrainBlending/Data_easy/events.zip 3.6362998969852924 G
 TerrainBlending/Data_easy/flow_lcam_front.zip 1.846339438 G
 TerrainBlending/Data_easy/image_lcam_back.zip 3.145498892 G
 TerrainBlending/Data_easy/image_lcam_bottom.zip 3.903344212 G
@@ -7191,7 +7122,6 @@ UrbanConstruction/Data_easy/depth_rcam_front.zip 1.422083281 G
 UrbanConstruction/Data_easy/depth_rcam_left.zip 1.515810889 G
 UrbanConstruction/Data_easy/depth_rcam_right.zip 1.461948862 G
 UrbanConstruction/Data_easy/depth_rcam_top.zip 1.36962858 G
-UrbanConstruction/Data_easy/events.zip 68.61067935172468 G
 UrbanConstruction/Data_easy/flow_lcam_front.zip 2.180961222 G
 UrbanConstruction/Data_easy/image_lcam_back.zip 4.909550718 G
 UrbanConstruction/Data_easy/image_lcam_bottom.zip 4.717007953 G
@@ -7295,7 +7225,6 @@ VictorianStreet/Data_easy/depth_rcam_front.zip 1.284637414 G
 VictorianStreet/Data_easy/depth_rcam_left.zip 1.314266393 G
 VictorianStreet/Data_easy/depth_rcam_right.zip 1.338752977 G
 VictorianStreet/Data_easy/depth_rcam_top.zip 1.194646065 G
-VictorianStreet/Data_easy/events.zip 38.036390628665686 G
 VictorianStreet/Data_easy/flow_lcam_front.zip 1.744954063 G
 VictorianStreet/Data_easy/image_lcam_back.zip 3.439306518 G
 VictorianStreet/Data_easy/image_lcam_bottom.zip 3.471131336 G
@@ -7399,7 +7328,6 @@ WaterMillDay/Data_easy/depth_rcam_front.zip 2.523423676 G
 WaterMillDay/Data_easy/depth_rcam_left.zip 2.470217973 G
 WaterMillDay/Data_easy/depth_rcam_right.zip 2.50259644 G
 WaterMillDay/Data_easy/depth_rcam_top.zip 1.864028874 G
-WaterMillDay/Data_easy/events.zip 17.710912607610226 G
 WaterMillDay/Data_easy/flow_lcam_front.zip 3.342123946 G
 WaterMillDay/Data_easy/image_lcam_back.zip 5.605881478 G
 WaterMillDay/Data_easy/image_lcam_bottom.zip 6.564283626 G
@@ -7503,7 +7431,6 @@ WaterMillNight/Data_easy/depth_rcam_front.zip 3.092595296 G
 WaterMillNight/Data_easy/depth_rcam_left.zip 3.231191346 G
 WaterMillNight/Data_easy/depth_rcam_right.zip 3.229522919 G
 WaterMillNight/Data_easy/depth_rcam_top.zip 2.371641246 G
-WaterMillNight/Data_easy/events.zip 8.55778980627656 G
 WaterMillNight/Data_easy/flow_lcam_front.zip 4.006227613 G
 WaterMillNight/Data_easy/image_lcam_back.zip 3.197175597 G
 WaterMillNight/Data_easy/image_lcam_bottom.zip 2.238165687 G
@@ -7607,7 +7534,6 @@ WesternDesertTown/Data_easy/depth_rcam_front.zip 6.341551547 G
 WesternDesertTown/Data_easy/depth_rcam_left.zip 6.324213323 G
 WesternDesertTown/Data_easy/depth_rcam_right.zip 6.254219837 G
 WesternDesertTown/Data_easy/depth_rcam_top.zip 3.783194286 G
-WesternDesertTown/Data_easy/events.zip 90.3880659462884 G
 WesternDesertTown/Data_easy/flow_lcam_front.zip 9.793439953 G
 WesternDesertTown/Data_easy/image_lcam_back.zip 10.389829088 G
 WesternDesertTown/Data_easy/image_lcam_bottom.zip 9.871650466 G
@@ -7695,3 +7621,146 @@ WesternDesertTown/Data_hard/seg_rcam_front.zip 0.088892175 G
 WesternDesertTown/Data_hard/seg_rcam_left.zip 0.096678479 G
 WesternDesertTown/Data_hard/seg_rcam_right.zip 0.089685183 G
 WesternDesertTown/Data_hard/seg_rcam_top.zip 0.056369289 G
+AbandonedCable/Data_easy/events_lcam_front.zip 116.022446924 G
+AbandonedCable/Data_easy/events_rcam_front.zip 119.838698881 G
+AbandonedFactory/Data_easy/events_lcam_front.zip 33.450141645 G
+AbandonedFactory2/Data_easy/events_lcam_front.zip 18.620518082 G
+AbandonedFactory2/Data_easy/events_rcam_front.zip 18.679563205 G
+AbandonedSchool/Data_easy/events_lcam_front.zip 25.960078104 G
+AbandonedSchool/Data_easy/events_rcam_front.zip 26.202433949 G
+AmericanDiner/Data_easy/events_lcam_front.zip 10.804726439 G
+AmericanDiner/Data_easy/events_rcam_front.zip 10.792253593 G
+AmusementPark/Data_easy/events_lcam_front.zip 80.976236715 G
+AmusementPark/Data_easy/events_rcam_front.zip 81.06158352 G
+AncientTowns/Data_easy/events_lcam_front.zip 60.120565505 G
+AncientTowns/Data_easy/events_rcam_front.zip 60.029594233 G
+Antiquity3D/Data_easy/events_lcam_front.zip 57.295662763 G
+Antiquity3D/Data_easy/events_rcam_front.zip 57.525949276 G
+Apocalyptic/Data_easy/events_lcam_front.zip 34.209314628 G
+Apocalyptic/Data_easy/events_rcam_front.zip 34.173635278 G
+ArchVizTinyHouseDay/Data_easy/events_lcam_front.zip 4.326446682 G
+ArchVizTinyHouseDay/Data_easy/events_rcam_front.zip 4.45867485 G
+ArchVizTinyHouseNight/Data_easy/events_lcam_front.zip 1.411424818 G
+ArchVizTinyHouseNight/Data_easy/events_rcam_front.zip 1.442220408 G
+BrushifyMoon/Data_easy/events_lcam_front.zip 111.051061692 G
+BrushifyMoon/Data_easy/events_rcam_front.zip 110.889248166 G
+CarWelding/Data_easy/events_lcam_front.zip 26.543049217 G
+CarWelding/Data_easy/events_rcam_front.zip 26.566737214 G
+CastleFortress/Data_easy/events_lcam_front.zip 83.618520984 G
+CastleFortress/Data_easy/events_rcam_front.zip 83.904447921 G
+CoalMine/Data_easy/events_lcam_front.zip 10.751373371 G
+CoalMine/Data_easy/events_rcam_front.zip 10.76782445 G
+ConstructionSite/Data_easy/events_lcam_front.zip 76.16181947 G
+ConstructionSite/Data_easy/events_rcam_front.zip 76.471127829 G
+CountryHouse/Data_easy/events_lcam_front.zip 9.285690184 G
+CountryHouse/Data_easy/events_rcam_front.zip 9.177671828 G
+CyberPunkDowntown/Data_easy/events_lcam_front.zip 17.246048536 G
+CyberPunkDowntown/Data_easy/events_rcam_front.zip 17.262565894 G
+Cyberpunk/Data_easy/events_lcam_front.zip 19.528142132 G
+Cyberpunk/Data_easy/events_rcam_front.zip 19.592267486 G
+DesertGasStation/Data_easy/events_lcam_front.zip 7.417468734 G
+DesertGasStation/Data_easy/events_rcam_front.zip 7.470577298 G
+Downtown/Data_easy/events_lcam_front.zip 114.880107742 G
+EndofTheWorld/Data_easy/events_lcam_front.zip 13.676238261 G
+EndofTheWorld/Data_easy/events_rcam_front.zip 13.827504288 G
+FactoryWeather/Data_easy/events_lcam_front.zip 25.387797896 G
+FactoryWeather/Data_easy/events_rcam_front.zip 25.346831116 G
+Fantasy/Data_easy/events_lcam_front.zip 45.149630527 G
+Fantasy/Data_easy/events_rcam_front.zip 45.100378908 G
+ForestEnv/Data_easy/events_lcam_front.zip 197.649883355 G
+ForestEnv/Data_easy/events_rcam_front.zip 197.978773041 G
+Gascola/Data_easy/events_lcam_front.zip 130.152924325 G
+Gascola/Data_easy/events_rcam_front.zip 130.34407203 G
+GothicIsland/Data_easy/events_lcam_front.zip 37.098595832 G
+GothicIsland/Data_easy/events_rcam_front.zip 37.089376072 G
+GreatMarsh/Data_easy/events_lcam_front.zip 5.284383447 G
+GreatMarsh/Data_easy/events_rcam_front.zip 5.306106168 G
+HQWesternSaloon/Data_easy/events_lcam_front.zip 24.584575144 G
+HQWesternSaloon/Data_easy/events_rcam_front.zip 24.543761169 G
+HongKong/Data_easy/events_lcam_front.zip 16.708460694 G
+HongKong/Data_easy/events_rcam_front.zip 16.32725132 G
+Hospital/Data_easy/events_lcam_front.zip 77.327894867 G
+House/Data_easy/events_lcam_front.zip 8.577048928 G
+House/Data_easy/events_rcam_front.zip 8.569352324 G
+IndustrialHangar/Data_easy/events_lcam_front.zip 36.548157082 G
+IndustrialHangar/Data_easy/events_rcam_front.zip 36.372160264 G
+JapaneseAlley/Data_easy/events_lcam_front.zip 29.726769416 G
+JapaneseCity/Data_easy/events_lcam_front.zip 40.560948991 G
+JapaneseCity/Data_easy/events_rcam_front.zip 40.718857158 G
+MiddleEast/Data_easy/events_lcam_front.zip 18.977705171 G
+MiddleEast/Data_easy/events_rcam_front.zip 19.020046243 G
+ModUrbanCity/Data_easy/events_lcam_front.zip 49.40543371 G
+ModUrbanCity/Data_easy/events_rcam_front.zip 49.450711976 G
+ModernCityDowntown/Data_easy/events_lcam_front.zip 53.40445123 G
+ModernCityDowntown/Data_easy/events_rcam_front.zip 53.738211589 G
+ModularNeighborhood/Data_easy/events_lcam_front.zip 244.199243699 G
+ModularNeighborhoodIntExt/Data_easy/events_lcam_front.zip 98.182376853 G
+ModularNeighborhoodIntExt/Data_easy/events_rcam_front.zip 98.127542212 G
+NordicHarbor/Data_easy/events_lcam_front.zip 120.549804951 G
+NordicHarbor/Data_easy/events_rcam_front.zip 121.104900994 G
+Ocean/Data_easy/events_lcam_front.zip 22.95309465 G
+Ocean/Data_easy/events_rcam_front.zip 22.833554909 G
+Office/Data_easy/events_lcam_front.zip 16.730785547 G
+Office/Data_easy/events_rcam_front.zip 16.767857294 G
+OldBrickHouseDay/Data_easy/events_lcam_front.zip 11.615003792 G
+OldBrickHouseDay/Data_easy/events_rcam_front.zip 11.601096146 G
+OldBrickHouseNight/Data_easy/events_lcam_front.zip 20.345928492 G
+OldBrickHouseNight/Data_easy/events_rcam_front.zip 20.5405739 G
+OldIndustrialCity/Data_easy/events_lcam_front.zip 134.36468 G
+OldIndustrialCity/Data_easy/events_rcam_front.zip 134.039478959 G
+OldScandinavia/Data_easy/events_lcam_front.zip 43.375570503 G
+OldScandinavia/Data_easy/events_rcam_front.zip 43.304109606 G
+OldTownFall/Data_easy/events_lcam_front.zip 14.014342054 G
+OldTownFall/Data_easy/events_rcam_front.zip 14.061900858 G
+OldTownNight/Data_easy/events_lcam_front.zip 18.083484007 G
+OldTownNight/Data_easy/events_rcam_front.zip 18.010317931 G
+OldTownSummer/Data_easy/events_lcam_front.zip 29.271228833 G
+OldTownSummer/Data_easy/events_rcam_front.zip 29.243995695 G
+OldTownWinter/Data_easy/events_lcam_front.zip 21.656518511 G
+OldTownWinter/Data_easy/events_rcam_front.zip 21.754104602 G
+PolarSciFi/Data_easy/events_lcam_front.zip 27.283627996 G
+PolarSciFi/Data_easy/events_rcam_front.zip 27.226022142 G
+Prison/Data_easy/events_lcam_front.zip 71.102584965 G
+Prison/Data_easy/events_rcam_front.zip 9.525679966 G
+Restaurant/Data_easy/events_lcam_front.zip 6.394157943 G
+Restaurant/Data_easy/events_rcam_front.zip 6.400720346 G
+RetroOffice/Data_easy/events_lcam_front.zip 3.162262799 G
+RetroOffice/Data_easy/events_rcam_front.zip 3.20382023 G
+Rome/Data_easy/events_lcam_front.zip 22.390438923 G
+Rome/Data_easy/events_rcam_front.zip 22.541408204 G
+Ruins/Data_easy/events_lcam_front.zip 99.843104777 G
+Ruins/Data_easy/events_rcam_front.zip 100.168297436 G
+SeasideTown/Data_easy/events_lcam_front.zip 22.568423538 G
+SeasideTown/Data_easy/events_rcam_front.zip 22.639873221 G
+SeasonalForestAutumn/Data_easy/events_lcam_front.zip 63.018341705 G
+SeasonalForestAutumn/Data_easy/events_rcam_front.zip 63.036682669 G
+SeasonalForestSpring/Data_easy/events_lcam_front.zip 70.667246582 G
+SeasonalForestSpring/Data_easy/events_rcam_front.zip 70.868696528 G
+SeasonalForestSummerNight/Data_easy/events_lcam_front.zip 69.523470615 G
+SeasonalForestSummerNight/Data_easy/events_rcam_front.zip 69.840410437 G
+SeasonalForestWinter/Data_easy/events_lcam_front.zip 53.531493458 G
+SeasonalForestWinter/Data_easy/events_rcam_front.zip 53.634086956 G
+SeasonalForestWinterNight/Data_easy/events_lcam_front.zip 45.893955138 G
+SeasonalForestWinterNight/Data_easy/events_rcam_front.zip 46.021960084 G
+Sewerage/Data_easy/events_lcam_front.zip 25.310413027 G
+Sewerage/Data_easy/events_rcam_front.zip 25.63891866 G
+ShoreCaves/Data_easy/events_lcam_front.zip 24.449779049 G
+ShoreCaves/Data_easy/events_rcam_front.zip 24.429517377 G
+Slaughter/Data_easy/events_lcam_front.zip 35.344978208 G
+Slaughter/Data_easy/events_rcam_front.zip 35.927950447 G
+SoulCity/Data_easy/events_lcam_front.zip 135.696929098 G
+SoulCity/Data_easy/events_rcam_front.zip 135.992658439 G
+Supermarket/Data_easy/events_lcam_front.zip 25.02838296 G
+Supermarket/Data_easy/events_rcam_front.zip 24.95145176 G
+TerrainBlending/Data_easy/events_lcam_front.zip 5.538662461 G
+TerrainBlending/Data_easy/events_rcam_front.zip 5.543953464 G
+UrbanConstruction/Data_easy/events_lcam_front.zip 28.034255597 G
+UrbanConstruction/Data_easy/events_rcam_front.zip 27.967580041 G
+VictorianStreet/Data_easy/events_lcam_front.zip 22.033907309 G
+VictorianStreet/Data_easy/events_rcam_front.zip 22.003406254 G
+WaterMillDay/Data_easy/events_lcam_front.zip 36.278792945 G
+WaterMillDay/Data_easy/events_rcam_front.zip 36.292450463 G
+WaterMillNight/Data_easy/events_lcam_front.zip 21.333647397 G
+WaterMillNight/Data_easy/events_rcam_front.zip 21.426802469 G
+WesternDesertTown/Data_easy/events_lcam_front.zip 65.252655524 G
+WesternDesertTown/Data_easy/events_rcam_front.zip 65.241106029 G

@@ -19,16 +19,18 @@ Download via Python API
     tartanair_data_root = '/my/path/to/root/folder/for/tartanair-v2'
     ta.init(tartanair_data_root)
 
-    # Download a trajectory.
+    # Download all the data from one environment.
     ta.download(env = "ArchVizTinyHouseDay", 
-                difficulty = ['easy'], # this can be 'easy', and/or 'hard'
-                modality = ['image', 'depth', 'seg', 'imu'], # available modalities are: image', 'depth', 'seg', 'imu', 'lidar', 'flow'
-                camera_name = ['lcam_front', 'lcam_left', 'lcam_right', 'lcam_back', 'lcam_top', 'lcam_bottom'], 
+                difficulty = ['easy', 'hard'], # this can be 'easy', and/or 'hard'
+                modality = ['image', 'depth', 'seg', 'imu', 'lidar', 'flow', 'events'], # available modalities are: image', 'depth', 'seg', 'imu', 'lidar', 'flow', 'events'
+                camera_name = ['lcam_front', 'lcam_left', 'lcam_right', 'lcam_back', 'lcam_top', 'lcam_bottom', \
+                               'rcam_front', 'rcam_left', 'rcam_right', 'rcam_back', 'rcam_top', 'rcam_bottom',  \
+                               'lcam_fish', 'lcam_equirect', 'rcam_fish', 'rcam_equirect'], 
                 unzip = True,
                 delete_zip = False, 
                 num_workers = 4) # unzip files autonomously after download
 
-    # To download the entire dataset
+    # Download the entire dataset
     all_data = ta.get_all_data() # this will fill in all available TAv2 data for env, difficulty, modality and camera_name
     ta.download(**all_data, 
                 unzip = True,
