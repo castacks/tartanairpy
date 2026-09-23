@@ -11,82 +11,83 @@ import sys
 sys.path.append('..')
 import tartanair as ta
 
-# Create a TartanAir object.
-tartanground_data_root = '/my/path/to/root/folder/for/tartanair-v2'
+if __name__ == '__main__':
+    # Create a TartanAir object.
+    tartanground_data_root = '/my/path/to/root/folder/for/tartanair-v2'
 
-ta.init(tartanground_data_root)
+    ta.init(tartanground_data_root)
 
-# Download data from following environments.
-env = [ "AbandonedFactory",
-        "ConstructionSite",
-        "Hospital",
-]
+    # Download data from following environments.
+    env = [ "AbandonedFactory",
+            "ConstructionSite",
+            "Hospital",
+    ]
 
-# Following versions are available: ['omni', 'diff', 'anymal']
-# Following modalities are available: ['image', 'meta', 'depth', 'seg', 'lidar', 'imu', 'rosbag', 'sem_pcd', 'seg_labels', 'rgb_pcd']
-# Following camera names are available: ['lcam_front', 'lcam_right', 'lcam_left', 'lcam_back', 'lcam_top', 'lcam_bottom', 
-#                                          rcam_front', 'rcam_right', 'rcam_left', 'rcam_back', 'rcam_top', 'rcam_bottom']
-# Trajectories can be specified as a list of strings, e.g., ['P0000', 'P0001', ...]
-# data_source can be 'huggingface' or 'airlab'
-# "omni" refers to the omnidirectional robot -> Trajectories are in the form of P0000, P0001, etc.
-# "diff" refers to the differential drive robot -> Trajectories are in the form of P1000, P1001, etc.
-# "anymal" refers to the quadrupedal robot -> Trajectories are in the form of P2000, P2001, etc.
+    # Following versions are available: ['omni', 'diff', 'anymal']
+    # Following modalities are available: ['image', 'meta', 'depth', 'seg', 'lidar', 'imu', 'rosbag', 'sem_pcd', 'seg_labels', 'rgb_pcd']
+    # Following camera names are available: ['lcam_front', 'lcam_right', 'lcam_left', 'lcam_back', 'lcam_top', 'lcam_bottom',
+    #                                          rcam_front', 'rcam_right', 'rcam_left', 'rcam_back', 'rcam_top', 'rcam_bottom']
+    # Trajectories can be specified as a list of strings, e.g., ['P0000', 'P0001', ...]
+    # data_source can be 'huggingface' or 'airlab'
+    # "omni" refers to the omnidirectional robot -> Trajectories are in the form of P0000, P0001, etc.
+    # "diff" refers to the differential drive robot -> Trajectories are in the form of P1000, P1001, etc.
+    # "anymal" refers to the quadrupedal robot -> Trajectories are in the form of P2000, P2001, etc.
 
-ta.download_ground(env = env, 
-              version = ['omni', 'diff', 'anymal'], 
-              traj =[],
-              modality = ['image', 'meta', 'depth', 'seg', 'lidar', 'imu', 'rosbag', 'sem_pcd', 'seg_labels', 'rgb_pcd'],  
-              camera_name = ['lcam_front', 'lcam_right', 'lcam_left', 'lcam_back'], 
-              unzip = True,
-              delete_zip = False,
-              num_workers = 4,
-              data_source = 'huggingface')
+    ta.download_ground(env = env,
+                version = ['omni', 'diff', 'anymal'],
+                traj =[],
+                modality = ['image', 'meta', 'depth', 'seg', 'lidar', 'imu', 'rosbag', 'sem_pcd', 'seg_labels', 'rgb_pcd'],
+                camera_name = ['lcam_front', 'lcam_right', 'lcam_left', 'lcam_back'],
+                unzip = True,
+                delete_zip = False,
+                num_workers = 4,
+                data_source = 'huggingface')
 
-# Download all modalities from provided environments for the omnidirectional robot
-# ta.download_ground(env = env, 
-#               version = ['omni'], 
-#               traj =[],
-#               modality = [],  
-#               camera_name = [], 
-#               unzip = False)
+    # Download all modalities from provided environments for the omnidirectional robot
+    # ta.download_ground(env = env,
+    #               version = ['omni'],
+    #               traj =[],
+    #               modality = [],
+    #               camera_name = [],
+    #               unzip = False)
 
-# Download One Trajectory Front camera from each environement (Omni-directional motion).
-# ta.download_ground(env = [], 
-#               version = ['omni'], 
-#               traj =['P0000'],
-#               modality = [],  
-#               camera_name = ['lcam_front'], 
-#               unzip = False)
+    # Download One Trajectory Front camera from each environement (Omni-directional motion).
+    # ta.download_ground(env = [],
+    #               version = ['omni'],
+    #               traj =['P0000'],
+    #               modality = [],
+    #               camera_name = ['lcam_front'],
+    #               unzip = False)
 
-# Download all data from all environments.
-# ta.download_ground(env = [], 
-#               version = [], 
-#               traj =[],
-#               modality = [],  
-#               camera_name = [], 
-#               unzip = False)
+    # Download all data from all environments.
+    # ta.download_ground(env = [],
+    #               version = [],
+    #               traj =[],
+    #               modality = [],
+    #               camera_name = [],
+    #               unzip = False)
 
-# Download the semantic occupancy data for all environments.
-# ta.download_ground(env = [], 
-#               version = [], 
-#               traj = [],
-#               modality = ['seg_labels', 'sem_pcd'],  
-#               camera_name = [], 
-#               unzip = False)
+    # Download the semantic occupancy data for all environments.
+    # ta.download_ground(env = [],
+    #               version = [],
+    #               traj = [],
+    #               modality = ['seg_labels', 'sem_pcd'],
+    #               camera_name = [],
+    #               unzip = False)
 
-# All above downloads can be done in parallel using multi-threading.
+    # All above downloads can be done in parallel using multi-threading.
 
-# ta.download_ground_multi_thread(env = env, 
-#               version = ['omni', 'diff', 'anymal'], 
-#               traj =[],
-#               modality = ['image', 'meta', 'depth', 'seg', 'lidar', 'imu', 'rosbag', 'sem_pcd', 'seg_labels', 'rgb_pcd'],  
-#               camera_name = ['lcam_front', 'lcam_right', 'lcam_left', 'lcam_back'], 
-#               unzip = False)
+    # ta.download_ground_multi_thread(env = env,
+    #               version = ['omni', 'diff', 'anymal'],
+    #               traj =[],
+    #               modality = ['image', 'meta', 'depth', 'seg', 'lidar', 'imu', 'rosbag', 'sem_pcd', 'seg_labels', 'rgb_pcd'],
+    #               camera_name = ['lcam_front', 'lcam_right', 'lcam_left', 'lcam_back'],
+    #               unzip = False)
 
-# ta.download_ground_multi_thread(env = [], 
-#               version = [], 
-#               traj = [],
-#               modality = [],  
-#               camera_name = [], 
-#               unzip = False, 
-#               num_workers = 8)
+    # ta.download_ground_multi_thread(env = [],
+    #               version = [],
+    #               traj = [],
+    #               modality = [],
+    #               camera_name = [],
+    #               unzip = False,
+    #               num_workers = 8)

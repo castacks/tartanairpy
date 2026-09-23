@@ -1,5 +1,5 @@
 '''
-Author: Wenshan Wang    
+Author: Wenshan Wang
 Date: 2025-11-01
 
 If you haven't unzipped the files while downloading, you can use this script to unzip them.
@@ -13,10 +13,11 @@ import sys
 sys.path.append('..')
 import tartanair as ta
 
-# Create a TartanAir object.
-tartanair_data_root = '/my/path/to/root/folder/for/tartanair-v2'
-unzip_target_dir = '/my/path/to/root/folder/for/tartanair-v2/unzip'
+if __name__ == '__main__':
+    # Create a TartanAir object.
+    tartanair_data_root = '/my/path/to/root/folder/for/tartanair-v2'
+    unzip_target_dir = '/my/path/to/root/folder/for/tartanair-v2/unzip'
 
-ta.init(tartanair_data_root)
+    ta.init(tartanair_data_root)
 
-ta.unzip(output_dir = unzip_target_dir, num_workers = 4)
+    ta.unzip(output_dir = unzip_target_dir, num_workers = 4)

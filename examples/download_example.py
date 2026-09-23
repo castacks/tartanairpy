@@ -12,24 +12,25 @@ import sys
 sys.path.append('..')
 import tartanair as ta
 
-# Create a TartanAir object.
-tartanair_data_root = '/my/path/to/root/folder/for/tartanair-v2'
+if __name__ == '__main__':
+    # Create a TartanAir object.
+    tartanair_data_root = '/my/path/to/root/folder/for/tartanair-v2'
 
-ta.init(tartanair_data_root)
+    ta.init(tartanair_data_root)
 
-# Download data from following environments.
-env = [ "Prison",
-        "Ruins",
-        "UrbanConstruction",
-]
+    # Download data from following environments.
+    env = [ "Prison",
+            "Ruins",
+            "UrbanConstruction",
+    ]
 
-ta.download(env = env, 
-              difficulty = ['easy', 'hard'], 
-              modality = ['image', 'depth'],  
-              camera_name = ['lcam_front', 'lcam_right', 'lcam_back', 'lcam_left', 'lcam_top', 'lcam_bottom'], 
-              unzip = True,
-              delete_zip = False,
-              num_workers = 4)
+    ta.download(env = env,
+                difficulty = ['easy', 'hard'],
+                modality = ['image', 'depth'],
+                camera_name = ['lcam_front', 'lcam_right', 'lcam_back', 'lcam_left', 'lcam_top', 'lcam_bottom'],
+                unzip = True,
+                delete_zip = False,
+                num_workers = 4)
 
-# Can also download via a yaml config file.
-ta.download(config = 'download_config.yaml')
+    # Can also download via a yaml config file.
+    ta.download(config = 'download_config.yaml')

@@ -13,16 +13,17 @@ import numpy as np
 sys.path.append('..')
 import tartanair as ta
 
-# Create a TartanAir object.
-tartanair_data_root = '/my/path/to/root/folder/for/tartanair-v2'
- 
-ta.init(tartanair_data_root)
+if __name__ == '__main__':
+    # Create a TartanAir object.
+    tartanair_data_root = '/my/path/to/root/folder/for/tartanair-v2'
 
-# List available trajectories.
-traj = ta.get_traj_np(env = 'ArchVizTinyHouseDay', 
-                      difficulty = 'easy', 
-                      trajectory_id = "P000",  
-                      camera_name = 'lcam_front')
-print(traj.shape)
-np.set_printoptions(precision=3, suppress=True)
-print(traj[0:10, :])
+    ta.init(tartanair_data_root)
+
+    # List available trajectories.
+    traj = ta.get_traj_np(env = 'ArchVizTinyHouseDay',
+                        difficulty = 'easy',
+                        trajectory_id = "P000",
+                        camera_name = 'lcam_front')
+    print(traj.shape)
+    np.set_printoptions(precision=3, suppress=True)
+    print(traj[0:10, :])

@@ -12,11 +12,12 @@ import sys
 sys.path.append('..')
 import tartanair as ta
 
-# Create a TartanAir object.
-tartanair_data_root = '/my/path/to/root/folder/for/tartanair-v2'
+if __name__ == '__main__':
+    # Create a TartanAir object.
+    tartanair_data_root = '/my/path/to/root/folder/for/tartanair-v2'
 
-ta.init(tartanair_data_root)
+    ta.init(tartanair_data_root)
 
-# List available trajectories.
-available_envs = ta.list_envs() # Returns a dictionary with the available environments. Of form {'local': ['env1', 'env2', ...], 'remote': ['env1', 'env2', ...]}
-print(available_envs)
+    # List available trajectories.
+    available_envs = ta.list_envs() # Returns a dictionary with the available environments. Of form {'local': ['env1', 'env2', ...], 'remote': ['env1', 'env2', ...]}
+    print(available_envs)
