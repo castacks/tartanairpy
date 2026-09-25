@@ -67,7 +67,7 @@ class AirLabDownloader(object):
             print(f"  Successfully downloaded {source_file_name} to {target_file_name}!")
             success_source_files.append(source_file_name)
             success_target_files.append(target_file_name)
-        
+
         if len(success_target_files) == len(filelist):
             return True, success_source_files, success_target_files
         else:
@@ -174,10 +174,10 @@ class HuggingfaceDownloader(object):
             except Exception as e:
                 print_error(f"Error: Failed to download chunk {idx} due to {e}.")
                 continue
-            
+
             success_source_files.extend(chunk)
             success_target_files.extend([join(output_dir, f) for f in chunk])
-        
+
         if len(success_target_files) == len(filelist):
             return True, success_source_files, success_target_files
         else:
@@ -190,10 +190,10 @@ class TartanAirDownloader(TartanAirModule):
         # self.downloader = CloudFlareDownloader()
         # self.downloader = AirLabDownloader(bucket_name = 'tartanair_v2')
 
-    def generate_filelist(self, envs, difficulties, modalities, camera_names, mute = False): 
+    def generate_filelist(self, envs, difficulties, modalities, camera_names, mute = False):
         '''
         Return a list of zipfiles to be downloaded
-        Example: 
+        Example:
         [
             "abandonedfactory/Data_easy/depth_lcam_equirect.zip",
             "abandonedfactory/Data_easy/flow_lcam_front.zip",
@@ -202,11 +202,13 @@ class TartanAirDownloader(TartanAirModule):
 
         '''
         zipfilelist = []
-        for env in envs: 
+        for env in envs:
             envstr = env + '/'
-            folderlist = self.compile_modality_and_cameraname(difficulties,modalities, camera_names, mute = mute)
-            zipfiles = [envstr + fl + '.zip' for fl in folderlist]
-            zipfilelist.extend(zipfiles)
+            folderdict = self.compile_modality_and_cameraname(difficulties, modalities, camera_names, mute = mute)
+            for difficulty, folderlist in folderdict.items():
+                diffstr = 'Data_' + difficulty + '/'
+                zipfiles = [envstr + diffstr + fl + '.zip' for fl in folderlist]
+                zipfilelist.extend(zipfiles)
 
         return zipfilelist
 
@@ -280,7 +282,7 @@ class TartanAirDownloader(TartanAirModule):
             camera_name = config['camera_name']
             unzip = config['unzip']
             delete_zip = config['delete_zip']
-        
+
         # Check that the inputs are all lists. If not, convert them to lists.
         if not isinstance(env, list):
             env = [env]
@@ -301,21 +303,21 @@ class TartanAirDownloader(TartanAirModule):
         if len(camera_name) == 0:
             camera_name = self.camera_names
 
-        return env, difficulty, modality, camera_name, unzip, delete_zip    
-            
+        return env, difficulty, modality, camera_name, unzip, delete_zip
+
     def download_single_thread(self, zipfilelist, max_failure_trial = 3, **kwargs):
         """
         Downloads a trajectory from the TartanAir dataset. A trajectory includes a set of images and a corresponding trajectory text file describing the motion.
 
         Args:
             zipfilelist (list): List of zip files to download.
-        
-        Note: 
-            for imu and lidar, no camera_name needs to be specified. 
-            for flow, only lcam_front is available. 
+
+        Note:
+            for imu and lidar, no camera_name needs to be specified.
+            for flow, only lcam_front is available.
         """
-            
-        # generate the target file list: 
+
+        # generate the target file list:
         all_success_filelist = []
 
         suc, success_source_files, success_target_files = self.downloader.download(zipfilelist, self.tartanair_data_root)
@@ -323,7 +325,7 @@ class TartanAirDownloader(TartanAirModule):
 
         # download failed files untill success
         trail_count = 0
-        while not suc: 
+        while not suc:
             zipfilelist = [ff for ff in zipfilelist if ff not in success_source_files]
             if len(zipfilelist) == 0:
                 print_warn("No failed files are found! ")
@@ -361,7 +363,7 @@ class TartanAirDownloader(TartanAirModule):
         # Check that the camera names are valid
         if not self.check_camera_valid(camera_name):
             return False
-        
+
         zipfilelist = self.generate_filelist(env, difficulty, modality, camera_name)
         CURDIR = os.path.dirname(os.path.abspath(__file__))
         gtfile = CURDIR + '/download_files.txt'
@@ -372,19 +374,19 @@ class TartanAirDownloader(TartanAirModule):
         if num_workers <= 1 or data_source == 'huggingface':
             # use single thread download
             suc, all_success_filelist = self.download_single_thread(zipfilelist, max_failure_trial = max_failure_trial)
-        else: 
+        else:
             with ThreadPoolExecutor(max_workers=num_workers) as executor:
                 futures = []
                 for ee in env:
                     for dd in difficulty:
                         subfilelist = self.generate_filelist([ee], [dd], modality, camera_name, mute = True)
-                        _, subfilelist = self.doublecheck_filelist(subfilelist, gtfile = gtfile, mute = True) # mainly for rcam_events because it is missing for some envs. 
+                        _, subfilelist = self.doublecheck_filelist(subfilelist, gtfile = gtfile, mute = True) # mainly for rcam_events because it is missing for some envs.
 
-                        futures.append(executor.submit(self.download_single_thread, zipfilelist = subfilelist, 
+                        futures.append(executor.submit(self.download_single_thread, zipfilelist = subfilelist,
                                        max_failure_trial = max_failure_trial,))
                         # Wait for a few seconds to avoid overloading the data server
                         time.sleep(2)
-                
+
                 # Wait for all futures to complete
                 all_success_filelist = []
                 suc = True
@@ -451,10 +453,10 @@ class TartanGroundDownloader(TartanAirDownloader):
 
         return env_to_traj
 
-    def generate_filelist(self, envs, versions, trajectories, modalities, camera_names): 
+    def generate_filelist(self, envs, versions, trajectories, modalities, camera_names):
         '''
         Return a list of zipfiles to be downloaded
-        Example: 
+        Example:
         [
             "AbandonedCable/Data_diff/P0000/depth_lcam_back.zip",
             "AbandonedCable/Data_omni/P0001/depth_lcam_front.zip",
@@ -465,7 +467,7 @@ class TartanGroundDownloader(TartanAirDownloader):
         zipfilelist = []
         env_to_traj = self.extract_existing_trajectories()
 
-        for env in envs: 
+        for env in envs:
             envstr = env + '/'
             # # Add the seg_label.zip file
             # zipfilelist.append(envstr + 'seg_labels.zip')
@@ -484,7 +486,7 @@ class TartanGroundDownloader(TartanAirDownloader):
                     if 'rosbag' in current_modalities:
                         print_warn(f"Rosbag modality is not available for {env} with version {version}. Removing from modalities for {version}")
                         current_modalities = [mod for mod in current_modalities if mod != 'rosbag']
-                
+
                 # Find the available trajectories for the current version
                 available_trajs = env_to_traj[env][f'Data_{version}']
 
@@ -492,7 +494,7 @@ class TartanGroundDownloader(TartanAirDownloader):
                     env_ver_trajs = env_to_traj[env][f'Data_{version}']
                 else:
                     env_ver_trajs = trajectories
-                    
+
 
                 if not available_trajs:
                     print_warn(f"No trajectories found for {env} with version {version}. Skipping...")
@@ -513,7 +515,7 @@ class TartanGroundDownloader(TartanAirDownloader):
                     zipfilelist.extend(zipfiles)
 
         return zipfilelist
-    
+
     def prepare_download_list(self, env=[], version=[], traj=[], modality=[], camera_name=[], config=None):
         """
         Generate and validate the complete file list for download.
@@ -528,13 +530,13 @@ class TartanGroundDownloader(TartanAirDownloader):
         # Check that the camera names are valid
         if not self.check_camera_valid(camera_name, check_ground= True):
             return None, None
-        
+
         # Generate the file list
         zipfilelist = self.generate_filelist(env, version, traj, modality, camera_name)
 
         if len(zipfilelist) == 0:
             return [], []  # Nothing to download
-        
+
         # Validate against ground truth
         CURDIR = os.path.dirname(os.path.abspath(__file__))
         gtfile = CURDIR + '/download_ground_files.txt'
@@ -544,9 +546,9 @@ class TartanGroundDownloader(TartanAirDownloader):
 
         # # Generate target file list
         # targetfilelist = [join(self.tartanair_data_root, zipfile.replace('/', '_')) for zipfile in zipfilelist]
-        
+
         return zipfilelist #, targetfilelist
-    
+
     def refine_parameters(self, env, version, traj, modality, camera_name, unzip, delete_zip, config):
         if config is not None:
             print("Using config file: {}".format(config))
@@ -561,7 +563,7 @@ class TartanGroundDownloader(TartanAirDownloader):
             camera_name = config['camera_name']
             unzip = config['unzip']
             delete_zip = config['delete_zip']
-        
+
         # Check that the inputs are all lists. If not, convert them to lists.
         if not isinstance(env, list):
             env = [env]
@@ -619,24 +621,24 @@ class TartanGroundDownloader(TartanAirDownloader):
     #         traj (str or list): The trajectory to download. Valid trajectories are: P0000, P0001, P0002, etc. If not specified, all trajectories will be downloaded.
     #         modality (str or list): The modality to download. Valid modalities are: image, depth, seg, imu, lidar, sem_pcd, rgb_pcd, rosbag. Default is image.
     #         camera_name (str or list): The name of the camera to download. Valid names are: lcam_back, lcam_bottom, lcam_front, lcam_left, lcam_right, lcam_top, rcam_back, rcam_bottom, rcam_front, rcam_left, rcam_right, rcam_top
-        
-    #     Note: 
-    #         for imu and lidar, no camera_name needs to be specified. 
+
+    #     Note:
+    #         for imu and lidar, no camera_name needs to be specified.
     #     """
     #     # Prepare the complete download list
     #     zipfilelist, targetfilelist = self.prepare_download_list(env, version, traj, modality, camera_name, config)
-        
+
     #     if zipfilelist is None:
     #         return False
-            
+
     #     if len(zipfilelist) == 0:
     #         return True  # Nothing to download
-        
+
     #     print(f"Total files to download: {len(zipfilelist)}")
-        
-    #     # # Add "TartanGround_v2/" prefix to the zipfilelist 
+
+    #     # # Add "TartanGround_v2/" prefix to the zipfilelist
     #     # prefixed_zipfilelist = [f"TartanGround_v2/{ff}" for ff in zipfilelist]
-        
+
     #     # # Use chunked download (single chunk for single-threaded)
     #     success, all_success_filelist = self._download_chunk(zipfilelist, targetfilelist, max_failure_trial, 1)
 
@@ -667,23 +669,23 @@ class TartanGroundDownloader(TartanAirDownloader):
         # First, prepare the complete download list
         print("Preparing complete download list...")
         zipfilelist = self.prepare_download_list(env, version, traj, modality, camera_name, config)
-        
+
         if zipfilelist is None:
             return False
-            
+
         if len(zipfilelist) == 0:
             print("No files to download.")
             return True
-        
+
         print(f"Total files to download: {len(zipfilelist)}")
-        
-        # # Add "TartanGround_v2/" prefix to the zipfilelist 
+
+        # # Add "TartanGround_v2/" prefix to the zipfilelist
         # prefixed_zipfilelist = [f"TartanGround_v2/{ff}" for ff in zipfilelist]
-        
+
         # Split files into chunks for multithreaded download
         chunk_size = len(zipfilelist) // num_workers + 1
         file_chunks = [zipfilelist[i:i + chunk_size] for i in range(0, len(zipfilelist), chunk_size)]
-        
+
         if num_workers <= 1 or data_source == 'huggingface':
             overall_success, all_success_filelist = self.download_single_thread(zipfilelist, max_failure_trial = max_failure_trial)
         else:
@@ -691,7 +693,7 @@ class TartanGroundDownloader(TartanAirDownloader):
             overall_success = True
             with ThreadPoolExecutor(max_workers=num_workers) as executor:
                 futures = []
-                
+
                 # Submit download jobs for each chunk
                 for i, zip_chunk in enumerate(file_chunks):
                     print(f"Submitting chunk {i+1}/{len(file_chunks)} with {len(zip_chunk)} files")
@@ -699,7 +701,7 @@ class TartanGroundDownloader(TartanAirDownloader):
                     futures.append(future)
                     # Wait for a few seconds to avoid overloading the data server
                     time.sleep(2)
-                
+
                 # Wait for all futures to complete
                 for i, future in enumerate(as_completed(futures)):
                     try:

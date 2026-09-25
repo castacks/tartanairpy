@@ -20,12 +20,12 @@ def print_highlight(msg):
 
 class TartanAirModule():
     '''
-    The main building block of the TartanAir toolbox. This class contains the _information_ about the TartanAir dataset, and implements no functionality. All functionalities are implemented in inherited classes like the TartanAirDownloader, and the interface is via the TartanAir class.   
+    The main building block of the TartanAir toolbox. This class contains the _information_ about the TartanAir dataset, and implements no functionality. All functionalities are implemented in inherited classes like the TartanAirDownloader, and the interface is via the TartanAir class.
     '''
     def __init__(self, tartanair_data_root):
         # Check if tartanair_data_root exists, otherwise create it.
         if not os.path.exists(tartanair_data_root):
-            os.makedirs(tartanair_data_root)        
+            os.makedirs(tartanair_data_root)
         self.tartanair_data_root = tartanair_data_root
 
         # The allowed names for the cameras, modalities, environments and difficulties.
@@ -48,7 +48,7 @@ class TartanAirModule():
 
         self.camera_directions = ["front", "right", "back", "left", "top", "bottom"]
 
-        self.modality_names = ['image', 'depth', 'seg', 'imu', 'lidar', 'flow', 'events', 'mp4']
+        self.modality_names = ['image', 'depth', 'seg', 'imu', 'lidar', 'flow', 'events', 'mp4', 'pose']
 
         self.cam_modalities = ['image', 'depth', 'seg'] # the modalities that support all camera names
 
@@ -57,79 +57,79 @@ class TartanAirModule():
         self.event_camlist = ['lcam_front', 'rcam_front'] # valid camera name for the events modality
 
         self.env_names = [
-            'AbandonedCable', 
-            'AbandonedFactory', 
-            'AbandonedFactory2', 
-            'AbandonedSchool', 
-            'AmericanDiner', 
-            'AmusementPark', 
-            'AncientTowns', 
-            'Antiquity3D', 
-            'Apocalyptic', 
-            'ArchVizTinyHouseDay', 
-            'ArchVizTinyHouseNight', 
-            'BrushifyMoon', 
-            'CarWelding', 
-            'CastleFortress', 
-            'CoalMine', 
-            'ConstructionSite', 
-            'CountryHouse', 
-            'CyberPunkDowntown', 
-            'Cyberpunk', 
-            'DesertGasStation', 
-            'Downtown', 
-            'EndofTheWorld', 
-            'FactoryWeather', 
-            'Fantasy', 
-            'ForestEnv', 
-            'Gascola', 
-            'GothicIsland', 
-            'GreatMarsh', 
-            'HQWesternSaloon', 
-            'HongKong', 
-            'Hospital', 
-            'House', 
-            'IndustrialHangar', 
-            'JapaneseAlley', 
-            'JapaneseCity', 
-            'MiddleEast', 
-            'ModUrbanCity', 
-            'ModernCityDowntown', 
-            'ModularNeighborhood', 
-            'ModularNeighborhoodIntExt', 
-            'NordicHarbor', 
-            'Ocean', 
-            'Office', 
-            'OldBrickHouseDay', 
-            'OldBrickHouseNight', 
-            'OldIndustrialCity', 
-            'OldScandinavia', 
-            'OldTownFall', 
-            'OldTownNight', 
-            'OldTownSummer', 
-            'OldTownWinter', 
-            'PolarSciFi', 
-            'Prison', 
-            'Restaurant', 
-            'RetroOffice', 
-            'Rome', 
-            'Ruins', 
-            'SeasideTown', 
-            'SeasonalForestAutumn', 
-            'SeasonalForestSpring', 
-            'SeasonalForestSummerNight', 
-            'SeasonalForestWinter', 
-            'SeasonalForestWinterNight', 
-            'Sewerage', 
-            'ShoreCaves', 
-            'Slaughter', 
-            'SoulCity', 
-            'Supermarket', 
-            'TerrainBlending', 
-            'UrbanConstruction', 
-            'VictorianStreet', 
-            'WaterMillDay', 
-            'WaterMillNight', 
+            'AbandonedCable',
+            'AbandonedFactory',
+            'AbandonedFactory2',
+            'AbandonedSchool',
+            'AmericanDiner',
+            'AmusementPark',
+            'AncientTowns',
+            'Antiquity3D',
+            'Apocalyptic',
+            'ArchVizTinyHouseDay',
+            'ArchVizTinyHouseNight',
+            'BrushifyMoon',
+            'CarWelding',
+            'CastleFortress',
+            'CoalMine',
+            'ConstructionSite',
+            'CountryHouse',
+            'CyberPunkDowntown',
+            'Cyberpunk',
+            'DesertGasStation',
+            'Downtown',
+            'EndofTheWorld',
+            'FactoryWeather',
+            'Fantasy',
+            'ForestEnv',
+            'Gascola',
+            'GothicIsland',
+            'GreatMarsh',
+            'HQWesternSaloon',
+            'HongKong',
+            'Hospital',
+            'House',
+            'IndustrialHangar',
+            'JapaneseAlley',
+            'JapaneseCity',
+            'MiddleEast',
+            'ModUrbanCity',
+            'ModernCityDowntown',
+            'ModularNeighborhood',
+            'ModularNeighborhoodIntExt',
+            'NordicHarbor',
+            'Ocean',
+            'Office',
+            'OldBrickHouseDay',
+            'OldBrickHouseNight',
+            'OldIndustrialCity',
+            'OldScandinavia',
+            'OldTownFall',
+            'OldTownNight',
+            'OldTownSummer',
+            'OldTownWinter',
+            'PolarSciFi',
+            'Prison',
+            'Restaurant',
+            'RetroOffice',
+            'Rome',
+            'Ruins',
+            'SeasideTown',
+            'SeasonalForestAutumn',
+            'SeasonalForestSpring',
+            'SeasonalForestSummerNight',
+            'SeasonalForestWinter',
+            'SeasonalForestWinterNight',
+            'Sewerage',
+            'ShoreCaves',
+            'Slaughter',
+            'SoulCity',
+            'Supermarket',
+            'TerrainBlending',
+            'UrbanConstruction',
+            'VictorianStreet',
+            'WaterMillDay',
+            'WaterMillNight',
             'WesternDesertTown',
         ]
 
@@ -268,7 +268,7 @@ class TartanAirModule():
             'SeasonalForestAutumn',
             'SeasonalForestSpring',
             'SeasonalForestWinter']
-        
+
         self.ground_version_names = ['omni', 'diff', 'anymal']
     ###############################
     # Data enumeration.
@@ -276,10 +276,10 @@ class TartanAirModule():
     def enumerate_trajs(self, data_folders = ['Data_easy','Data_hard']):
         '''
         Return a dict:
-            res['env0']: ['Data_easy/P000', 'Data_easy/P001', ...], 
-            res['env1']: ['Data_easy/P000', 'Data_easy/P001', ...], 
+            res['env0']: ['Data_easy/P000', 'Data_easy/P001', ...],
+            res['env1']: ['Data_easy/P000', 'Data_easy/P001', ...],
         '''
-        env_folders = os.listdir(self.tartanair_data_root)    
+        env_folders = os.listdir(self.tartanair_data_root)
         env_folders = [ee for ee in env_folders if os.path.isdir(os.path.join(self.tartanair_data_root, ee))]
         env_folders.sort()
         trajlist = {}
@@ -302,10 +302,10 @@ class TartanAirModule():
         for env in envlist:
             if not env in self.env_names:
                 invalid_list.append(env)
-        
+
         if len(invalid_list) == 0:
             return True
-        
+
         print_error(f"The following envs are invalid: {invalid_list}")
         print_warn(f"The available envs are: {self.env_names}")
         return False
@@ -319,10 +319,10 @@ class TartanAirModule():
         for mod in modlist:
             if not mod in valid_modality:
                 invalid_list.append(mod)
-        
+
         if len(invalid_list) == 0:
             return True
-        
+
         print_error(f"The following modalities are invalid: {invalid_list}")
         print_warn(f"The available modalities are: {valid_modality}")
         return False
@@ -336,10 +336,10 @@ class TartanAirModule():
         for cam in camlist:
             if not cam in valid_camera:
                 invalid_list.append(cam)
-        
+
         if len(invalid_list) == 0:
             return True
-        
+
         print_error(f"The following camera names are invalid: {invalid_list}")
         print_warn(f"The available camera names are: {valid_camera}")
         return False
@@ -349,30 +349,37 @@ class TartanAirModule():
         for diff in difflist:
             if not diff in self.difficulty_names:
                 invalid_list.append(diff)
-        
+
         if len(invalid_list) == 0:
             return True
-        
+
         print_error(f"The following difficulties are invalid: {invalid_list}")
         print_warn(f"The available difficulties are: {self.difficulty_names}")
         return False
 
     def compile_modality_and_cameraname(self, difficulties, modalities, camera_names, mute = False):
-        folderlist = []
+        '''
+        Return a dict mapping each difficulty to the list of '<modality>_<camera>' style folder
+        names that are valid for it (e.g. 'events' is only valid for 'easy'). The folder names
+        carry no path prefix: callers own the path structure they need to build on top of them,
+        e.g. '<env>/Data_<difficulty>/<folder>.zip' for archives, or '<traj_path>/<folder>' for
+        already-extracted trajectories where 'Data_<difficulty>/P0xx' is already part of the path.
+        '''
+        folderdict = {}
 
         for difficulty in difficulties:
-            diffstr = 'Data_' + difficulty + '/'
+            folderlist = []
 
             for mod in modalities:
                 if mod in self.cam_modalities:
                     for camname in camera_names:
-                        folderstr =  mod + '_' + camname 
-                        folderlist.append(diffstr + folderstr)
+                        folderstr =  mod + '_' + camname
+                        folderlist.append(folderstr)
                 elif mod == 'flow':
                     for camname in camera_names:
                         if camname in self.flow_camlist:
-                            folderstr =  mod + '_' + camname 
-                            folderlist.append(diffstr + folderstr)
+                            folderstr =  mod + '_' + camname
+                            folderlist.append(folderstr)
                         else:
                             if not mute:
                                 print_warn("Warn: flow modality doesn't have {}! We only have flow for {}".format(camname, self.flow_camlist))
@@ -383,24 +390,26 @@ class TartanAirModule():
                         continue
                     for camname in camera_names:
                         if camname in self.event_camlist:
-                            folderstr =  mod + '_' + camname 
-                            folderlist.append(diffstr + folderstr)
+                            folderstr =  mod + '_' + camname
+                            folderlist.append(folderstr)
                         else:
                             if not mute:
                                 print_warn("Warn: events modality doesn't have {}! We only have event for {}".format(camname, self.event_camlist))
 
                 elif mod == 'lidar' or mod == 'imu': # for lidar and imu
                     folderstr = mod
-                    folderlist.append(diffstr + folderstr)
+                    folderlist.append(folderstr)
                 elif mod == 'mp4' and "lcam_front" in camera_names:
-                    folderstr =  mod + '_lcam_front' 
-                    folderlist.append(diffstr + folderstr)
+                    folderstr =  mod + '_lcam_front'
+                    folderlist.append(folderstr)
                 else:
                     if mod != "pose":
                         if not mute:
                             print_warn("Warn: note modality {} needs to be processed separately".format(mod))
-                
-        return folderlist
+
+            folderdict[difficulty] = folderlist
+
+        return folderdict
 
     def compile_ground_modality_and_cameraname(self, modalities, camera_names):
         '''
@@ -411,7 +420,7 @@ class TartanAirModule():
         for mod in modalities:
             if mod in self.cam_modalities:
                 for camname in camera_names:
-                    folderstr =  mod + '_' + camname 
+                    folderstr =  mod + '_' + camname
                     folderlist.append(folderstr)
             elif mod == 'flow':
                 print_warn("Warn: flow modality doesn't exist for TartanGround dataset. You need to compute the flow using provided scripts")
@@ -424,5 +433,5 @@ class TartanAirModule():
                 print_warn("Warn: All Pose files are provided in the metadata folder so use 'meta' as the modality")
             elif mod == 'rosbag':
                 folderlist.append('rosbags')
-                
+
         return folderlist

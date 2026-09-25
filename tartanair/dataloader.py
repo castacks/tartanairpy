@@ -8,7 +8,7 @@ Output batches will be of the form:
 
 '''
 
-# TODO(yoraish): there is a notation discrepancy between 'rgb' and 'image'. Should fix this and probably stick with 'image' as this is the name used in the dataset. 
+# TODO(yoraish): there is a notation discrepancy between 'rgb' and 'image'. Should fix this and probably stick with 'image' as this is the name used in the dataset.
 
 # General imports.
 import os
@@ -21,7 +21,7 @@ from .data_cacher.datafile_editor import generate_datafile, enumerate_frames, br
 
 class TartanAirDataLoader(TartanAirModule):
     '''
-    The TartanAirDataset class contains the _information_ about the TartanAir dataset, and implements no functionality. All functionalities are implemented in inherited classes like the TartanAirDownloader, and the interface is via the TartanAir class.   
+    The TartanAirDataset class contains the _information_ about the TartanAir dataset, and implements no functionality. All functionalities are implemented in inherited classes like the TartanAirDownloader, and the interface is via the TartanAir class.
     '''
     def __init__(self, tartanair_data_root):
         # Call the parent class constructor.
@@ -89,7 +89,7 @@ class TartanAirDataLoader(TartanAirModule):
         return datafile
 
 
-    def generate_config_file(self, datafile, foldernames, image_shape_hw, seq_length, 
+    def generate_config_file(self, datafile, foldernames, image_shape_hw, seq_length,
                                     subset_framenum, seq_stride, frame_skip, num_workers):
         config = {}
         config['task'] = 'tartanair'
@@ -128,20 +128,20 @@ class TartanAirDataLoader(TartanAirModule):
         return config
 
 
-    def get_data_cacher(self, 
-                        env, 
-                        difficulty = None, 
-                        trajectory_id = None, 
-                        modality = None, 
-                        camera_name = None, 
+    def get_data_cacher(self,
+                        env,
+                        difficulty = None,
+                        trajectory_id = None,
+                        modality = None,
+                        camera_name = None,
                         new_image_shape_hw = [640, 640],  # This can also be a dictionary, mapping each modality name to a shape.
                         seq_length = 1, # This can also be a dictionary, mapping each modality name to a sequence length.
-                        subset_framenum = 56, # <--- Note in the docs that this is an upper bound on the batch size. In general, this should be as large as possible 
+                        subset_framenum = 56, # <--- Note in the docs that this is an upper bound on the batch size. In general, this should be as large as possible
                         seq_stride = 1,
                         frame_skip = 0,
                         batch_size=1,
                         num_workers=1,
-                        shuffle=False, 
+                        shuffle=False,
                         verbose=False,):
 
         '''
@@ -150,7 +150,7 @@ class TartanAirDataLoader(TartanAirModule):
 
         # Add default values to empty inputs.
         if not difficulty:
-            difficulty = self.difficulty_names # default to all difficulties 
+            difficulty = self.difficulty_names # default to all difficulties
         if not trajectory_id:
             trajectory_id = [] # Empty list will default to all trajs down the line.
         if not modality:
@@ -186,7 +186,10 @@ class TartanAirDataLoader(TartanAirModule):
 
         # figuring out the combination of modality and camera_name
         # folderlist consists all the folders that need to be load under each trajectory
-        folderlist = self.compile_modality_and_cameraname(modality, camera_name)
+        # Local trajectory paths already contain 'Data_<difficulty>/P0xx', so folder names carry no difficulty prefix.
+        # Union across difficulties, since a trajectory's own path already pins it to one difficulty.
+        folderdict = self.compile_modality_and_cameraname(difficulty, modality, camera_name)
+        folderlist = list(dict.fromkeys(fl for folders in folderdict.values() for fl in folders))
         # find one folder that's not imu, because imu is not frame-based
         onemodfolder = None
         for fl in folderlist:
@@ -200,18 +203,18 @@ class TartanAirDataLoader(TartanAirModule):
         if not datafile:
             return False
 
-        # process pose modality seperately here because it is not frame-based 
+        # process pose modality seperately here because it is not frame-based
         if 'pose' in modality:
             for camname in camera_name:
                 folderlist.append('pose_' + camname)
 
-        config = self.generate_config_file(datafile, folderlist, new_image_shape_hw, seq_length, 
+        config = self.generate_config_file(datafile, folderlist, new_image_shape_hw, seq_length,
                                             subset_framenum, seq_stride, frame_skip, num_workers)
 
         # Create the data loader from the config.
-        trainDataloader = MultiDatasets(config, 
-                        'local', 
-                        batch= batch_size, 
+        trainDataloader = MultiDatasets(config,
+                        'local',
+                        batch= batch_size,
                         workernum= 1,
                         shuffle= shuffle,
                         verbose= verbose)
@@ -264,11 +267,11 @@ if __name__=="__main__":
     loader = TartanAirDataLoader('/data/tartanair_v2')
     datafile = loader.generate_data_file(env=['coalmine'], difficulty=['easy', 'hard'], trajectory_id=[], onemodfolder='seg_rcam_right', breakdown = True)
 
-    loader.generate_config_file(datafile, 
-                                foldernames=['depth_lcam_back','image_lcam_back'], 
-                                image_shape_hw=[640, 640], 
-                                seq_length=1, 
-                                subset_framenum=100, 
-                                seq_stride=1, 
-                                frame_skip=0, 
+    loader.generate_config_file(datafile,
+                                foldernames=['depth_lcam_back','image_lcam_back'],
+                                image_shape_hw=[640, 640],
+                                seq_length=1,
+                                subset_framenum=100,
+                                seq_stride=1,
+                                frame_skip=0,
                                 num_workers=4)

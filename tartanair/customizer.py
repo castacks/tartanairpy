@@ -42,14 +42,14 @@ class TartanAirCustomizer(TartanAirModule):
         assert os.path.exists(self.data_root), "The data root does not exist."
 
         # Available camera models.
-        self.camera_model_name_to_class = {'pinhole': Pinhole, 
-                                           'doublesphere': DoubleSphere, 
-                                           'linearsphere': LinearSphere, 
+        self.camera_model_name_to_class = {'pinhole': Pinhole,
+                                           'doublesphere': DoubleSphere,
+                                           'linearsphere': LinearSphere,
                                            'equirect': Equirectangular,
                                            #'radtan': PinholeRadTanFast,
                                            #'eucm': EUCM
                                            }
-        
+
         self.depth_shape = None
 
     def customize(self, env, difficulty = [], trajectory_id = [], modality = [], new_camera_models_params = [], R_raw_new = np.eye(4), num_workers = 1, device = 'cpu'):
@@ -86,7 +86,7 @@ class TartanAirCustomizer(TartanAirModule):
             self.env_folders = []
         else:
             self.env_folders = env
-            
+
         # The data-folders (easy/hard) to be processed within the environments.
         if not difficulty:
             self.data_folders = ['Data_easy', 'Data_hard']
@@ -132,7 +132,7 @@ class TartanAirCustomizer(TartanAirModule):
             new_cam_model_params_copy['params']['shape_struct'] = ShapeStruct(H=new_cam_model_params_copy['params']['height'], W=new_cam_model_params_copy['params']['width'])
             # Remove the height and width from the params.
             del new_cam_model_params_copy['params']['height']
-            del new_cam_model_params_copy['params']['width']            
+            del new_cam_model_params_copy['params']['width']
             # Create the new camera model object.
             new_cam_model_object = self.camera_model_name_to_class[new_cam_model_name](**new_cam_model_params_copy['params'])
             # Store the new camera model object.
@@ -144,7 +144,7 @@ class TartanAirCustomizer(TartanAirModule):
         modality_to_reader = {"image": self.reader.read_bgr, "depth": self.reader.read_dist, "seg": self.reader.read_seg}
         modality_to_interpolation = {"image": "linear", "seg": "nearest", "depth": "blend"}
         modality_to_writer = {"image": self.reader.write_as_is, "seg": self.reader.write_as_is, "depth": self.reader.write_float_depth}
-        
+
         ###############################
         # Enumerate the trajectories.
         ###############################
@@ -159,7 +159,7 @@ class TartanAirCustomizer(TartanAirModule):
         for env_name, env_trajs  in envs_to_trajs.items():
             if self.env_folders and env_name not in self.env_folders:
                 continue
-            for rel_traj_path in env_trajs: 
+            for rel_traj_path in env_trajs:
                 # Proceed only if the trajectory is in the list of trajectories to be processed.
                 if trajectory_id and rel_traj_path.split("/")[-1] not in trajectory_id:
                     continue
@@ -170,11 +170,11 @@ class TartanAirCustomizer(TartanAirModule):
                 for modality in self.modalities:
                     for cam_name in required_cam_sides: # Could be either of lcam or rcam.
                         for new_cam_model_name, (new_cam_model_object, R_raw_new, params_dict) in new_cam_model_name_to_cam_model_object_R_dict.items():
-                            
+
                             # Create directory.
                             new_data_dir_path = os.path.join(tartanair_path, env_name, rel_traj_path, "_".join([modality, cam_name, new_cam_model_name]))
                             print("Creating directory", new_data_dir_path) # Of form Data_easy/env/P001/image_lcam_custom0
-                            
+
                             # Does not overwrite older directories if those exist.
                             if os.path.exists(new_data_dir_path):
                                 pass
@@ -214,15 +214,15 @@ class TartanAirCustomizer(TartanAirModule):
                             # Keep a list of the arguments to be multiprocess-passed to the function `sample_image_worker`.
                             sample_image_worker_args = []
                             for frame_ix in range(num_frames):
-                                sample_image_worker_args.append([frame_ix, 
-                                                                new_cam_model_object, R_raw_new, # sampler, 
-                                                                modality, 
-                                                                new_cam_model_name, 
-                                                                cam_name, 
-                                                                side_to_frame_gfps, 
-                                                                new_data_dir_path, 
-                                                                modality_to_reader, 
-                                                                modality_to_interpolation, 
+                                sample_image_worker_args.append([frame_ix,
+                                                                new_cam_model_object, R_raw_new, # sampler,
+                                                                modality,
+                                                                new_cam_model_name,
+                                                                cam_name,
+                                                                side_to_frame_gfps,
+                                                                new_data_dir_path,
+                                                                modality_to_reader,
+                                                                modality_to_interpolation,
                                                                 modality_to_writer
                                 ])
 
@@ -235,7 +235,7 @@ class TartanAirCustomizer(TartanAirModule):
                                 # Run in parallel.
                                 print("        Running in parallel with", num_workers, "workers.")
                                 try:
-                 
+
                                     with Pool(num_workers) as pool:
                                         pool.map(self.sample_image_worker, sample_image_worker_args)
 
@@ -293,9 +293,9 @@ class TartanAirCustomizer(TartanAirModule):
                             # Write the rotated pose file.
                             out_fp = os.path.join(traj_path, out_fn)
                             np.savetxt(out_fp, poses_rotated, fmt='%.6f')
-                                
 
-    def sample_image_worker(self, argslist): 
+
+    def sample_image_worker(self, argslist):
         frame_ix, new_cam_model_object, R_raw_new, modality, new_cam_model_name, cam_name, side_to_frame_gfps, new_data_dir_path, modality_to_reader, modality_to_interpolation, modality_to_writer = argslist
 
         # sampler = SixPlanarNumba(new_cam_model_object.fov_degree, new_cam_model_object, R_raw_new)
@@ -305,7 +305,7 @@ class TartanAirCustomizer(TartanAirModule):
 
         sampler.device = self.device
         create_figures = False
-        
+
         raw_images = {}
         for side in ['front', 'back', 'left', 'right', 'top', 'bottom']:
             # Revert to below:
@@ -325,13 +325,13 @@ class TartanAirCustomizer(TartanAirModule):
 
                 else:
                     cv2.putText(img, side, (280, 320), cv2.FONT_HERSHEY_COMPLEX, 1, (255, 255, 255), 2)
-                
+
                 raw_images[side] = img
-        
+
         # Resample the six raw images to the new camera model.
         if modality_to_interpolation[modality] == "blend":
             blend_func = BlendBy2ndOrderGradTorch(0.01) # hard code
-            new_image, new_image_valid_mask = sampler.blend_interpolation(raw_images, blend_func, invalid_pixel_value=0)  
+            new_image, new_image_valid_mask = sampler.blend_interpolation(raw_images, blend_func, invalid_pixel_value=0)
         else:
             new_image, new_image_valid_mask = sampler(raw_images, interpolation= modality_to_interpolation[modality], invalid_pixel_value=0)
 
@@ -359,7 +359,7 @@ class TartanAirCustomizer(TartanAirModule):
             out_vis_img[0:top_img.shape[0], top_img.shape[1]:top_img.shape[1]*2, :] = top_img
             out_vis_img[out_vis_img.shape[0]-bottom_img.shape[0]:out_vis_img.shape[0], bottom_img.shape[1]:bottom_img.shape[1]*2, :] = bottom_img
             out_vis_img[out_vis_img.shape[0]//3:back_img.shape[0]+out_vis_img.shape[0]//3, back_img.shape[1]*3:back_img.shape[1]*4, :] = back_img
-            
+
             # Add the new image.
             new_image[new_image == 127] = 255
             out_vis_img[:, out_vis_img.shape[1]//2:out_vis_img.shape[1]//2+new_image.shape[1], :] = new_image
@@ -389,7 +389,7 @@ class TartanAirCustomizer(TartanAirModule):
         if not env:
             env = os.listdir(self.data_root)
         for env_folder in env:
-            
+
             # Iterate difficulty.
             if not difficulty:
                 env_path = os.path.join(self.data_root, env_folder)
@@ -399,21 +399,21 @@ class TartanAirCustomizer(TartanAirModule):
                 # Iterate trajectory.
                 if not trajectory_id:
                     diff_path = os.path.join(self.data_root, env_folder, difficulty_folder)
-                    trajectory_id = os.listdir(diff_path)                
+                    trajectory_id = os.listdir(diff_path)
                 for traj_id_folder in trajectory_id:
 
                     # Iterate modality.
                     if not modality:
                         raise ValueError("modality must be specified.")
-                    
+
                     # Keep a list of the file-count in each modality folder. We expect those to all be the same.
                     modality_num_files = []
                     for modality_name in modality:
                         for camera_name in ['front', 'left', 'right', 'back', 'top', 'bottom']:
-                            
+
                             modality_folder = modality_name +  '_' + str(cam_side) + '_' + camera_name
                             path = os.path.join(self.data_root, env_folder, difficulty_folder, traj_id_folder, modality_folder)
-                            
+
                             num_files = len(os.listdir(path))
                             modality_num_files.append(num_files)
 
@@ -422,7 +422,7 @@ class TartanAirCustomizer(TartanAirModule):
                         raise ValueError("The number of files in the modality folders is not the same.")
                     else:
                         print("Success: {env_folder}/{difficulty_folder}/{traj_id_folder} All files are available for {modality} on {raw_side} side.".format(env_folder = env_folder, difficulty_folder = difficulty_folder, traj_id_folder = traj_id_folder, modality = modality, raw_side = raw_side))
-            
+
         return True
 
 class TartanAirFlowCustomizer(TartanAirCustomizer):
@@ -460,7 +460,7 @@ class TartanAirFlowCustomizer(TartanAirCustomizer):
             self.env_folders = []
         else:
             self.env_folders = env
-            
+
         # The data-folders (easy/hard) to be processed within the environments.
         if not difficulty:
             self.data_folders = ['Data_easy', 'Data_hard']
@@ -487,7 +487,7 @@ class TartanAirFlowCustomizer(TartanAirCustomizer):
         for env_name, env_trajs  in envs_to_trajs.items():
             if self.env_folders and env_name not in self.env_folders:
                 continue
-            for rel_traj_path in env_trajs: 
+            for rel_traj_path in env_trajs:
                 # Proceed only if the trajectory is in the list of trajectories to be processed.
                 if trajectory_id and rel_traj_path.split("/")[-1] not in trajectory_id:
                     continue
@@ -495,11 +495,11 @@ class TartanAirFlowCustomizer(TartanAirCustomizer):
                 traj_path = os.path.join(tartanair_path, env_name, rel_traj_path)
 
                 for camname in camera_name:
-                                                
+
                     # Create directory.
                     new_data_dir_path = os.path.join(tartanair_path, env_name, rel_traj_path, f"flow_{camname}")
                     print("Creating directory", new_data_dir_path) # Of form Data_easy/env/P001/image_lcam_custom0
-                    
+
                     # Does not overwrite older directories if those exist.
                     if os.path.exists(new_data_dir_path):
                         pass
@@ -512,14 +512,14 @@ class TartanAirFlowCustomizer(TartanAirCustomizer):
                     files = os.listdir(os.path.join(tartanair_path, env_name, rel_traj_path, f"depth_{camname}"))
                     num_frames = len([f for f in files if f.endswith(".png") and not f.startswith(".")])
 
-                    # Now, we will prepare argument lists for the flow resampling workers. 
+                    # Now, we will prepare argument lists for the flow resampling workers.
                     # We enumerate all the pairs with "frame_sep" separation.
                     frame_pairs = [(frame_ix, frame_ix + frame_sep) for frame_ix in range(0, num_frames - frame_sep)]
 
                     # read the poses
                     pose_fp = os.path.join(tartanair_path, env_name, rel_traj_path, f"pose_{camname}.txt")
                     poses = np.loadtxt(pose_fp)
-                    
+
                     job_args = [
                         {
                             "source_path": os.path.join(tartanair_path, env_name, rel_traj_path),
@@ -545,7 +545,7 @@ class TartanAirFlowCustomizer(TartanAirCustomizer):
                         # Run in parallel.
                         print("        Running in parallel with", num_workers, "workers.")
                         try:
-            
+
                             with Pool(num_workers) as pool:
                                 pool.map(self.sample_flow_worker, job_args)
 
@@ -559,7 +559,7 @@ class TartanAirFlowCustomizer(TartanAirCustomizer):
         modality_to_reader = {"image": self.reader.read_bgr, "depth": self.reader.read_dist, "seg": self.reader.read_seg}
         modality_to_interpolation = {"image": "linear", "seg": "nearest", "depth": "blend"}
         modality_to_writer = {"image": self.reader.write_as_is, "seg": self.reader.write_as_is, "depth": self.reader.write_float_depth}
-        
+
         source_path = argslist["source_path"]
         output_path = argslist["output_path"]
         cam_name = argslist["cam_name"]
@@ -574,13 +574,13 @@ class TartanAirFlowCustomizer(TartanAirCustomizer):
             # cam_name = f"{cam_side[0]}cam_front"
 
             depth_filepath = os.path.join(source_path, f"depth_{cam_name}", f"{frame_index:06d}_{cam_name}_depth.png")
-            
+
             depth_image = self.reader.read_depth(depth_filepath)
 
             # populate views
             view = {}
 
-            # depthmap 
+            # depthmap
             view["depthmap"] = depth_image
 
             NED_R_cam = np.array([
@@ -595,7 +595,7 @@ class TartanAirFlowCustomizer(TartanAirCustomizer):
             view["camera_pose"] = np.eye(4, dtype=np.float32)
             view["camera_pose"][0:3, 0:3] = Rotation.from_quat(cam_info["pose_raw_ta"][3:]).as_matrix() @ NED_R_cam @ cam0_R_camsample0
             view["camera_pose"][0:3, 3] = cam_info["pose_raw_ta"][:3]
-            
+
             # intrinsics
             view["camera_intrinsics"] = np.array([
                 [320, 0, 320 - 0.5],
@@ -619,7 +619,7 @@ class TartanAirFlowCustomizer(TartanAirCustomizer):
             depth_error_threshold=0.1,
             depth_error_temperature=0.1,
             relative_depth_error_threshold=0.01,
-            opt_iters=2    
+            opt_iters=2
         )
 
         # write flow and occlusion to the output path (npz)
